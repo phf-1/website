@@ -1,0 +1,46 @@
+@media (max-width: 80ch) {
+    html {
+        font-size: 14px;
+    }
+
+    article {
+        padding: 0;
+        padding-left: 0.5ch;
+        padding-right: 0.5ch;
+        border: none;
+    }
+
+    nav#table-of-contents {
+        display: none;
+    }
+}
+
+@media (min-width: 80ch) and (max-width: 900px) {
+    html {
+        font-size: 14px;
+    }
+
+    nav#table-of-contents {
+        display: none;
+    }
+}
+
+@media (min-width: 900px) and (max-width: 1000px) {
+    html {
+        font-size: 14px;
+    }
+
+    nav#table-of-contents {
+        font-size: 12px;
+    }
+}
+
+@media (min-width: 1200px) {
+    html {
+        font-size: 18px;
+    }
+
+    nav#table-of-contents {
+        font-size: 16px;
+    }
+}

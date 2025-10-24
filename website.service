@@ -1,0 +1,30 @@
+[Unit]
+Description=Website Application
+After=network.target
+
+[Service]
+Type=simple
+Environment=LANGUAGE=en
+Environment=LC_ALL=C.UTF-8
+Environment=LANG=C.UTF-8
+Environment=XDG_CACHE_HOME=__CACHE_DIR__
+User=__WEBSITE_USER__
+Group=__WEBSITE_GROUP__
+WorkingDirectory=__INSTALL_DIR__
+Environment=GUILE_LOAD_PATH=__INSTALL_DIR__/scheme
+Environment=WEBSITE_IP=__WEBSITE_IP__
+Environment=WEBSITE_PORT=__WEBSITE_PORT__
+Environment=WEBSITE_LOGIN=__WEBSITE_LOGIN__
+Environment=WEBSITE_PASSWORD=__WEBSITE_PASSWORD__
+Environment=WEBSITE_LAYOUT=__WEBSITE_LAYOUT__
+Environment=WEBSITE_CONTENT=__WEBSITE_CONTENT__
+Environment=WEBSITE_ENV="prod"
+ExecStart=__INSTALL_DIR__/bin/website
+Restart=on-failure
+StandardOutput=journal
+StandardError=journal
+# journalctl SYSLOG_IDENTIFIER=website
+SyslogIdentifier=website
+
+[Install]
+WantedBy=multi-user.target

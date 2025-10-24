@@ -1,0 +1,164 @@
+#!/usr/bin/env bash
+
+# :REF: d7adcc5c-8b36-4cce-b520-d97aa6d4c9a1
+# :ID: f6eb14d9-1985-482f-94eb-b0b178c3bf63
+
+###########
+# Context #
+###########
+
+set -euo pipefail
+IFS=$'\n\t'
+
+function error_msg() { echo "ERROR | $1"; }
+function dev_msg() { echo "DEV | $1"; }
+
+export GUILE_LOAD_PATH=$PWD/scheme
+export ARCHIVE_NAME="website.tar.gz"
+export ARCHIVE="dist/$ARCHIVE_NAME"
+export WEBSITE_IP=127.0.0.1
+export WEBSITE_PORT=3000
+export WEBSITE_USER="websiteuser"
+export WEBSITE_GROUP="websitegroup"
+export WEBSITE_CONTENT=$PWD/../content
+export WEBSITE_ENV=dev
+export WEBSITE_LAYOUT=$PWD/layout
+
+function context() {
+    export WEBSITE_LOGIN=login
+    export WEBSITE_PASSWORD=password
+    if [[ -z "${GUIX_ENVIRONMENT:-}" ]]; then
+        if [[ -z "$@" ]]; then
+            guix shell -m manifest.scm
+
+        else
+            guix shell -m manifest.scm -- $@
+
+        fi
+
+    else
+        $@
+
+    fi
+}
+
+function server() {
+    ./bin/website &
+    WEBSITE_PID=$!
+    trap "kill $WEBSITE_PID" EXIT
+    echo "http://$WEBSITE_IP:$WEBSITE_PORT"
+    wait "$WEBSITE_PID"
+}
+
+function dist() {
+    [[ -z "$ARCHIVE" ]] && { error_msg "ARCHIVE is empty"; exit 1; }
+    local temp_dir=$(mktemp -d)
+    local temp_archive="$temp_dir/website"
+    mkdir -p "$temp_archive"
+    rsync -a {bin,scheme,config,bash,website.service,website} "$temp_archive/"
+    local name="${ARCHIVE##*/}"
+    tar -czf "$name" -C "$temp_dir" "${temp_archive##*/}"
+    rm -rf "$temp_dir"
+    mkdir -p "${ARCHIVE%/*}"
+    mv "$name" "$ARCHIVE"
+    echo "$ARCHIVE"
+}
+
+function html() {
+    ./bash/source_to_website_content "$WEBSITE_CONTENT" "$WEBSITE_CONTENT"
+}
+
+function deploy() {
+    if [[ ! -f "$ARCHIVE" ]]; then
+        error_msg "ARCHIVE is not a file. ARCHIVE = $ARCHIVE"
+        exit 1
+    fi
+    rsync -az "$ARCHIVE" root@$SERVER_IP:/root/
+    html
+    rsync -az --delete "$WEBSITE_CONTENT/" root@$SERVER_IP:/var/www/website/content/
+    rsync -az --delete layout/ root@$SERVER_IP:/var/www/website/layout/
+    ssh root@$SERVER_IP "chown -R $WEBSITE_USER:$WEBSITE_GROUP /var/www/website && chmod -R 755 /var/www/website"
+    ssh root@$SERVER_IP "bash -c 'tar xf website.tar.gz && cd website && ./website install && ./website activate'"
+}
+
+DOC=$(cat <<EOF
+usage:
+  $0 msg
+
+  msg      | effect
+  ---------+--------------------------------------------------------------
+  help     | This message is printed.
+  html     | Generates html for the content.
+  context  | A development context is built.
+  start    | A development context is built.
+           | A Web server listening in dev mode.
+  prod     | The current context is assumed to be sufficient.
+           | A Web server listening in prod mode.
+  test     | Tests are executed.
+  dist     | An archive is built.
+  install  | The website is installed in the current system.
+  activate | The website service is activate in the current system.
+  deploy   | An archive is sent,installed and activate in a distant server.
+EOF
+)
+
+#############
+# Interface #
+#############
+
+MSG="${1:-}"
+PARAM="${2:-}"
+
+if [[ "$MSG" == "help" ]]; then
+    echo "$DOC"
+
+elif [[ "$MSG" == "context" ]]; then
+    context
+
+elif [[ "$MSG" == "server" ]]; then
+    server
+
+elif [[ "$MSG" == "start" ]]; then
+    context $0 server
+
+elif [[ "$MSG" == "html" ]]; then
+    html
+
+elif [[ "$MSG" == "test" ]]; then
+    export WEBSITE_CONTENT=$PWD/fixture/content
+    export WEBSITE_ENV=test
+    export WEBSITE_LOGIN=login
+    export WEBSITE_PASSWORD=password
+    EXEC_TEST="$PWD/bash/exec_test"
+    TESTS_DIR="$PWD/test/website"
+    mkdir -p log
+    pushd log &>/dev/null
+    context "$EXEC_TEST" "$TESTS_DIR" "$PARAM"
+    popd &>/dev/null
+
+elif [[ "$MSG" == "prod" ]]; then
+    export WEBSITE_ENV=prod
+    ./bin/website
+
+elif [[ "$MSG" == "dist" ]]; then
+    dist
+
+elif [[ "$MSG" == "install" ]]; then
+    source bash/install.bash
+    install
+
+elif [[ "$MSG" == "activate" ]]; then
+    source bash/install.bash
+    source bash/activate.bash
+    source $HOME/.bashrc
+    activate
+
+elif [[ "$MSG" == "deploy" ]]; then
+    $0 dist
+    deploy
+
+else
+    error_msg "Unexpected MSG. MSG = $MSG"
+    $0 help
+    exit 1
+fi

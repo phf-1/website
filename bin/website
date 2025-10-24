@@ -1,0 +1,29 @@
+#!/usr/bin/env guile
+!#
+
+;; :REF: d7f8a08a-98fd-4086-af4e-dd4e2b1fa68a
+;; :ID: 9df53885-56eb-45a0-839f-0ff6913a49e7
+
+;;;;;;;;;;;;;
+;; Context ;;
+;;;;;;;;;;;;;
+
+(use-modules
+ (ice-9 match)
+ (srfi srfi-1)
+ (website conf)
+ (website server))
+
+;;;;;;;;;;;;;;;
+;; Interface ;;
+;;;;;;;;;;;;;;;
+
+(define conf (Conf#mk #f))
+
+(Server#mk (Conf#env conf)
+           (Conf#ip conf)
+           (Conf#port conf)
+           (Conf#content conf)
+           (Conf#layout conf)           
+           (Conf#login conf)
+           (Conf#password conf))

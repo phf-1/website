@@ -1,0 +1,5 @@
+* DONE Index of articles generated & deployed
+* TODO WEBSITE_ENV is used
+* TODO The development process is documented
+* TODO Clean-up the code
+* TODO Add tests

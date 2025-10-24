@@ -1,0 +1,325 @@
+* Context
+
+- [[ref:c708a576-6c6c-4eea-8473-011095d9ef10][String]]
+- [[ref:8bf691e8-ad28-4d68-bfd9-d3c7f1c7b348][Nothing]]
+- [[ref:1296a617-c19c-4fe8-ae2a-29c294493359][Just]]
+- [[ref:3c47155b-35b8-4392-932a-53d82ef6fe40][Hash]]
+- [[ref:76052dc6-4124-4143-bd78-b0a1e95e3127][Maybe(X)]]
+- [[ref:a32325c0-5fe5-4c3c-9378-7504416d5099][Actor]]
+- [[ref:40ff9c82-fbfc-445c-8191-426e200b6dd7][Keyword]]
+- [[ref:7182dc53-6af9-4cfd-bced-8a9ea862f279][Bytevector]]
+
+* Resource
+:PROPERTIES:
+:TYPE: ca53237e-a27a-40d0-aeae-5d4bf4fd4e2f
+:END:
+
+- Type :≡ Keyword
+
+- Id :≡ String
+
+- Resource : SubType(Actor)
+
+- Resource#mk : Type Id (Bytevector|String) → Resource
+
+- resource :≡ Resource#mk(t id v)
+
+- resource#type() :≡ t
+
+- resource#id() :≡ id
+
+- resource#content() :≡ v
+
+* Html
+:PROPERTIES:
+:TYPE: ca53237e-a27a-40d0-aeae-5d4bf4fd4e2f
+:END:
+
+- Html#mk : Id Bytevector → Html
+
+- Html#mk(id bv) :≡ Resource#mk(:html id bv)
+
+* Text
+:PROPERTIES:
+:TYPE: ca53237e-a27a-40d0-aeae-5d4bf4fd4e2f
+:END:
+
+- Text#mk : Id Bytevector → Text
+
+- Text#mk(id bv) :≡ Resource#mk(:text id bv)
+
+* Jpeg
+:PROPERTIES:
+:TYPE: ca53237e-a27a-40d0-aeae-5d4bf4fd4e2f
+:END:
+
+- Jpeg#mk : Id Bytevector → Jpeg
+
+- Jpeg#mk(id bv) :≡ Resource#mk(:jpeg id bv)
+
+* Pdf
+:PROPERTIES:
+:TYPE: ca53237e-a27a-40d0-aeae-5d4bf4fd4e2f
+:END:
+
+- Pdf#mk : Id Bytevector → Pdf
+
+- Pdf#mk(id bv) :≡ Resource#mk(:pdf id bv)
+
+* Article
+:PROPERTIES:
+:TYPE: ca53237e-a27a-40d0-aeae-5d4bf4fd4e2f
+:ID: cd651702-bd90-4ddc-962b-2579cd51d845
+:END:
+
+- Org :≡ Text
+
+- Id :≡ String
+
+- Resources :≡ List(Resource)
+
+- Article : SubType(Actor)
+
+- Article#mk : Boolean Id Html Org Resources → Article
+
+- art :≡ Article#mk private id html org resources
+
+- art#private?() :≡ private
+
+- art#id() :≡ id
+
+- art#html() :≡ html
+
+- art#org() :≡ org
+
+- art#resource(id) :≡
+  - resource ∈ resources ∧ resource#id() = id → just(resource)
+  - _ → nothing
+
+* Db
+
+- Db : SubType(Actor)
+
+- Db#mk : Set(Article) → Db
+
+- Db#mk(articles) : Db :≡
+  - db#article : Id → Maybe(Article) :≡
+    - λid.
+      - ∃ article ∈ articles ∧ article#id() = id → just(article)
+      - _ → nothing
+
+  - db
+
+* ArticlePath
+:PROPERTIES:
+:TYPE: ca53237e-a27a-40d0-aeae-5d4bf4fd4e2f
+:ID: c57ff4ce-4499-45d1-a9fc-3ce285b30a16
+:END:
+
+An ArticlePath is a path to directory with the following structure:
+
+#+begin_example
+…/(public|private)/id
+├── article.html
+├── article.org
+└── resource
+    ├── …
+    └── ….(jpeg|html|pdf|txt)
+#+end_example
+
+* article-path→article
+
+- article-path→article : ArticlePath → Article :≡ 🞎
+
+* ContentDirectory
+
+A ContentDirectory is a path to a directory with the following structure:
+
+#+begin_example
+./
+├── public/
+│   ├── 1/
+│   ├── …/
+│   └── n/
+└── private/
+    ├── x/
+    ├── …/
+    └── z/
+#+end_example
+
+where …/public/1, …/private/x, … : ArticlePath
+
+* contentdirectory→articles
+
+- contentdirectory→articles : ContentDirectory → Set(Article)
+
+* Conf
+:PROPERTIES:
+:TYPE: ca53237e-a27a-40d0-aeae-5d4bf4fd4e2f
+:ID: 6ea23d0d-78c4-468c-9998-eaa555ecdb12
+:END:
+
+- Conf : SubType(Actor)
+
+- Conf#mk() : Conf
+
+- Conf#value : Keyword → String
+- Conf#value(:ip) :≡ value of the WEBSITE_IP environment variable, an IP address.
+- Conf#value(:port) :≡ value of the WEBSITE_PORT environment variable, a PORT number.
+- Conf#value(:content) :≡ value of the WEBSITE_CONTENT environment variable, a ContentDirectory
+- Conf#value(:env) :≡ value of the WEBSITE_ENV environment variable, "dev" | "test" | "prod"
+- Conf#value(:login) :≡ value of the WEBSITE_LOGIN, a String.
+- Conf#value(:password) :≡ value of the WEBSITE_PASSWORD, a String.
+
+* Reply
+
+- Response :≡ https://www.gnu.org/software/guile/manual/guile.html#Responses
+- Reply :≡ Response × Bytevector
+- Reply#hello() :≡ 🞎
+- Reply#404() :≡ 🞎
+
+* Layout
+:PROPERTIES:
+:TYPE: f590edb9-5fa3-4a07-8f3d-f513950d5663
+:ID: 6eec59f7-6386-4d28-a253-41c662e32339
+:END:
+
+A layout file is an HTML file with a single ~__BODY__~ string that is to be replaced by
+the HTML content of an article. It completes the article content to form a complete
+HTML String.
+
+- Name :≡ String
+
+- Layout :≡ SubType(Actor)
+
+- Layout#mk : Name String → Layout
+
+- layout :≡ Layout#mk name string
+
+- layout#embed(content) :≡ string with "__BODY__" placeholder replaced by content.
+
+- layout#name() :≡ name
+
+* LayoutDirectory
+
+A LayoutDirectory is a path to a directory with the following structure:
+
+#+begin_example
+./
+└── article.html
+#+end_example
+
+where article.html is file which content is a Layout.
+
+* layoutdir→layouts
+
+- layoutdir→layouts : LayoutDirectory → Hash(Name Layout) :≡ 🞎
+
+* string→bytevector
+
+- string→bytevector : String → Bytevector
+
+* Website
+:PROPERTIES:
+:TYPE: f590edb9-5fa3-4a07-8f3d-f513950d5663
+:ID: 65e02573-e1ea-4463-95bc-46ce866426af
+:END:
+
+- index : Db → Article :≡
+  - titles : List(String) :≡ titles for each article in DB.
+  - article : Article :≡ article whose content is links
+  - article
+
+- html→reply : Html → HtmlReply
+- html→reply(html layout) :≡
+  - html
+  - ▸ Resource#content()
+  - ▸ layout#embed()
+  - ▸ string→bytevector()
+  - ▸ HtmlReply#mk()
+
+- Website : SubType(Actor)
+
+- Website#mk : Env Content Layout Login Password → Website
+
+- Website#mk(env content layout login password) :≡
+  - articles :≡ contentdirectory→articles content
+  - db :≡ Db#mk articles
+  - layouts :≡ layoutdir→layouts layout
+  - article-layout :≡ layouts("article.html")
+  - index :≡ index(db)
+
+  - website#404() :≡ Reply#404()
+
+  - website#index() :≡ html→reply(index#html() article-layout)
+
+  - website#hello() :≡ Reply#hello()
+
+  - website#article(id msg) :≡
+    - match db#article(id)
+      - nothing → website#404()
+      - just(art) →
+        - match Actor#send(art msg)
+          - html : Html → html→reply(html article-layout)
+          - org : Text → org#content() ▸ string→bytevector() ▸ TextReply#mk()
+          - jpeg : Jpeg → jpeg#content() ▸ JpegReply#mk()
+          - pdf : Pdf → pdf#content() ▸ PdfReply#mk()
+          - nothing → website#404()
+
+  - website
+
+* ./bin/start
+:PROPERTIES:
+:TYPE: ca53237e-a27a-40d0-aeae-5d4bf4fd4e2f
+:ID: d7f8a08a-98fd-4086-af4e-dd4e2b1fa68a
+:END:
+
+- ~./bin/start~ executes the following:
+  - conf :≡ Conf#mk()
+  - 🞎
+  - Server#mk(
+    -  ip
+    -  port
+    -  content
+    -  layout
+    -  env
+    -  login
+    -  password)
+
+* Identity
+:PROPERTIES:
+:TYPE: ca53237e-a27a-40d0-aeae-5d4bf4fd4e2f
+:ID: a82de302-2587-483d-bf6b-bde6ff80fada
+:END:
+
+Login :≡ String
+
+Password :≡ String
+
+Identity :≡ Login × Password
+
+* Protocol
+
+Given a browser pointed at =https://domain= and =server :≡ ./bin/start=, then the
+following protocol is satisfied:
+
+|---------------------------------+------------------------------------------|
+| Request                         | Reply                                    |
+|---------------------------------+------------------------------------------|
+| GET identity /hello             | website#hello()                          |
+| GET identity /article/id/html   | website#article(identity id msg(:html))  |
+| GET identity /article/id/org    | website#article(identity id msg(:org))   |
+| GET identity /article/id/res-id | website#resource(identity id res-id)     |
+| GET identity /articles          | website#index()                          |
+| GET identity /                  | website#article(identity "1" msg(:html)) |
+| GET identity /id                | website#resource(identity "1" id)        |
+| _                               | website#404()                            |
+|---------------------------------+------------------------------------------|
+
+* Local Variables  :noexport:
+Local Variables:
+eval: (add-hook 'before-save-hook #'whitespace-cleanup nil t)
+indent-tabs-mode: nil
+org-export-with-broken-links: t
+fill-column: 85
+End:

@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+IFS=$'\n\t'
+
+TEST_DIR="${1:-}"
+if [[ ! -d "$TEST_DIR" ]]; then
+    echo "TEST_DIR is not a directory. TEST_DIR = $TEST_DIR"
+    exit 1
+fi
+
+TEST_NAME="${2:-}"
+TEST_FILE="$TEST_DIR/$TEST_NAME.scm"
+
+if [[ -f "$TEST_FILE" ]]; then
+    guile -s "$TEST_FILE"
+else
+    for test_file in "$TEST_DIR"/*; do
+        guile -s "$test_file"
+    done    
+fi
+
+
+
