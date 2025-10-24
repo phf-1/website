@@ -1,0 +1,44 @@
+#!/usr/bin/guile \
+-e main -s
+!#
+
+;;;;;;;;;;;;;;;;;;;
+;; Specification ;;
+;;;;;;;;;;;;;;;;;;;
+;;
+;; [[id:4d45b997-7990-4629-9255-1bd94f14a295]]
+;;
+;; Given port : Port, dir : LibraryDir, then `$0 :start port dir' implies
+;; server#start(port).
+;;
+;; [[ref:4ee84d7f-12d6-4bcf-a00f-a049631063f1][LibraryDir]]
+;; [[ref:876d6839-7a43-4215-80f4-459f13c29870][server]]
+
+(define root-dir (string-append (dirname (current-filename)) "/.."))
+(add-to-load-path (string-append root-dir "/scheme"))
+(define elisp-dir (string-append root-dir "/elisp"))
+(define start-el (string-append elisp-dir "/start.el"))
+(define bibliography-bib (string-append root-dir "/bibliography.bib"))
+(define csl-dir (string-append root-dir "/csl"))
+
+(use-modules (ice-9 match)
+             (parser)
+             (publication)
+             (library)
+             (server))
+
+(define (main args)
+  (let* ((parser<start-el> (Parser `(#:mk ,start-el ,bibliography-bib ,csl-dir)))
+         (Publication<parser> (Publication `(#:mk ,parser<start-el>)))
+         (Library<Publication> (Library `(#:mk ,Publication<parser>)))
+         (Server<Library,parser> (Server `(#:mk ,Library<Publication> ,parser<start-el>))))
+    (match args
+      ((name . cli-args)
+       (match (parser<start-el> `(#:args ,cli-args))
+         (`(#:start ,port ,dir)
+          (format #t "Starting server on port ~a with library ~a~%" port dir)
+          (let ((server (Server<Library,parser> `(#:mk ,dir #:Directory))))
+            (server `(#:start ,port))))
+         (_
+          (format (current-error-port) "Usage: ~a :start PORT DIR~%" name)
+          (exit 1)))))))

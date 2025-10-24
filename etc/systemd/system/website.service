@@ -1,0 +1,72 @@
+[Unit]
+# Human-readable name for the service shown in systemd logs and status output
+Description=Website
+
+# Wait for network to be available before starting this service
+# Ensures network interfaces are up before the web server attempts to bind to a port
+After=network.target
+
+[Service]
+# Process model: 'simple' means ExecStart process is the main service process
+# systemd considers the service started as soon as this process begins running
+Type=simple
+
+# Create a private /tmp namespace for this service, isolated from system /tmp
+# Automatically cleaned up when service stops, improves security and prevents /tmp pollution
+PrivateTmp=true
+
+# Unix user account that will run the service process
+# Running as non-root user limits damage if the service is compromised
+User=@USER@
+
+# Environment variable passed to the service process
+# The web server reads this to determine which port to bind to
+Environment=PORT=@PORT@
+
+# The command to execute when starting the service
+# This is the self-extracting archive that unpacks and starts the web server
+ExecStart=@EXEC@ start
+
+# Automatically restart the service if it exits (crashes or stops)
+# 'always' means restart regardless of exit code or reason
+Restart=always
+
+# Wait 10 seconds before restarting after a failure
+# Prevents rapid restart loops and gives time for transient issues to resolve
+RestartSec=10
+
+# Send standard output (stdout) to systemd's journal logging system
+# View with: journalctl -u website
+StandardOutput=journal
+
+# Send standard error (stderr) to systemd's journal logging system
+# Captures error messages and stack traces for debugging
+StandardError=journal
+
+# Security: Prevent the process from gaining additional privileges
+# Blocks privilege escalation via setuid binaries or capabilities
+NoNewPrivileges=true
+
+# Security: Deny access to physical devices (/dev)
+# Web server doesn't need hardware access; reduces attack surface
+PrivateDevices=true
+
+# Security: Make most of the filesystem read-only
+# Only explicitly allowed paths (via ReadWritePaths) can be written to
+# Protects system files from modification if service is compromised
+ProtectSystem=strict
+
+# Security: Make home directories inaccessible to the service
+# Prevents reading other users' personal files (includes /home, /root, /run/user)
+ProtectHome=true
+
+# Security: Explicitly allow write access to /tmp
+# Required for mktemp -d to create temporary working directories
+# (PrivateTmp already handles this, but being explicit improves clarity)
+ReadWritePaths=/tmp
+
+[Install]
+# When this service is enabled, add it to the multi-user.target dependency list
+# multi-user.target is reached when system is ready for normal multi-user operation
+# Ensures service starts automatically on boot after reaching this target
+WantedBy=multi-user.target

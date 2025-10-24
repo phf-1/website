@@ -1,0 +1,145 @@
+#+ID: ca648df2-f226-4920-9c48-bbb1d879f7cb
+#+TITLE: Automating legal procedures
+#+DATE: 2025-10-27
+
+* Abstract
+
+This work explores the feasibility of automating parts of judicial debt recovery
+procedures using modern AI and distributed systems. Millions of uncollected contracts
+remain unresolved each year because legal enforcement costs exceed potential
+recoveries. This feasibility study focuses on identifying the main technical
+challenges of automating such procedures. Two demonstrators were developed: one for
+automated data extraction using Google Gemini, achieving over 95% accuracy, and
+another as a web application for simulating recovery procedures built on the Erlang
+Virtual Machine. Results show that current AI and distributed architectures enable
+building large-scale, low-cost systems capable of processing millions of legal cases
+efficiently, which is worth investigating.
+
+* Introduction
+
+How can judicial procedures be automated? The question begins with exploring how
+modern AI tools may transform the legal world. In 2024–2025, I met lawyer [[https://www.jeantet.fr/avocats/philippe-mallea][Philippe
+Mallea]], and we discussed several use cases. It turns out that millions of contracts
+remain unresolved because traditional methods are too costly.
+
+Each year, large companies generate millions of breached contracts—especially in
+sectors like mobile phone subscriptions or streaming services such as Netflix. Each
+contract may represent hundreds of dollars in debt, adding up to hundreds of millions
+per year.
+
+Recurring costs also accumulate. For instance, managing paper contracts can cost
+around half a million dollars annually for infrastructure and logistics—such as
+document processing facilities in North Africa. On top of that, companies still pay
+taxes on these unfulfilled contracts.
+
+* Problem
+
+The main issue is that enforcing these contracts through legal procedures is more
+expensive than ignoring them. In North Africa, for example, the cost of pursuing
+legal action exceeds the potential recovery. So, the challenge is to reduce the cost
+of processing millions of contracts efficiently each year.
+
+To illustrate, consider the following: given 10 million mobile phone contracts, how
+can we identify those with a success probability above 80% and apply the legal
+procedure for less than $100 per case?
+
+Assuming all legal and procedural parameters are known, the problem can be divided
+into three parts:
+- *Prediction*: Build a system that estimates the probability of a successful legal
+  outcome for each contract.
+- *Operation*: Design a program that applies the legal procedure at a cost below $100
+  per case.
+- *Scale*: Ensure both prediction and operation systems can process millions of cases
+  simultaneously.
+
+* Feasibility study
+
+Since this is an exploratory study, the goal was to identify the key technical
+challenges a viable solution must address.
+
+- *Extracting data from raw contracts.* The prediction problem reduces to extracting
+  relevant data from contracts, recording case outcomes, and applying statistical
+  models to predict success rates. Because no dataset of successful or unsuccessful
+  procedures exists, the initial task was to extract structured information
+  efficiently from sample contracts. In short: can modern AI systems extract contract
+  data effectively?
+
+- *Flexible architecture.* The operational problem becomes one of system design—how
+  to integrate automation smoothly into existing legal workflows while remaining
+  flexible for edge cases and adapting to the rapid evolution of AI technologies.
+
+- *Reading and writing legal documents.* The most expensive operations are those
+  requiring lawyers’ input—reading and drafting legal documents. Can modern AI
+  systems automate these tasks reliably?
+
+- *Robustness at scale.* A large-scale system must be resilient: component failures
+  should not trigger cascading failures that halt millions of procedures. How can we
+  build such a robust system?
+
+At this stage, the goal was to show that building a program with these properties is
+realistic. Demonstrators were developed to support the argument that such automation
+is feasible.
+
+* Solution
+
+After obtaining a test dataset of contracts, two programs were developed.
+
+#+CAPTION: Example of debt
+#+ATTR_HTML: :alt caption
+#+ATTR_HTML: :title caption
+#+ATTR_HTML: :width 75%
+[[file:img-1.jpeg]]
+
+#+CAPTION: Example of contract
+#+ATTR_HTML: :alt caption
+#+ATTR_HTML: :title caption
+#+ATTR_HTML: :width 75%
+[[file:img-2.jpeg]]
+
+The first program processed the dataset and extracted nearly all relevant data,
+achieving over 95% accuracy. Two key findings emerged:
+1. The choice of AI model is critical—Google Gemini performed best for this task.
+2. Effective prompt engineering requires experience and extensive trial and error.
+
+Error correction systems were also essential to handle occasional nonsensical outputs
+from AI models.
+
+The second program was a web application built with the Elixir language on the Erlang
+Virtual Machine (VM). Through a simple web interface, a lawyer could simulate a
+"discussion" aimed at advancing a recovery procedure. Given a contract, the
+application would read documents provided by the lawyer, generate a legal document in
+response, and request the next document to process. The application followed the
+legal procedures described by our partner lawyers, who evaluated the accuracy of the
+automatically generated documents.
+
+The architectural question was resolved through the Actor model, as implemented in
+the Erlang VM. This model met all requirements for a robust, scalable distributed
+system, including communication with external actors—for example, reading court
+websites to obtain updates on legal procedures.
+
+The Erlang VM provides a battle-tested implementation of the Actor Model, which views
+programs as networks of small computing entities called /actors/. An actor is similar
+to a lightweight virtual computer that communicates only by sending messages. If one
+fails, it does not affect its neighbors and can be restarted. The Erlang VM supports
+millions of actors running concurrently across multiple physical machines, providing
+the desired robustness and scalability.
+
+* Results
+
+- More than 95% of expected data can be extracted from raw contracts using Google
+  Gemini.
+- With enough examples, Google Gemini can draft convincing legal documents adapted to
+  specific recovery procedures.
+- The Erlang VM offers the scalability and robustness required for a production
+  system.
+- The Actor Model provides the flexibility needed to model complex systems of
+  interrelated legal entities.
+
+* Conclusion
+
+This feasibility study demonstrates that automating parts of judicial debt recovery
+is worth investigating. Modern AI systems such as Google Gemini can reliably extract
+data and draft legal documents with minimal human intervention, and distributed
+architectures provide the scalability and robustness needed for real-world
+deployment. More challenges remain to be solved, but no technical impossibilities
+have been discovered.

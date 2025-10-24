@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>phfrohring</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&family=Source+Serif+Pro:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    @CSS@
+  </head>
+  <body>
+    <div class="c11"></div>
+    <header class="c12">
+      <nav class="top-nav">
+        <ul>
+          <div class="left">
+            <li class="link"><a href="/">About</a></li>
+            <li class="link"><a href="/articles">Articles</a></li>
+          </div>
+          <div class="right">
+            <li class="link"><a href="#" role="button" id="qa-Btn">Q&A</a></li>
+          </div>
+        </ul>
+      </nav>
+    </header>
+
+    <div class="c13"></div>
+
+    <aside id="c21" class="c21"></aside>
+
+    <main class="c22">
+      <div id="reviewer" class="reviewer hidden">
+        <div class="question">
+          <div class="content"></div>
+          <div class="buttons">
+            <button class="reveal">Reveal</button>
+            <button class="stop">Stop</button>
+          </div>
+        </div>
+
+        <div class="answer">
+          <div class="content"></div>
+          <div class="buttons">
+            <button class="next">Next</button>
+            <button class="discuss">Discuss</button>
+          </div>
+        </div>
+
+        <form class="discussion" method="POST">
+          <div class="email">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required placeholder="you@example.com">
+          </div>
+          <div class="content">
+            <label for="content">Content:</label>
+            <textarea
+              id="content"
+              name="content"
+              required
+              placeholder="Enter your text here… (5000 chars max)."
+              maxlength="5000"
+              rows="5"></textarea>
+          </div>
+          <button type="submit">Send</button>
+        </form>
+      </div>
+      <article id="article">
+        @BODY@
+      </article>
+    </main>
+
+    <aside id="c23" class="c23">
+      <span id="license">License: <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a></span>
+    </aside>
+    @JS@
+  </body>
+</html>

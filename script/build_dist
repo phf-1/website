@@ -1,0 +1,110 @@
+#! /bin/bash
+
+#################
+# Specification #
+#################
+#
+# Given archive :≡ /path/to/archive.tar.zst and dist :≡ /path/to/dist, then build an
+# executable at dist such that:
+#   - Given port, then `$ ./dist start' starts a server serving HTTP protocol[2] with
+#     publications deduced from archive.
+#
+#   - Given user, group, port, then `# ./dist install' installs a sysD service that
+#     supervises a process started with `./dist start' by user.
+#
+# [[ref:3c446152-6565-44b6-ab73-7faf6c7273b1][archive]]
+# [[ref:da7b66f8-4977-4d55-ab82-d0f2b5c072fb][dist]]
+
+##################
+# Implementation #
+##################
+
+set -euo pipefail
+IFS=$'\n\t'
+
+
+USAGE=$(cat <<EOF
+Usage: $0 --in \$ARCHIVE --out \$DIST
+
+  \$ARCHIVE is a path to an archive that stores the website.
+  \$DIST is a path to a self executing archive.
+EOF
+)
+ARCHIVE=""
+DIST=""
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --help | -h)
+      echo "$USAGE"
+      exit 0
+      ;;
+
+    --in)
+      ARCHIVE="$2"
+      [[ ! -f "$ARCHIVE" ]] && { $0 --error; }
+      shift 2
+      ;;
+
+    --out)
+      DIST="$2"
+      [[ ! -f "$DIST" && -e "$DIST" ]] && { $0 --error; }
+      mkdir -p $(dirname "$DIST")
+      shift 2
+      ;;
+
+    --error)
+      echo "ERROR"
+      $0 --help
+      exit 1
+      ;;
+
+    *)
+      $0 --error
+      ;;
+  esac
+done
+[[ -z "$ARCHIVE" || -z "$DIST" ]] && { $0 --error; }
+
+# The self executing archive is built.
+cat > "$DIST" <<'EOF'
+#!/bin/bash
+
+set -euo pipefail
+IFS=$'\n\t'
+
+# $workdir is the directory under which the website is to be decompressed.
+workdir=$(mktemp -d)
+
+# After this script exists, delete $workdir.
+trap 'rm -rf "$workdir"' EXIT
+
+# $skip is the line number at which starts the archive.
+skip=$(awk '/^exit 0/ {print NR+1; exit}' "$0")
+
+# The archive is extracted under $workdir.
+tail -n +"$skip" "$0" | zstd -d -c - | tar xf - -C "$workdir"
+pushd "$workdir/archive"
+
+# Given environment :≡ user : User, group : Group, port : Port then
+# after $0 install, a sysD service is configured and installed so that `exec start' is
+# executed by user and group and answers to HTTP requests at port.
+if [[ "$1" == "install" ]]; then
+  make install USER=$USER GROUP=$GROUP EXEC=$0 PORT=$PORT
+
+# Given environment :≡ port : Port then after `$0 start', then a processus answers
+# HTTP requests at port.
+elif [[ "$1" == "start" ]]; then
+  guix shell -C -F -N -m prod-manifest.scm -- bash -c "make start PORT=$PORT"
+
+else
+  echo "ERROR | Unexpected message. message = $1"
+  exit 1
+
+fi
+
+exit 0
+EOF
+cat "$ARCHIVE" >> "$DIST"
+chmod +x "$DIST"
+
+exit 0

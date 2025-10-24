@@ -1,0 +1,48 @@
+#+TITLE: Guile Personal Website
+#+AUTHOR: Your Name
+#+OPTIONS: toc:nil num:nil
+
+A flexible, reproducible personal website built entirely with GNU tools:
+
+- Guile Scheme (actor-model architecture)
+- Org-mode + Emacs (literate content with citations)
+- GNU Guix (reproducible environments)
+
+*Live site:* https://phfrohring.com
+
+** Highlights
+
+- Modular actor-based design (Parser, Publication, Library, Server)
+- Plain-text Org-mode sources exported on-demand
+- Content-addressable UUID directories
+- Single self-contained executable via =make dist=
+- Minimalist: no database, no heavy frameworks
+- Easy systemd deployment
+
+** Quick Start (Development)
+
+#+begin_src bash
+make env          # Enter reproducible dev environment
+make start PORT=3000  # Start server
+#+end_src
+
+Visit http://localhost:3000
+
+** Build & Deploy
+
+#+begin_src bash
+make test         # Run tests
+make dist         # Build executable _dist/website
+#+end_src
+
+Copy the executable to a server and run:
+
+#+begin_src bash
+USER=websiteuser GROUP=websitegroup PORT=3000 \\
+  /path/to/website install
+#+end_src
+
+** More Information
+
+- Design and rationale: =plan.org=
+- Architecture in source comments (Specification / Implementation)

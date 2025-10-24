@@ -1,0 +1,129 @@
+#+ID: 9a2e1e81-3000-4495-a13f-ff45afb5ad77
+#+TITLE: ExoCode
+#+DATE: 2025-10-30
+#+CITE_EXPORT: csl
+#+STATUS: draft
+
+* Introduction
+
+By analogy with an exothermic physical process, an /exovaloric/ social process is one
+that generates more value, utility, or benefit than the resources it consumes—often
+through cooperation or amplification. Since software development involves
+collaboration and value creation, we introduce /ExoCode/: an exovaloric process
+designed to create value through software production.
+
+ExoCode draws inspiration from the C4.1 process[cite:@hintjens_c4] described in the
+ØMQ Guide[cite:@hintjens_guide Chapter 6], but targets smaller groups (around a dozen
+collaborators rather than hundreds). It aims to drastically reduce the number of
+rules while preserving the essence of what makes C4.1 successful.
+
+* Objective
+
+ExoCode should:
+- Preserve the most valuable aspects of the C4.1 process as described in the guide.
+- Contain significantly fewer rules than C4.1.
+- Be usable by a single developer.
+- Be adoptable by a new developer in under an hour.
+
+* ExoCode
+
+ExoCode is the process used by this project to update its code. When in doubt, refer
+to the C4.1 process[cite:@hintjens_c4].
+
+** License
+
+The project uses a share-alike license such as:
+- MPLv2[cite:@mplv2]
+- LGPLv3[cite:@lgplv3]
+- GPLv3[cite:@gplv3]
+
+** Platform
+
+The /platform/ is where the code is hosted — e.g. github.com, codeberg.org.
+
+** Issue
+
+An issue is created using the platform’s issue tracker. It consists of an assertion
+and a predicate that must be true for a patch to be considered a solution.
+
+** Patch
+
+A patch is a Git commit containing data intended to be added to the project.
+
+** Valid patch
+
+A valid patch is a patch such that it:
+- Solves one issue.
+- Follows the project’s code style.
+- Adheres to the Evolution of Public Contracts[fn:393a].
+- Uses the same license as the project.
+- Is owned by its author; no copyright assignment required.
+- Does not include non-trivial code from other projects unless the contributor is the
+  original author.
+- Compiles cleanly and passes project self-tests on all main target platforms.
+- Contains a commit message composed of:
+  - An assertion as the first line.
+  - A blank line.
+  - An explanation of why the patch makes that assertion true.
+- Updates the relevant documentations.
+- Does not break the master branch when merged.
+
+[fn:393a]: https://rfc.zeromq.org/spec/44/#26-evolution-of-public-contracts
+
+** Contributor
+
+From a contributor’s point of view — /i.e./ someone who wishes to submit a patch to the
+project — the process is:
+
+1) Log in to the platform with your real name or well-known alias.
+2) Add or choose an issue to solve in the issue tracker.
+3) Fork the project.
+4) Build a patch that solves the issue.
+5) If you are not listed as a contributor, identify yourself.
+6) Submit a pull request.
+7) After the pull request is merged by a maintainer, close the issue.
+
+** Maintainer
+
+From a maintainer’s point of view — /i.e./ someone who reviews and merges patches — the
+process is:
+
+1) Log in to the platform with your real name or well-known alias.
+2) Select a pull request.
+3) Verify that the patch is valid.
+4) If the patch is invalid, explain why to the author and:
+   - either return to step 3;
+   - or reject the pull request.
+5) If the patch is valid, merge it into the "master" branch.
+
+** Administrator
+
+From an administrator’s point of view — /i.e./ someone who manages maintainers — the
+process is:
+
+1) Promote the most effective maintainers to administrators.
+2) Remove inactive maintainers.
+3) Ban "bad actors" after public discussion.
+
+** Founder
+
+From a founder’s point of view — /i.e./ someone who created the project and/or is its
+moral owner — the process is:
+
+1) Act as an administrator.
+
+* Discussion
+
+ExoCode has far fewer rules than the C4.1 process but refers to it in case of doubt.
+Experience will show whether it fulfills its goals. Most importantly, it requires at
+least one project and one entity — similar to iMatix as described in the Guide — to
+hold a trademark and enforce the license. Until then, it cannot be put to the test.
+
+* Conclusion
+
+ExoCode may serve as a draft for a simpler C4.1 process but cannot surpass it unless
+adopted by a project with significant stakes.
+
+* Bibliography
+
+#+print_bibliography:

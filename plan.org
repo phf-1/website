@@ -1,0 +1,578 @@
+#+OPTIONS: author:nil
+#+PROPERTY: header-args:bash :exports both :results output raw :wrap example
+
+* State
+** Specification
+:PROPERTIES:
+:ID:       ea17f50d-7dd0-4bfb-a0f3-4a88747ef35d
+:CUSTOM_ID: spec
+:END:
+
+*** HTTP protocol
+:PROPERTIES:
+:ID:       da7b66f8-4977-4d55-ab82-d0f2b5c072fb
+:END:
+
+Given publications : Set([[ref:11262bd0-6696-4a20-9164-2191e53d4d2f][Publication]]), then a HTTP Protocol is described by:
+
+|--------+--------------------+--------------------------------------------------------------+------|
+| Method | Path               | Reply                                                        | Type |
+|--------+--------------------+--------------------------------------------------------------+------|
+| GET    | /health            | {"health": "ok"}                                             | JSON |
+|--------+--------------------+--------------------------------------------------------------+------|
+| GET    | /                  | 301 to /00000000-0000-0000-0000-000000000000/html            |      |
+|--------+--------------------+--------------------------------------------------------------+------|
+| GET    | /articles          | 301 to /00000000-0000-0000-0000-000000000001/html            |      |
+|--------+--------------------+--------------------------------------------------------------+------|
+| GET    | /<uuid>/html       | If ∃ publication with matching uuid,                         | HTML |
+|        |                    | then return its HTML representation, else 404.               |      |
+|--------+--------------------+--------------------------------------------------------------+------|
+| GET    | /<uuid>/org        | If ∃ publication with matching uuid,                         | Text |
+|        |                    | then return its Org representation, else 404.                |      |
+|--------+--------------------+--------------------------------------------------------------+------|
+| GET    | /<uuid>/<filename> | If ∃ publication with matching uuid and associated filename, | HTML |
+|        |                    | then return the data, else 404.                              |      |
+|--------+--------------------+--------------------------------------------------------------+------|
+| GET    | _                  | 404                                                          | HTML |
+|--------+--------------------+--------------------------------------------------------------+------|
+| _      | _                  | 400                                                          | HTML |
+|--------+--------------------+--------------------------------------------------------------+------|
+
+*** LibraryDir
+:PROPERTIES:
+:ID:       4ee84d7f-12d6-4bcf-a00f-a049631063f1
+:END:
+
+A LibraryDir is a path to a directory which contains a list of [[ref:da15973f-f7f9-449b-9afa-e4ea4fbece19][PublicationDir]].
+
+*** PublicationDir
+:PROPERTIES:
+:ID:       da15973f-f7f9-449b-9afa-e4ea4fbece19
+:END:
+
+A PublicationDir is a path to a directory that contains files that define a
+publication. Its structure is:
+
+#+begin_example
+f90b80b2-ff5e-4ee5-bcf8-cb8d775e99bd      # mandatory
+├── css                                   # optional
+│   ├── 1.css -> ../../../css/master.css
+│   ├── 2.css -> ../../../css/color.css
+│   ├── 3.css -> ../../../css/media.css
+│   └── 4.css
+├── data                                  # optional
+│   ├── english-cv.pdf
+│   ├── french-cv.pdf
+│   └── portrait.jpeg
+├── js                                    # optional
+│   └── 1.js -> ../../../js/master.js
+├── layout.html -> ../../html/layout.html # mandatory
+└── org                                   # mandatory
+    └── 1.org
+#+end_example
+
+* Iterations
+** DONE 19
+SCHEDULED: <2026-02-04 Wed>
+:PROPERTIES:
+:TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
+:END:
+:LOGBOOK:
+CLOCK: [2026-02-04 Wed 13:30]--[2026-02-04 Wed 18:54] =>  5:24
+CLOCK: [2026-02-04 Wed 10:25]--[2026-02-04 Wed 10:45] =>  0:20
+:END:
+
+*** Objective
+
+Refactor using the idea that:
+- Type A ~ Actor A
+- A#mk : X Y … → A
+- A#x : A → X
+- …
+- documentation states what it represents.
+- The code may be generated using A.I. from the documentation.
+
+
+Remaining questions:
+- Where are supposed to be stored "morphisms"?
+
+*** Result
+
+- Fixed documentation.
+
+** DONE 18
+SCHEDULED: <2026-02-04 Wed>
+:PROPERTIES:
+:TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
+:END:
+:LOGBOOK:
+CLOCK: [2026-02-04 Wed 07:18]--[2026-02-04 Wed 10:25] =>  3:07
+:END:
+
+*** Objective
+
+Fix the remaining published content.
+
+*** Result
+
+- Publications creation has been parallelized.
+- Citation are taken into account (bibliography & pnas style).
+- Citation style is more legible.
+- Remaining published content have been migrated.
+
+** DONE 17
+SCHEDULED: <2026-02-03 Tue>
+:PROPERTIES:
+:TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
+:END:
+:LOGBOOK:
+CLOCK: [2026-02-03 Tue 21:01]--[2026-02-03 Tue 21:13] =>  0:12
+CLOCK: [2026-02-03 Tue 18:00]--[2026-02-03 Tue 20:11] =>  2:11
+CLOCK: [2026-02-03 Tue 16:04]--[2026-02-03 Tue 16:13] =>  0:09
+CLOCK: [2026-02-03 Tue 15:45]--[2026-02-03 Tue 15:50] =>  0:05
+:END:
+
+*** Objective
+
+The following command:
+
+#+begin_src bash :eval no
+make deploy
+#+end_src
+
+After deploy, the website is live on some VPS.
+
+*** Specification
+
+make deploy
+1. vps represents the VPS.
+2. ssh represents the ssh actor.
+3. user represents the user that owns the website on the vps.
+4. command :≡ 'echo "hello from ${USER}"'
+5. ssh#execute(user#name vps#ip command)
+   - execute command as user on the vps.
+   - stdout should be "hello from user#name()"
+
+** DONE 16
+SCHEDULED: <2026-02-03 Tue>
+:PROPERTIES:
+:TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
+:END:
+:LOGBOOK:
+CLOCK: [2026-02-03 Tue 13:45]--[2026-02-03 Tue 15:42] =>  1:57
+CLOCK: [2026-01-30 Fri 22:50]--[2026-01-30 Fri 23:30] =>  0:40
+CLOCK: [2026-01-30 Fri 22:30]--[2026-01-30 Fri 22:50] =>  0:20
+CLOCK: [2026-01-30 Fri 20:52]--[2026-01-30 Fri 22:09] =>  1:17
+:END:
+
+*** Objective
+
+=make install= installs a systemd service that starts the website and restarts it if it
+crashes.
+
+*** Specification
+
+The objective is to expose a webserver behind a reverse proxy to the internet. An
+HTTP request goes to from the internet to the reverse proxy, is being forwarded to
+something like localhost:3000. The request is processed by the webserver, a reply is
+processed replied to the client through This process may be understood as an Actor
+/i.e./ it can send/receive messages, has processing capabilities, memory, and the
+capacity to start other processes.
+
+*** Execution
+
+Assuming manifest.scm and guix, we can ship the dependencies, assuming very little of
+the box executing the archive.
+
+*** Result
+
+#+begin_src bash :eval no
+make prod PORT=3001
+make install
+#+end_src
+
+** DONE 15
+:PROPERTIES:
+:TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
+:END:
+:LOGBOOK:
+CLOCK: [2026-01-30 Fri 20:30]--[2026-01-30 Fri 20:49] =>  0:19
+CLOCK: [2026-01-30 Fri 17:30]--[2026-01-30 Fri 19:04] =>  1:34
+CLOCK: [2026-01-30 Fri 10:30]--[2026-01-30 Fri 12:00] =>  1:30
+:END:
+
+*** Objective
+
+Implement =make dist=.
+
+*** Specification
+
+Implement a Bash script =build_dist= such that:
+
+#+begin_src bash :eval no
+./build_script --in $ARCHIVE --out $DIST
+#+end_src
+
+builds =_dist/website=. =_dist/website= is a self-extracting archive such that =PORT=3000
+./website= starts the website using the port =$PORT=. It assumes a Linux environment,
+maybe Debian 12, and that Guile 3+ is installed. Here is an example of self
+extracting archive:
+
+#+begin_src bash :eval no
+#! /bin/env bash
+
+set -euo pipefail
+IFS=$'\n\t'
+
+# website.tar.gz is built.
+rm -rf website
+mkdir -p website/files
+echo "hello" > website/files/hello.txt
+echo "#! /bin/bash" > website/server
+echo "cat files/hello.txt" >> website/server
+chmod +x website/server
+tar czf website.tar.gz website/
+
+# prog is a script such that $ ./prog start self extracts into a workdir and starts
+# the server.
+cat > prog <<'EOF'
+#!/bin/bash
+
+set -euo pipefail
+IFS=$'\n\t'
+
+if [ "$1" != "start" ]; then
+    echo "$0 start"
+    exit 1
+fi
+
+# skip is the number of lines that should be skipped before the archive starts in
+# this file.
+skip=$(awk '/^exit 0/ {print NR+1; exit}' "$0")
+
+# workdir is where website should be executed.
+# After end of execution, workdir is deleted.
+workdir=$(mktemp -d)
+trap 'rm -rf "$workdir"' EXIT
+
+# The archive is extracted under workdir/.
+tail -n +"$skip" "$0" | tar xzf - -C "$workdir"
+
+# The server is started under workdir/.
+(cd "$workdir/website" && ./server)
+
+exit 0
+EOF
+
+# The archive is concatenated after ./prog
+cat website.tar.gz >> prog
+
+# ./prog is executable.
+chmod +x prog
+#+end_src
+
+Use the self-extracting archive examples as guideline to =build_dist=.
+
+** DONE 14
+:PROPERTIES:
+:TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
+:END:
+:LOGBOOK:
+CLOCK: [2026-01-28 Wed 10:08]--[2026-01-28 Wed 12:05] =>  1:57
+CLOCK: [2026-01-28 Wed 08:42]--[2026-01-28 Wed 10:08] =>  1:26
+:END:
+
+*** Objective
+
+- Find a suitable way to document the code.
+- Simplify.
+
+** DONE 13
+:PROPERTIES:
+:TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
+:END:
+:LOGBOOK:
+CLOCK: [2026-01-27 Tue 21:20]--[2026-01-28 Wed 00:36] =>  3:16
+CLOCK: [2026-01-27 Tue 19:45]--[2026-01-27 Tue 19:51] =>  0:06
+:END:
+
+*** Objective
+
+- We observe that Publication : Parser → Type.
+- More generally, we interpret types as actors, so we must generalyze :
+  - Publication : Parser → Type
+  - Library : Publication(parser) → Type
+  - …
+
+** DONE 13
+:PROPERTIES:
+:TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
+:END:
+:LOGBOOK:
+CLOCK: [2026-01-27 Tue 18:30]--[2026-01-27 Tue 19:45] =>  1:15
+CLOCK: [2026-01-27 Tue 12:27]--[2026-01-27 Tue 13:21] =>  0:54
+:END:
+
+*** Objective
+
+- Generate the index.
+- Publication : Parser → Type
+
+** DONE 12
+:PROPERTIES:
+:TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
+:END:
+:LOGBOOK:
+CLOCK: [2026-01-27 Tue 11:07]--[2026-01-27 Tue 12:23] =>  1:16
+:END:
+
+*** Objective
+
+- redirect / to /00000000-0000-0000-0000-000000000000/html in scheme/server.scm
+- redirect /articles to /00000000-0000-0000-0000-000000000001/html in scheme/server.scm
+
+** DONE 11
+:PROPERTIES:
+:TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
+:END:
+:LOGBOOK:
+CLOCK: [2026-01-27 Tue 10:40]--[2026-01-27 Tue 11:05] =>  0:25
+CLOCK: [2026-01-27 Tue 10:16]--[2026-01-27 Tue 10:40] =>  0:24
+:END:
+
+*** Objective
+
+- Reconcile specification notation and implementation notations. For instance =Parser#mk= ↦ =Parser#mk=.
+- test/server.scm is up to date.
+
+** DONE 10
+:PROPERTIES:
+:TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
+:END:
+:LOGBOOK:
+CLOCK: [2026-01-27 Tue 08:45]--[2026-01-27 Tue 10:15] =>  1:30
+:END:
+
+*** Objective
+Reconcile the specification and the implementation.
+
+** DONE 9
+:PROPERTIES:
+:TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
+:END:
+:LOGBOOK:
+CLOCK: [2026-01-26 Mon 20:56]--[2026-01-26 Mon 22:26] =>  1:30
+CLOCK: [2026-01-26 Mon 18:01]--[2026-01-26 Mon 20:38] =>  2:37
+:END:
+
+*** Objective
+
+Publications should allow to re-use global CSS/JS/HTML.
+
+** DONE 8
+:PROPERTIES:
+:TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
+:END:
+:LOGBOOK:
+CLOCK: [2026-01-26 Mon 16:40]--[2026-01-26 Mon 17:57] =>  1:17
+CLOCK: [2026-01-26 Mon 16:25]--[2026-01-26 Mon 16:39] =>  0:14
+:END:
+
+*** Objective
+
+A publication should includes CSS/JS in addition to HTML.
+
+*** Specification
+
+Given a publication directory, there is a article.org file. Then, an article.html
+file is build from article.org file using Emacs. Then, Publication#mk adds the css
+and the js to the html using <script> and <style>.
+
+** DONE 7
+:PROPERTIES:
+:TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
+:END:
+:LOGBOOK:
+CLOCK: [2026-01-26 Mon 10:37]--[2026-01-26 Mon 12:37] =>  2:03
+:END:
+
+*** Objective
+Take into consideration data/* in publications.
+
+** DONE 6
+:PROPERTIES:
+:TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
+:END:
+:LOGBOOK:
+CLOCK: [2026-01-24 Sat 17:07]--[2026-01-24 Sat 20:37]
+:END:
+
+*** Objective
+Define a type of actor that serves the requested content.
+
+** DONE 5
+:PROPERTIES:
+:TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
+:END:
+:LOGBOOK:
+CLOCK: [2026-01-24 Sat 11:41]--[2026-01-24 Sat 14:00] =>  2:19
+:END:
+
+*** Objective
+- Implement the specification.
+- For each created/updated file, write the complete file in a code block so that I can copy/paste it.
+- Highlight changes using comments starting with ";; CLAUDE:".
+
+** DONE 4
+:PROPERTIES:
+:TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
+:END:
+:LOGBOOK:
+CLOCK: [2026-01-24 Sat 10:30]--[2026-01-24 Sat 11:26] =>  0:56
+:END:
+
+*** Objective
+- =make dist= builds an archive =_dist/website.tar.zst=.
+- Given =./website.tar.zst=, then after decompression, we have =./website/*=.
+- =cd website/; make; make install= installs the website and enable/start a systemd
+  service that keep the website working.
+
+** DONE 3
+:PROPERTIES:
+:TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
+:END:
+:LOGBOOK:
+CLOCK: [2026-01-23 Fri 22:37]--[2026-01-23 Fri 23:00] =>  0:23
+:END:
+
+*** Objective
+- Add automated tests.
+
+*** Specification
+=make test= excecutes automated tests that verify that the [[ref:d499ed57-889d-45bb-b6f0-9e0497d188c1][HTTP protocol]] is satisfied.
+
+** DONE 2
+:PROPERTIES:
+:TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
+:END:
+:LOGBOOK:
+CLOCK: [2026-01-23 Fri 21:23]--[2026-01-23 Fri 22:37] =>  1:14
+:END:
+
+*** Objective
+Model the program using actors.
+
+** DONE 1
+:PROPERTIES:
+:TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
+:END:
+:LOGBOOK:
+CLOCK: [2026-01-23 Fri 20:43]--[2026-01-23 Fri 21:23] =>  0:40
+:END:
+
+*** Objective
+After website#start(port), a website is listening on localhost:port.
+
+*** Specification
+website is a linux executable. Its syntax on the Bash CLI is, for instance: =$
+./website :start 3000=. The website should just return "hello world!". =./website=
+should be implemented in [[https://www.gnu.org/software/guile/manual/guile.html][Guile Scheme]].
+
+* Backlog
+** VM
+:PROPERTIES:
+:TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
+:END:
+:LOGBOOK:
+CLOCK: [2026-01-24 Sat 11:30]--[2026-01-24 Sat 11:36] =>  0:06
+:END:
+
+*** Objective
+=make vm= builds a qcow2 image of a Guix system optimized to execute the website. This
+qcow2 image is intented to be deployed to some VPS.
+
+*** Log
+#+begin_src bash
+sudo apt update && sudo apt install qemu-utils
+#+end_src
+
+** Ma
+
+actors should ask surrounding context — /i.e./ a Ma instance — for functionalities. For
+instance, =ma#parse-binary(str)=. If parser ∈ ma, then ma#parse-binary(str) =
+parser#parse-binary(str). In other words, an actor may ask its surrounding
+environment for help. The question is when should an actor internalize a
+functionality — /e.g./ parser — and when to ask its context for it — /e.g./
+ma#binary-type(str) ? In other words, if an actor needs to be updated so that it can
+use #binary-type(str) then should the actor:
+1. Build its own internal parser ?
+   - ⇒ no interface changes
+2. Ask at build time for a parser ?
+   - actor#mk() ↦ actor#mk(parser)
+3. Ask its surrounding environment for #binary-type(str) ?
+   - ma#binary-type(str) (ultra late biding)
+
+*** Response
+#+begin_example
+This is a classic architectural trade-off involving **coupling, cohesion, and lifecycle management**. Choosing between internalizing a capability or externalizing it to the environment depends on how "essential" that functionality is to the actor's identity.
+
+Here is a breakdown of how to choose between your three strategies:
+
+---
+
+### Comparison of Strategies
+
+| Strategy | Coupling | Flexibility | Maintenance Overhead | Best For... |
+| --- | --- | --- | --- | --- |
+| **1. Internalization** | None (Self-contained) | Low (Hard-coded) | High (Duplication risk) | Core, unique logic. |
+| **2. Build-time Injection** | Explicit | High (Swappable) | Medium (Interface changes) | Specific collaborators. |
+| **3. Context Lookup** | Implicit (Magic) | Ultra-high | Low (Global updates) | Cross-cutting utilities. |
+
+---
+
+### When to use each approach
+
+#### 1. Internalize (The "Loner" Actor)
+
+Choose this if the functionality is **intrinsically tied** to the actor’s state or is a private implementation detail that no one else should care about.
+
+,* **Logic:** If the parser logic is unique to *only* this actor and changing it elsewhere would break this actor, keep it inside.
+,* **Math Logic:** .
+
+#### 2. Build-time Injection (The "Contractor" Actor)
+
+Choose this when the actor needs a specific tool to do its job, but you want the ability to swap that tool out (e.g., for testing or different binary formats).
+
+,* **The Trade-off:** You mentioned "interface changes." While `actor#mk() \mapsto actor#mk(parser)` is a breaking change, it makes the dependency **explicit**. You avoid "magic" behavior where an actor fails at runtime because the environment is missing a piece.
+,* **Use case:** When different actors need different *versions* of a parser.
+
+#### 3. Context Lookup (The "Socialite" Actor)
+
+This "Ultra-late binding" is powerful but risky. It treats the `Ma` instance as a **Service Locator**.
+
+,* **Logic:** Use this for **cross-cutting concerns**—functionalities that are ubiquitous, stable, and used by almost every actor (like logging, time, or standard type-checking).
+,* **The "Ma" Rule:** If  is a platform standard, the actor shouldn't have to carry the weight of that logic.
+,* **Danger:** If the environment changes, the actor might break silently. It is harder to unit-test an actor if it requires a full `Ma` instance to function.
+
+---
+
+### The Decision Matrix
+
+To decide which path to take, ask yourself these three questions:
+
+1. **Is the parser a "Standard Utility"?** * *Yes:* Use **Option 3** (Context). Let the environment handle the heavy lifting.
+2. **Does the actor's behavior change based on the parser type?** * *Yes:* Use **Option 2** (Injection). This ensures the actor is configured correctly at birth.
+3. **Is the parser logic "Top Secret" or highly specialized?** * *Yes:* Use **Option 1** (Internal). Don't leak private logic into the environment.
+
+> **Pro Tip:** If you want the best of both worlds, use **Option 2** but provide a **default** in the constructor that pulls from the environment. This keeps the interface explicit but the usage convenient.
+
+Would you like me to help you draft a specific interface or "contract" for how the Actor should communicate its requirements to the `Ma` instance?
+#+end_example
+
+* Local Variables                                                  :noexport:
+Local Variables:
+eval: (add-hook 'before-save-hook #'whitespace-cleanup nil t)
+eval: (add-hook 'after-save-hook #'user--org-export-current-buffer-to-utf8-buffer nil t)
+org-confirm-babel-evaluate: nil
+fill-column: 85
+End:

@@ -1,0 +1,86 @@
+* Prompt
+
+#+OPTIONS: author:nil creator:nil
+#+PROPERTY: header-args:bash :exports both :results output raw :wrap example
+
+- This prompt uses the Org Mode markup language.
+  - The grammar is defined here: https://orgmode.org/worg/org-syntax.html
+
+  - The semantics is defined here: https://orgmode.org/org.html
+
+  - You rely on the structure of the prompt as needed (e.g. sections, code blocks,
+    etc.).
+
+- This prompt has a sub-section named Objective. Objective describes what you should
+  produce.
+
+- This prompt may have a second sub-section named Context. Context provides
+  additional data that you may use to satisfy Objective.
+
+- Your are elegant and correct.
+
+- For each created/updated code file, return the complete content in a code block and
+  annotate the code updates with comments of the form: ";; AI: "
+
+** Objective
+
+Write a README for a GitHub repo.
+Make sure that I can either download it or copy/paste it.
+
+** Context
+*** Error                                                          :noexport:
+
+#+begin_example
+[Unit]
+Description=Website
+After=network.target
+
+[Service]
+Type=simple
+Environment=PORT=3001
+ExecStart=/home/phf/src/website-next/_dist/website
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.targetWebsite service installed and started.
+#+end_example
+
+*** Diff                                                           :noexport:
+
+#+begin_src bash
+git diff plan.org
+#+end_src
+
+*** Specification                                                  :noexport:
+
+#+INCLUDE: "./plan.org::#spec" :only-contents t
+
+*** File tree
+
+#+begin_src bash
+tree --gitignore
+#+end_src
+
+*** File content
+
+#+begin_src bash
+for file in $(fd -t f -E "*.png" -E "*.jpg" -E "*.jpeg" -E "*.pdf" . ./); do
+  if [[ ! "$file" == "./prompt.org" && ! "$file" == "./plan.org" ]]; then
+    echo "<content file=$file>"
+    cat "$file"
+    echo "</content>"
+    echo ""
+  fi
+done
+#+end_src
+
+* Local Variables                                                  :noexport:
+Local Variables:
+eval: (add-hook 'before-save-hook #'whitespace-cleanup nil t)
+eval: (add-hook 'after-save-hook #'user--org-export-current-buffer-to-utf8-file nil t)
+org-confirm-babel-evaluate: nil
+fill-column: 85
+End:
