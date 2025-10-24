@@ -132,6 +132,9 @@ An ArticlePath is a path to directory with the following structure:
 - article-path→article : ArticlePath → Article :≡ 🞎
 
 * ContentDirectory
+:PROPERTIES:
+:ID:       80f470d2-cb23-4e46-9ec9-58c2253d61f9
+:END:
 
 A ContentDirectory is a path to a directory with the following structure:
 
