@@ -41,7 +41,7 @@
       (with-output-to-string
         (lambda () (sxml->xml `(h1 ,str))))))
 
-(define (directory->article dir)
+(define (directory->article dir layout)
   (Path#directory-check dir)
   (let ((components (Path#components dir))
         (second-to-last #f))
@@ -57,7 +57,7 @@
            (private? (string= second-to-last "private"))
            (org (Text#mk "article.org" (call-with-input-file org-path get-bytevector-all)))
            (title-str (bv->title (Text#bvector org)))
-           (html (lambda () (Html#mk "article.html" (Layout#bvector (string-append (title title-str) (call-with-input-file html-path get-string-all))))))
+           (html (lambda () (Html#mk "article.html" (Layout#embed layout (string-append (title title-str) (call-with-input-file html-path get-string-all))))))
            (datas (if (file-exists? data-path)
                       (filter-map
                        (lambda (filename)
@@ -76,7 +76,7 @@
       (Article#mk private? id title-str html org datas))))
 
 
-(define (dir->articles content)
+(define (dir->articles content layout)
   (Path#directory-check content)
   (let ((entries (scandir content)))
     (filter-map
@@ -84,14 +84,14 @@
        (let ((entry-path (Path#join content entry)))
          (and (file-is-directory? entry-path)
               (not (string-prefix? "." entry))
-              (directory->article entry-path))))
+              (directory->article entry-path layout))))
      entries)))
 
-(define (contentdirectory->articles dir)
+(define (contentdirectory->articles dir layout)
   (Path#directory-check dir)
   (let* ((articles (append
-                    (dir->articles (Path#join dir "private"))
-                    (dir->articles (Path#join dir "public"))))
+                    (dir->articles (Path#join dir "private") layout)
+                    (dir->articles (Path#join dir "public") layout)))
          (content (make-hash-table (length articles))))
     (for-each
      (lambda (article)

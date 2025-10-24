@@ -12,9 +12,13 @@
              (website actor)
              (website article))
 
-(define (init articles)
-  (hash-for-each (lambda (_key value) (Article#check value)) articles)
-  `(,articles ,(Article#index articles)))
+(define (init data)
+  (match data
+    (`(,articles ,layout)
+     (hash-for-each (lambda (_key value) (Article#check value)) articles)
+     `(,articles ,(Article#index articles layout)))
+    (_
+     (raise-exception (format #f "Unexpected data. data = ~a" data)))))
 
 (define (tx state msg)
   (match-let ((`(,articles ,index) state))
@@ -31,7 +35,10 @@
       (_
        (raise-exception (format #f "Unexpected message. msg = ~a" msg))))))
 
-(define Db#mk (Actor#mk init tx))
+(define mk (Actor#mk init tx))
+
+(define (Db#mk articles layout)
+  (mk `(,articles ,layout)))
 
 (define (Db#article db id)
   (Actor#send db `(#:article ,id)))

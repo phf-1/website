@@ -1,5 +1,8 @@
 * DONE Index of articles generated & deployed
 * TODO WEBSITE_ENV is used
+Depending on the value, articles and layout should be cached for performance reasons
+or re-read from disk for a live content editing property.
+
 * TODO The development process is documented
 * TODO Clean-up the code
 * TODO Add tests

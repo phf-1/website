@@ -43,9 +43,10 @@
       (article->link article)
       (if (Article#private? article) private public)))))
 
-(define (set-of-article->index-html articles)
+(define (set-of-article->index-html articles layout)
   (Html#mk "article.html"
-           (Layout#bvector
+           (Layout#embed
+            layout
             (sxml->string
              (list
               (h2 '(@ (style "margin-top:0;")) "List of articles")

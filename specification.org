@@ -9,107 +9,6 @@
 - [[ref:40ff9c82-fbfc-445c-8191-426e200b6dd7][Keyword]]
 - [[ref:7182dc53-6af9-4cfd-bced-8a9ea862f279][Bytevector]]
 
-* Resource
-:PROPERTIES:
-:TYPE: ca53237e-a27a-40d0-aeae-5d4bf4fd4e2f
-:END:
-
-- Type :≡ Keyword
-
-- Id :≡ String
-
-- Resource : SubType(Actor)
-
-- Resource#mk : Type Id (Bytevector|String) → Resource
-
-- resource :≡ Resource#mk(t id v)
-
-- resource#type() :≡ t
-
-- resource#id() :≡ id
-
-- resource#content() :≡ v
-
-* Html
-:PROPERTIES:
-:TYPE: ca53237e-a27a-40d0-aeae-5d4bf4fd4e2f
-:END:
-
-- Html#mk : Id Bytevector → Html
-
-- Html#mk(id bv) :≡ Resource#mk(:html id bv)
-
-* Text
-:PROPERTIES:
-:TYPE: ca53237e-a27a-40d0-aeae-5d4bf4fd4e2f
-:END:
-
-- Text#mk : Id Bytevector → Text
-
-- Text#mk(id bv) :≡ Resource#mk(:text id bv)
-
-* Jpeg
-:PROPERTIES:
-:TYPE: ca53237e-a27a-40d0-aeae-5d4bf4fd4e2f
-:END:
-
-- Jpeg#mk : Id Bytevector → Jpeg
-
-- Jpeg#mk(id bv) :≡ Resource#mk(:jpeg id bv)
-
-* Pdf
-:PROPERTIES:
-:TYPE: ca53237e-a27a-40d0-aeae-5d4bf4fd4e2f
-:END:
-
-- Pdf#mk : Id Bytevector → Pdf
-
-- Pdf#mk(id bv) :≡ Resource#mk(:pdf id bv)
-
-* Article
-:PROPERTIES:
-:TYPE: ca53237e-a27a-40d0-aeae-5d4bf4fd4e2f
-:ID: cd651702-bd90-4ddc-962b-2579cd51d845
-:END:
-
-- Org :≡ Text
-
-- Id :≡ String
-
-- Resources :≡ List(Resource)
-
-- Article : SubType(Actor)
-
-- Article#mk : Boolean Id Html Org Resources → Article
-
-- art :≡ Article#mk private id html org resources
-
-- art#private?() :≡ private
-
-- art#id() :≡ id
-
-- art#html() :≡ html
-
-- art#org() :≡ org
-
-- art#resource(id) :≡
-  - resource ∈ resources ∧ resource#id() = id → just(resource)
-  - _ → nothing
-
-* Db
-
-- Db : SubType(Actor)
-
-- Db#mk : Set(Article) → Db
-
-- Db#mk(articles) : Db :≡
-  - db#article : Id → Maybe(Article) :≡
-    - λid.
-      - ∃ article ∈ articles ∧ article#id() = id → just(article)
-      - _ → nothing
-
-  - db
-
 * ArticlePath
 :PROPERTIES:
 :TYPE: ca53237e-a27a-40d0-aeae-5d4bf4fd4e2f
@@ -126,10 +25,6 @@ An ArticlePath is a path to directory with the following structure:
     ├── …
     └── ….(jpeg|html|pdf|txt)
 #+end_example
-
-* article-path→article
-
-- article-path→article : ArticlePath → Article :≡ 🞎
 
 * ContentDirectory
 :PROPERTIES:
@@ -152,56 +47,73 @@ A ContentDirectory is a path to a directory with the following structure:
 
 where …/public/1, …/private/x, … : ArticlePath
 
-* contentdirectory→articles
-
-- contentdirectory→articles : ContentDirectory → Set(Article)
-
-* Conf
+* Resource
 :PROPERTIES:
 :TYPE: ca53237e-a27a-40d0-aeae-5d4bf4fd4e2f
-:ID: 6ea23d0d-78c4-468c-9998-eaa555ecdb12
 :END:
 
-- Conf : SubType(Actor)
+A resource may be viewed as a Keyword × Id × Bytevector where Id :≡
+String. resource#bv() is its bytevector, and so on for resource#type() and
+resource#id().
 
-- Conf#mk() : Conf
-
-- Conf#value : Keyword → String
-- Conf#value(:ip) :≡ value of the WEBSITE_IP environment variable, an IP address.
-- Conf#value(:port) :≡ value of the WEBSITE_PORT environment variable, a PORT number.
-- Conf#value(:content) :≡ value of the WEBSITE_CONTENT environment variable, a ContentDirectory
-- Conf#value(:env) :≡ value of the WEBSITE_ENV environment variable, "dev" | "test" | "prod"
-- Conf#value(:login) :≡ value of the WEBSITE_LOGIN, a String.
-- Conf#value(:password) :≡ value of the WEBSITE_PASSWORD, a String.
-
-* Reply
-
-- Response :≡ https://www.gnu.org/software/guile/manual/guile.html#Responses
-- Reply :≡ Response × Bytevector
-- Reply#hello() :≡ 🞎
-- Reply#404() :≡ 🞎
-
-* Layout
+* HtmlResource
 :PROPERTIES:
-:TYPE: f590edb9-5fa3-4a07-8f3d-f513950d5663
-:ID: 6eec59f7-6386-4d28-a253-41c662e32339
+:TYPE: ca53237e-a27a-40d0-aeae-5d4bf4fd4e2f
 :END:
 
-A layout file is an HTML file with a single ~__BODY__~ string that is to be replaced by
-the HTML content of an article. It completes the article content to form a complete
-HTML String.
+An HtmlResource is a resource such that resource#type() = :html and its bytevector
+represents a UTF8 string formatted as an HTML document.
 
-- Name :≡ String
+* TextResource
+:PROPERTIES:
+:TYPE: ca53237e-a27a-40d0-aeae-5d4bf4fd4e2f
+:END:
 
-- Layout :≡ SubType(Actor)
+An TextResource is a resource such that resource#type() = :text and its bytevector
+represents a UTF8 string.
 
-- Layout#mk : Name String → Layout
+* JpegResource
+:PROPERTIES:
+:TYPE: ca53237e-a27a-40d0-aeae-5d4bf4fd4e2f
+:END:
 
-- layout :≡ Layout#mk name string
+An JpegResource is a resource such that resource#type() = :jpeg and its bytevector
+represents a Jpeg image.
 
-- layout#embed(content) :≡ string with "__BODY__" placeholder replaced by content.
+* PdfResource
+:PROPERTIES:
+:TYPE: ca53237e-a27a-40d0-aeae-5d4bf4fd4e2f
+:END:
 
-- layout#name() :≡ name
+An PdfResource is a resource such that resource#type() = :pdf and its bytevector
+represents a PDF file.
+
+* Article
+:PROPERTIES:
+:TYPE: ca53237e-a27a-40d0-aeae-5d4bf4fd4e2f
+:ID: cd651702-bd90-4ddc-962b-2579cd51d845
+:END:
+
+an article :≡ Article#mk(…) represents an article. It is built from a boolean that
+tells if it is private or public, an id (a string), a title (a string), an
+HtmlResource, a TextResource and a set named data of resources of these types:
+HtmlResource, PdfResource, TextResource, JpegResource.
+
+article#id() is its id, article#title() its title, and so on for article#html() and
+article#org() (the text resource). article#data(id) returns a resource such that
+resource ∈ data and resource#id() = id if any, or nothing.
+
+* Db
+:PROPERTIES:
+:TYPE: ca53237e-a27a-40d0-aeae-5d4bf4fd4e2f
+:ID: ff90b350-b368-4cb3-b29e-d34e8fd341a3
+:END:
+
+A db :≡ Db#mk(articles layout) where articles is a set of articles and layout a
+Layout, provides db#article(id) which is an article if article ∈ articles and
+article#id() = id, else nothing. In addition, db#article("index") is an article
+computed from articles which represents the index of the articles. db#article("1") is
+the article that serves as the landing page.
 
 * LayoutDirectory
 
@@ -214,80 +126,37 @@ A LayoutDirectory is a path to a directory with the following structure:
 
 where article.html is file which content is a Layout.
 
-* layoutdir→layouts
-
-- layoutdir→layouts : LayoutDirectory → Hash(Name Layout) :≡ 🞎
-
-* string→bytevector
-
-- string→bytevector : String → Bytevector
-
-* Website
+* Layout
 :PROPERTIES:
 :TYPE: f590edb9-5fa3-4a07-8f3d-f513950d5663
-:ID: 65e02573-e1ea-4463-95bc-46ce866426af
+:ID: 6eec59f7-6386-4d28-a253-41c662e32339
 :END:
 
-- index : Db → Article :≡
-  - titles : List(String) :≡ titles for each article in DB.
-  - article : Article :≡ article whose content is links
-  - article
+A layout file is an HTML file with a single ~__BODY__~ string that is to be replaced by
+the HTML content of an article. It completes the article content to form a complete
+HTML String. layout :≡ Layout#mk(dir) where dir is a LayoutDirectory and provides
+layout#embed(str) a Bytevector where str has replaced __BODY__ in the layout string.
 
-- html→reply : Html → HtmlReply
-- html→reply(html layout) :≡
-  - html
-  - ▸ Resource#content()
-  - ▸ layout#embed()
-  - ▸ string→bytevector()
-  - ▸ HtmlReply#mk()
+* Reply
 
-- Website : SubType(Actor)
+A reply is a pair formed from a [[https://www.gnu.org/software/guile/manual/guile.html#Responses][Response]] and a Bytevector — /i.e./ its
+content. Reply#404, Reply#hello and maybe others are predefined replies.
 
-- Website#mk : Env Content Layout Login Password → Website
-
-- Website#mk(env content layout login password) :≡
-  - articles :≡ contentdirectory→articles content
-  - db :≡ Db#mk articles
-  - layouts :≡ layoutdir→layouts layout
-  - article-layout :≡ layouts("article.html")
-  - index :≡ index(db)
-
-  - website#404() :≡ Reply#404()
-
-  - website#index() :≡ html→reply(index#html() article-layout)
-
-  - website#hello() :≡ Reply#hello()
-
-  - website#article(id msg) :≡
-    - match db#article(id)
-      - nothing → website#404()
-      - just(art) →
-        - match Actor#send(art msg)
-          - html : Html → html→reply(html article-layout)
-          - org : Text → org#content() ▸ string→bytevector() ▸ TextReply#mk()
-          - jpeg : Jpeg → jpeg#content() ▸ JpegReply#mk()
-          - pdf : Pdf → pdf#content() ▸ PdfReply#mk()
-          - nothing → website#404()
-
-  - website
-
-* ./bin/start
+* Env
 :PROPERTIES:
 :TYPE: ca53237e-a27a-40d0-aeae-5d4bf4fd4e2f
-:ID: d7f8a08a-98fd-4086-af4e-dd4e2b1fa68a
+:ID: a1603b4f-a95a-4eea-9cc3-f2cc35eb68d9
 :END:
 
-- ~./bin/start~ executes the following:
-  - conf :≡ Conf#mk()
-  - 🞎
-  - Server#mk(
-    -  ip
-    -  port
-    -  content
-    -  layout
-    -  env
-    -  login
-    -  password)
+An env value is either "dev", "test" or "prod".
+
+* Verb
+:PROPERTIES:
+:TYPE: ca53237e-a27a-40d0-aeae-5d4bf4fd4e2f
+:ID: ac0f68a7-24d6-458e-92b4-68f700a1cdfb
+:END:
+
+Verb#get represents the GET verb of an HTTP request.
 
 * Identity
 :PROPERTIES:
@@ -295,29 +164,79 @@ where article.html is file which content is a Layout.
 :ID: a82de302-2587-483d-bf6b-bde6ff80fada
 :END:
 
-Login :≡ String
+An identity is a pair of a login and a password, both of them strings.
 
-Password :≡ String
+* Website
+:PROPERTIES:
+:TYPE: f590edb9-5fa3-4a07-8f3d-f513950d5663
+:END:
 
-Identity :≡ Login × Password
+A Website written website :≡ Website#mk(env content layout login password) varies its
+logging behaviour and performances depending on the env value. An expected identity
+is built from login and password: some content are accessible only if the client
+sends the correct identity. A Db db of articles and a Layout are deduced from the
+ContentDirectory content and layout (a directory path) value.
+
+website#hello() is a reply which content is just "hello". website#404() is
+Reply#404. website#article(identity id :html) is a reply built from the
+article#html(), provided article ∈ db and article#id() = id ; else: Reply#404. A
+challenge (Basic Auth) might be replied if necessary. website#article(identity id
+:org) is similar. website#index() is like website#article(nothing "index"
+:html). Finally, website#resource(identity id resource-id) replies
+article#data(resource-id) if any, or Reply#404.
+
+* Conf
+:PROPERTIES:
+:TYPE: ca53237e-a27a-40d0-aeae-5d4bf4fd4e2f
+:ID: 6ea23d0d-78c4-468c-9998-eaa555ecdb12
+:END:
+
+A configuration written conf :≡ Conf#mk() is the set of values read from the
+environment. All environment variables start with the WEBSITE_ prefix. The IP address
+and the PORT values are read from WEBSITE_IP and WEBSITE_PORT. CONTENT value is a
+ContentDirectory. ENV is an env value. LOGIN and PASSWORD are strings. conf#ip() is
+the IP value, conf#port() is the PORT value and so on.
+
+* Server
+:PROPERTIES:
+:TYPE: f590edb9-5fa3-4a07-8f3d-f513950d5663
+:ID: 65e02573-e1ea-4463-95bc-46ce866426af
+:END:
+
+A server written server :≡ Server#mk(…) starts a Webserver and arrange so that the
+request it receives are sent to a Website instance w. Assuming a reply has been
+computed, it is sent back to the request author.
+
+* ./bin/start
+:PROPERTIES:
+:TYPE: ca53237e-a27a-40d0-aeae-5d4bf4fd4e2f
+:ID: d7f8a08a-98fd-4086-af4e-dd4e2b1fa68a
+:END:
+
+./bin/start is a unix executable that builds a Conf then a Server initialized with
+the parameters deduced from the configuration.
 
 * Protocol
 
-Given a browser pointed at =https://domain= and =server :≡ ./bin/start=, then the
-following protocol is satisfied:
+Provided the current machine has executed ~./website install && ./website activate~,
+then a webserver is executing, result of =./bin/start=. Given a browser pointing at
+=https://domain= such that a DNS forwards requests to the current machine, then the
+browser can expect the following protocol to be satisfied:
 
-|---------------------------------+------------------------------------------|
-| Request                         | Reply                                    |
-|---------------------------------+------------------------------------------|
-| GET identity /hello             | website#hello()                          |
-| GET identity /article/id/html   | website#article(identity id msg(:html))  |
-| GET identity /article/id/org    | website#article(identity id msg(:org))   |
-| GET identity /article/id/res-id | website#resource(identity id res-id)     |
-| GET identity /articles          | website#index()                          |
-| GET identity /                  | website#article(identity "1" msg(:html)) |
-| GET identity /id                | website#resource(identity "1" id)        |
-| _                               | website#404()                            |
-|---------------------------------+------------------------------------------|
+|-----------------------------+----------------------------------|
+| Request                     | Reply                            |
+|-----------------------------+----------------------------------|
+| GET auth /hello             | website#hello()                  |
+| GET auth /article/id/html   | website#article(auth id :html)   |
+| GET auth /article/id/org    | website#article(auth id :org)    |
+| GET auth /article/id/res-id | website#resource(auth id res-id) |
+| GET auth /articles          | website#index()                  |
+| GET auth /                  | website#article(auth "1" :html)  |
+| GET auth /id                | website#resource(auth "1" id)    |
+| _                           | website#404()                    |
+|-----------------------------+----------------------------------|
+
+GET is a Verb, auth may be an identity or nothing, website is a Website.
 
 * Local Variables  :noexport:
 Local Variables:

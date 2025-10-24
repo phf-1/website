@@ -48,13 +48,12 @@
 
 (define Layout#mk (Actor#mk init tx))
 
-(define layout (Layout#mk (getenv "WEBSITE_LAYOUT")))
-
-(define (Layout#bvector str)
+(define (Layout#embed layout str)
   (Actor#send layout `(#:bvector ,str)))
 
 ;;;;;;;;;;;;;;;
 ;; Interface ;;
 ;;;;;;;;;;;;;;;
 
-(export Layout#bvector)
+(export Layout#mk
+        Layout#embed)

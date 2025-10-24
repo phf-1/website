@@ -22,6 +22,7 @@
              (website directory-and-article)
              (website header)
              (website html)
+             (website layout)
              (website identity)
              (website jpeg)
              (website list)
@@ -76,20 +77,22 @@
 
 (define (init data)
   (match data
-    (`(,env ,content ,layout ,login ,password)
+    (`(,env ,content ,layout-dir ,login ,password)
      (display "TODO: check env\n")
      (Path#directory-check content)
-     (Path#directory-check layout)
+     (Path#directory-check layout-dir)
      (String#check login)
      (String#check password)
-     (let ((db (Db#mk (contentdirectory->articles content)))
-           (identity (Identity#mk login password)))
-       `(,db ,identity)))
+
+     (let* ((layout (Layout#mk layout-dir))
+            (db (Db#mk (contentdirectory->articles content layout) layout))
+            (identity (Identity#mk login password)))
+       `(,db ,identity ,layout)))
     (_
      (raise-exception (format #f "Unexpected data. data = ~a" data)))))
 
 (define (tx state message)
-  (match-let ((`(,db ,expected-identity) state))
+  (match-let ((`(,db ,expected-identity ,layout) state))
     (match message
       (#:hello
        `(,Reply#hello ,state ,tx))
@@ -118,14 +121,14 @@
                  (Html#bvector (Article#html article)))
                ,state
                ,tx))
-            
+
             (#:org
              `(,(Reply#mk
                  (build-response #:code 200 #:headers (Header#for #:text))
                  (Text#bvector (Article#org article)))
                ,state
                ,tx))
-            
+
             (_
              `(,Reply#404 ,state ,tx))))))
 
@@ -146,7 +149,7 @@
              `(,(Reply#mk
                  (build-response #:code 200 #:headers (data->headers data))
                  (Data#bvector data))
-               ,state ,tx))))))      
+               ,state ,tx))))))
 
       (_
        (raise-exception (format #f "Unexpected message. message = ~a" message))))))

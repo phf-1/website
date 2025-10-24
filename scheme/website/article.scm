@@ -107,8 +107,8 @@
 (define (Article#data article id)
   (Actor#send article (list #:data id)))
 
-(define (Article#index articles)
-  (define html (lambda () (set-of-article->index-html articles)))
+(define (Article#index articles layout)
+  (define html (lambda () (set-of-article->index-html articles layout)))
   (define org (Text#mk "article.org" (string->utf8 "")))
   (Article#mk #f "index" "Index of articles" html org '()))
 
