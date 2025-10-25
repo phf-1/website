@@ -55,26 +55,19 @@ def rsync_directories(source: Path, website: Path):
             logger.error(f"rsync failed: {e.stderr}")
             raise
 
+
 def build_html(org_path: Path) -> tuple[str, str]:
     """Convert Org file to HTML using Emacs."""
     html_path = org_path.with_suffix('.html')
     logger.debug(f"Building HTML for: {html_path}")
+    config_path = Path(__file__).parent / 'org-export-config.el'
     try:
-        # Ensure Emacs can find org-mode
         cmd = [
             'emacs', '-Q', '--batch',
             '--file', str(org_path),
-            '--eval', '(setq org-export-with-broken-links t)',
-            '--eval', '(setq org-export-with-title t)',
-            '--eval', '(setq org-html-doctype "html5")',
-            '--eval', '(setq org-html-html5-fancy t)',
-            '--eval', '(setq org-export-with-section-numbers nil)',
-            '--eval', '(setq org-todo-keywords \'((sequence "TODO(t)" "WAITING(w)" "DOING(o)" "|" "DONE(d)" "FAILED(f)" "CANCELED(c)")))',
-            '--eval', '(org-html-export-to-html nil nil nil t)'
+            '--load', str(config_path)
         ]
-        print(cmd)
         result = subprocess.run(cmd, check=True, capture_output=True, text=True)
-        print(result)
         if html_path.exists():
             return "ok", str(html_path)
         else:
