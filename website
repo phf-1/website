@@ -23,6 +23,7 @@ export WEBSITE_GROUP="websitegroup"
 export WEBSITE_CONTENT=$PWD/../content
 export WEBSITE_ENV=dev
 export WEBSITE_LAYOUT=$PWD/layout
+export SERVER_IP="138.197.186.104"
 
 function context() {
     export WEBSITE_LOGIN=login
@@ -65,7 +66,7 @@ function dist() {
 }
 
 function html() {
-    ./bash/source_to_website_content "$WEBSITE_CONTENT" "$WEBSITE_CONTENT"
+    ./bin/content-with-html "$WEBSITE_CONTENT" "$WEBSITE_CONTENT"
 }
 
 function deploy() {

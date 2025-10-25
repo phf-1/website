@@ -1,0 +1,121 @@
+#!/usr/bin/env python3
+
+import argparse
+import subprocess
+import logging
+from pathlib import Path
+from concurrent.futures import ProcessPoolExecutor
+
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+
+def dir_check(path):
+    if not path.is_dir():
+        logging.error(f"path is not a directory. path = {path}")
+        raise ValueError(f"path is not a directory. path = {path}")
+
+def file_check(path):
+    if not path.is_file():
+        logging.error(f"path is not a regular file. path = {path}")
+        raise ValueError(f"path is not a regular file. path = {path}")
+
+def list_check(lst):
+    if not isinstance(lst,list):
+        logging.error(f"lst is not a list. lst = {lst}")
+        raise ValueError(f"lst is not a list. lst = {lst}")
+
+# Path to the Emacs init file.
+CONFIG_PATH = Path(__file__).parent.parent / 'elisp' / 'init.el'
+file_check(CONFIG_PATH)
+logging.info(f"Emacs config loaded from {CONFIG_PATH}")
+
+def compute_article_html(article):
+    """Given article ≡ …/article.org, after compute_article_html(article), …/article.html has been built."""
+
+    file_check(article)
+
+    target = article.with_suffix('.html')
+    if target.exists() and article.stat().st_mtime <= target.stat().st_mtime:
+        logging.debug(f"Skipping {article}: up to date")
+        return
+
+    logging.info(f"Generating HTML for {article}")
+    cmd = ['emacs', '-Q', '--batch', '--file', str(article), '--load', str(CONFIG_PATH)]
+    subprocess.run(cmd, check=True)
+
+def compute_all_article_html(articles):
+    """compute_all_article_html(articles) :≡ map articles compute_article_html"""
+
+    list_check(articles)
+
+    logging.info(f"Generating HTML for {len(articles)} articles in parallel")
+
+    with ProcessPoolExecutor() as executor:
+        futures = [executor.submit(compute_article_html, article) for article in articles]
+        for future in futures:
+            future.result()
+
+    logging.info("All HTML generations completed")
+
+def find_all_article_org(dir):
+    """find_all_article_org(dir) is the list of all paths of regular files under dir
+    which name are article.org"""
+
+    dir_check(dir)
+
+    articles = [p for p in dir.rglob("article.org") if p.is_file()]
+    logging.info(f"Found {len(articles)} article.org files in {dir}")
+    return articles
+
+def rsync_directories(source, target):
+    """rsync_directories(source,target) is the equivalent of rsync -a --delete source target"""
+
+    dir_check(source)
+    dir_check(target)
+
+    logging.info(f"Rsyncing {source} to {target}")
+    cmd = [
+        'rsync', '-a', "--delete", str(source) + '/', str(target) + '/'
+    ]
+    subprocess.run(cmd, check=True, capture_output=True, text=True)
+    logging.info("Rsync completed")
+
+def build_website_content(content_dir, target_dir):
+    """Given a ContentDirectory content_dir and a Directory target_dir, after
+    build_website_content(content_dir, target_dir) target_dir is a copy of
+    content_dir except that an article.html is built for each article.org and placed
+    next to it.
+    """
+
+    dir_check(content_dir)
+    dir_check(target_dir)
+
+    logging.info("Starting website build")
+    rsync_directories(content_dir,target_dir)
+    list_of_article_org = find_all_article_org(target_dir)
+    compute_all_article_html(list_of_article_org)
+    logging.info("Website build completed")
+
+def cli_args():
+    """Return the pair of directories read from the command line."""
+
+    parser = argparse.ArgumentParser(description="Read the content directory and target directory from the CLI.")
+    parser.add_argument('content_dir', help='The content directory')
+    parser.add_argument('target_dir', help='The target directory')
+    args = parser.parse_args()
+    return (Path(args.content_dir), Path(args.target_dir))
+
+def main():
+    """Given a ContentDirectory c and a path to a directory d read from the command
+    line, then after main(), d is a copy of c except that an article.html is built
+    for each article.org and placed next to it.
+    """
+
+    content_dir, target_dir = cli_args()
+    logging.info(f"Building website: content={content_dir}, target={target_dir}")
+    build_website_content(content_dir, target_dir)
+    logging.info(f"Website built successfully at {target_dir}")
+
+if __name__ == "__main__":
+    main()
