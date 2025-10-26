@@ -2,7 +2,13 @@
 # Context #
 ###########
 
-export INSTALL_DIR="/usr/local/share/website"
+CONF="$HOME/website_env"
+if [[ ! -f "$CONF" ]]; then
+    echo "ERROR | CONF is not a file. CONF = $CONF"
+    exit 1
+fi
+
+source "$CONF"
 
 executing_as_root() {
     if [ "$(id -u)" -ne 0 ]; then

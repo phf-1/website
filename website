@@ -1,165 +1,485 @@
-#!/usr/bin/env bash
+#!/usr/bin/env python3
 
 # :REF: d7adcc5c-8b36-4cce-b520-d97aa6d4c9a1
 # :ID: f6eb14d9-1985-482f-94eb-b0b178c3bf63
 
+
 ###########
-# Context #
+# imports #
 ###########
 
-set -euo pipefail
-IFS=$'\n\t'
+import os
+import sys
+import subprocess
+import tempfile
+import shutil
+from dataclasses import dataclass
+from pathlib import Path
 
-function error_msg() { echo "ERROR | $1"; }
-function dev_msg() { echo "DEV | $1"; }
 
-export GUILE_LOAD_PATH=$PWD/scheme
-export ARCHIVE_NAME="website.tar.gz"
-export ARCHIVE="dist/$ARCHIVE_NAME"
-export WEBSITE_IP=127.0.0.1
-export WEBSITE_PORT=3000
-export WEBSITE_USER="websiteuser"
-export WEBSITE_GROUP="websitegroup"
-export WEBSITE_CONTENT=$PWD/../content
-export WEBSITE_ENV=dev
-export WEBSITE_LAYOUT=$PWD/layout
-export SERVER_IP="138.197.186.104"
+#########
+# utils #
+#########
 
-function context() {
-    export WEBSITE_LOGIN=login
-    export WEBSITE_PASSWORD=password
-    if [[ -z "${GUIX_ENVIRONMENT:-}" ]]; then
-        if [[ -z "$@" ]]; then
-            guix shell -m manifest.scm
+def error_msg(msg: str) -> None:
+    print(f"ERROR | {msg}")
 
-        else
-            guix shell -m manifest.scm -- $@
 
-        fi
+def dev_msg(msg: str) -> None:
+    print(f"DEV | {msg}")
 
-    else
-        $@
 
-    fi
-}
+def is_str(x):
+    return isinstance(x, str)
 
-function server() {
-    ./bin/website &
-    WEBSITE_PID=$!
-    trap "kill $WEBSITE_PID" EXIT
-    echo "http://$WEBSITE_IP:$WEBSITE_PORT"
-    wait "$WEBSITE_PID"
-}
 
-function dist() {
-    [[ -z "$ARCHIVE" ]] && { error_msg "ARCHIVE is empty"; exit 1; }
-    local temp_dir=$(mktemp -d)
-    local temp_archive="$temp_dir/website"
-    mkdir -p "$temp_archive"
-    rsync -a {bin,scheme,config,bash,website.service,website} "$temp_archive/"
-    local name="${ARCHIVE##*/}"
-    tar -czf "$name" -C "$temp_dir" "${temp_archive##*/}"
-    rm -rf "$temp_dir"
-    mkdir -p "${ARCHIVE%/*}"
-    mv "$name" "$ARCHIVE"
-    echo "$ARCHIVE"
-}
+def is_iter(x):
+    return hasattr(x, "__iter__")
 
-function html() {
-    ./bin/content-with-html "$WEBSITE_CONTENT" "$WEBSITE_CONTENT"
-}
 
-function deploy() {
-    if [[ ! -f "$ARCHIVE" ]]; then
-        error_msg "ARCHIVE is not a file. ARCHIVE = $ARCHIVE"
-        exit 1
-    fi
-    rsync -az "$ARCHIVE" root@$SERVER_IP:/root/
-    html
-    rsync -az --delete "$WEBSITE_CONTENT/" root@$SERVER_IP:/var/www/website/content/
-    rsync -az --delete layout/ root@$SERVER_IP:/var/www/website/layout/
-    ssh root@$SERVER_IP "chown -R $WEBSITE_USER:$WEBSITE_GROUP /var/www/website && chmod -R 755 /var/www/website"
-    ssh root@$SERVER_IP "bash -c 'tar xf website.tar.gz && cd website && ./website install && ./website activate'"
-}
+def is_iter_of(x, pred):
+    return is_iter(x) and all((pred(e) for e in x))
 
-DOC=$(cat <<EOF
-usage:
-  $0 msg
 
-  msg      | effect
-  ---------+--------------------------------------------------------------
-  help     | This message is printed.
-  html     | Generates html for the content.
-  context  | A development context is built.
-  start    | A development context is built.
-           | A Web server listening in dev mode.
-  prod     | The current context is assumed to be sufficient.
-           | A Web server listening in prod mode.
-  test     | Tests are executed.
-  dist     | An archive is built.
-  install  | The website is installed in the current system.
-  activate | The website service is activate in the current system.
-  deploy   | An archive is sent,installed and activate in a distant server.
-EOF
-)
+def iter_of_check(x, pred):
+    if not is_iter_of(x, pred):
+        raise AssertionError(f"x is not an iterable of pred. x = {x}")
+
+
+def str_check(x):
+    if not isinstance(x, str):
+        raise AssertionError(f"x is not a string. x = {x}")
+
+
+def dir_check(x):
+    if not (isinstance(x, Path) and x.is_dir()):
+        raise AssertionError(f"x is not a path to a directory. x = {x}")
+
+
+def file_check(x):
+    if not (isinstance(x, Path) and x.is_file()):
+        raise AssertionError(f"x is not a regular file. x = {x}")
+
+
+#################
+# cli_arguments #
+#################
+
+def cli_arguments():
+    """cli_arguments() is the list of strings read from the CLI."""
+
+    return sys.argv[1:]
+
+
+###########
+# Message #
+###########
+
+@dataclass
+class Message:
+    pass
+
+
+@dataclass
+class Help(Message):
+    pass
+
+
+@dataclass
+class Context(Message):
+    pass
+
+
+@dataclass
+class Html(Message):
+    pass
+
+
+@dataclass
+class Test(Message):
+    name: str | None
+
+
+@dataclass
+class Dist(Message):
+    pass
+
+
+@dataclass
+class Deploy(Message):
+    ip: str
+    user: str
+    group: str
+
+
+@dataclass
+class Install:
+    pass
+
+
+@dataclass
+class Activate:
+    pass
+
+
+##############
+# transducer #
+##############
+
+def transducer(strings):
+    """Given strings : List(String), transducer(strings) is the matching message, as
+    described by specification().
+    """
+
+    iter_of_check(strings, is_str)
+
+    match strings:
+        case ["help"]:
+            return Help()
+
+        case ["context"]:
+            return Context()
+
+        case ["html"]:
+            return Html()
+
+        case ["test"]:
+            return Test(name=None)
+
+        case ["test", name]:
+            return Test(name=name)
+
+        case ["dist"]:
+            return Dist()
+
+        case ["activate"]:
+            return Activate()
+
+        case ["install"]:
+            return Install()
+
+        case ["deploy"]:
+            return Deploy(
+                ip="138.197.186.104", user="websiteuser", group="websitegroup"
+            )
+
+        case ["deploy", ip, user, group]:
+            return Deploy(ip=ip, user=user, group=group)
+
+        case _:
+            raise AssertionError(f"Unexpected strings. strings = '{strings}'")
+
+
+###########
+# context #
+###########
+
+def context():
+    """After context(), an environment is live with all the necessary environment
+    variables to execute ./bin/website. See:
+
+    - :REF: 0b9c4f86-bcd8-498f-979e-c84b9196ab2d
+
+    For the set of necessary environment variables.
+    """
+
+    scheme_dir = Path.cwd() / "scheme"
+    dir_check(scheme_dir)
+    os.environ["GUILE_LOAD_PATH"] = str(scheme_dir)
+
+    content_dir = Path.cwd().parent / "content"
+    dir_check(content_dir)
+    os.environ["WEBSITE_CONTENT"] = str(content_dir)
+
+    layout_dir = Path.cwd() / "layout"
+    dir_check(layout_dir)
+    os.environ["WEBSITE_LAYOUT"] = str(layout_dir)
+
+    os.environ["WEBSITE_ENV"] = "dev"
+    os.environ["WEBSITE_IP"] = "127.0.0.1"
+    os.environ["WEBSITE_PORT"] = "3000"
+    os.environ["WEBSITE_CONTEXT_IS_LIVE"] = "true"
+
+    if not os.environ.get("GUIX_ENVIRONMENT"):
+        subprocess.run(["guix", "shell", "-m", "manifest.scm"])
+
+
+def context_is_live():
+    return os.getenv("WEBSITE_CONTEXT_IS_LIVE") == "true"
+
+
+def context_check():
+    if not context_is_live():
+        raise AssertionError("context is not live.")
+
+
+########
+# html #
+########
+
+def content_path():
+    path = Path(os.environ["WEBSITE_CONTENT"])
+    dir_check(path)
+    return path
+
+
+def html():
+    """Assuming context() has been called, HTML content is added to WEBSITE_CONTENT."""
+
+    context_check()
+    path = str(content_path())
+    subprocess.run(["./bin/content-with-html", path, path], check=True)
+
+
+########
+# test #
+########
+
+def test(name=None):
+    """Assuming context() has been called, then after test(), all tests have been
+    executed and logs have been written to ./log/
+    """
+
+    if not (name is None or isinstance(name, str)):
+        raise AssertionError(f"name is not None or a string. name = {name}")
+
+    context_check()
+
+    test_exec = Path.cwd() / "bin" / "exec_test"
+    file_check(test_exec)
+
+    tests_dir = Path.cwd() / "test" / "website"
+    dir_check(tests_dir)
+
+    log_dir = Path("log")
+    log_dir.mkdir(exist_ok=True)
+
+    os.chdir(log_dir)
+
+    cmd = [test_exec, tests_dir]
+
+    if isinstance(name, str):
+        cmd.append(name)
+
+    subprocess.run(cmd)
+
+
+########
+# dist #
+########
+
+ARCHIVE = Path("dist") / "website.tar.gz"
+
+
+def dist():
+    """Assuming context() has been executed, dist() builds an archive
+    ./dist/website.tar.gz such that, when decompressed, a directory ./dist/website/
+    is created and ./dist/website/website msg — where msg :≡ install | activate — may
+    be executed.
+    """
+
+    context_check()
+
+    archive_stem = Path(ARCHIVE.stem).stem
+
+    # A temporary directory containing desired files is built.
+    temp_dir = tempfile.mkdtemp()
+    temp_archive = Path(temp_dir) / archive_stem
+    temp_archive.mkdir(parents=True)
+    items = ["bin", "scheme", "config", "bash", "website.service", "website"]
+    for item in items:
+        src = Path(item)
+        if src.exists():
+            if src.is_dir():
+                shutil.copytree(src, temp_archive / item, dirs_exist_ok=True)
+            else:
+                shutil.copy2(src, temp_archive / item)
+
+    # Create tar archive
+    shutil.make_archive(str(temp_archive), "gztar", temp_dir, archive_stem)
+
+    # Move to final location
+    ARCHIVE.parent.mkdir(parents=True, exist_ok=True)
+    ARCHIVE.unlink(missing_ok=True)
+    shutil.move(str(Path(temp_dir) / ARCHIVE.name), ARCHIVE)
+
+    # Cleanup
+    shutil.rmtree(temp_dir)
+
+    print(ARCHIVE)
+
+
+###########
+# install #
+###########
+
+def install():
+    subprocess.run(["bash", "-c", "source bash/install.bash && install"], check=True)
+
+
+############
+# activate #
+############
+
+def activate():
+    subprocess.run(
+        [
+            "bash",
+            "-c",
+            "source bash/install.bash && source bash/activate.bash && source $HOME/.bashrc && activate",
+        ],
+        check=True,
+    )
+
+
+##########
+# deploy #
+##########
+
+def deploy(ip, user, group):
+    """Assuming context(); dist(); html(); ip,user : String; then after
+    deploy(ip,user,group), the archive has been sent, and the website installed and
+    activated on the machine with the given ip using the given user and group, as
+    well as the content and layout.
+    """
+
+    str_check(ip)
+    str_check(user)
+    str_check(group)
+
+    context_check()
+
+    file_check(ARCHIVE)
+
+    # TODO: fix "root".
+    subprocess.run(["rsync", "-az", str(ARCHIVE), f"root@{ip}:/root/"], check=True)
+
+    content = content_path()
+    subprocess.run(
+        [
+            "rsync",
+            "-az",
+            "--delete",
+            f"{str(content)}/",
+            f"root@{ip}:/var/www/website/content/",
+        ],
+        check=True,
+    )
+
+    subprocess.run(
+        [
+            "rsync",
+            "-az",
+            "--delete",
+            "layout/",
+            f"root@{ip}:/var/www/website/layout/",
+        ],
+        check=True,
+    )
+
+    subprocess.run(
+        [
+            "ssh",
+            f"root@{ip}",
+            f"chown -R {user}:{group} /var/www/website && chmod -R 755 /var/www/website",
+        ],
+        check=True,
+    )
+
+    stem = Path(ARCHIVE.stem).stem
+    subprocess.run(
+        [
+            "ssh",
+            f"root@{ip}",
+            f"bash -c 'tar xf {ARCHIVE.name} && cd {stem} && ./{stem} install && ./{stem} activate'",
+        ],
+        check=True,
+    )
+
+
+###############
+# interpreter #
+###############
+
+def interpreter(message):
+    """Given message : Message, after interpreter(message), the expected behaviour as
+    described by specification() has been observed by the user.
+    """
+
+    match message:
+        case Help():
+            print(specification())
+
+        case Context():
+            context()
+
+        case Html():
+            html()
+
+        case Test(name=name):
+            test(name)
+
+        case Dist():
+            dist()
+
+        case Install():
+            install()
+
+        case Activate():
+            activate()
+
+        case Deploy(ip=ip, user=user, group=group):
+            html()
+            dist()
+            deploy(ip, user, group)
+
+
+########
+# main #
+########
+
+def main():
+    """Read command line arguments, interprete them as a message, and let the
+    interpreter satisfy the desired behaviour. The association <message,desired
+    behaviour> is given by specification().
+    """
+
+    strings = cli_arguments()
+
+    try:
+        message = transducer(strings)
+    except Exception:
+        error_msg(f"Unexpected CLI arguments. arguments = {strings}")
+        message = Help()
+
+    interpreter(message)
+
+
+#################
+# specification #
+#################
+
+def specification():
+    return """usage:
+  {script} msg
+
+  msg                  | effect
+  ---------------------+---------------------------------------------------------------------------------
+  help                 | This message is printed.
+  context              | Build an environment where all necessary development dependencies are available.
+  html                 | Generates html for the content.
+  test                 | Tests are executed.
+  dist                 | An archive is built.
+  install              | The website is installed in the current system.
+  activate             | The website service is activate in the current system.
+  deploy ip user group | An archive is sent,installed and activate in a distant server using ip and user.
+deploy               | like `deploy ip user group', except default values are used.
+""".format(script=sys.argv[0])
+
 
 #############
 # Interface #
 #############
 
-MSG="${1:-}"
-PARAM="${2:-}"
-
-if [[ "$MSG" == "help" ]]; then
-    echo "$DOC"
-
-elif [[ "$MSG" == "context" ]]; then
-    context
-
-elif [[ "$MSG" == "server" ]]; then
-    server
-
-elif [[ "$MSG" == "start" ]]; then
-    context $0 server
-
-elif [[ "$MSG" == "html" ]]; then
-    html
-
-elif [[ "$MSG" == "test" ]]; then
-    export WEBSITE_CONTENT=$PWD/fixture/content
-    export WEBSITE_ENV=test
-    export WEBSITE_LOGIN=login
-    export WEBSITE_PASSWORD=password
-    EXEC_TEST="$PWD/bash/exec_test"
-    TESTS_DIR="$PWD/test/website"
-    mkdir -p log
-    pushd log &>/dev/null
-    context "$EXEC_TEST" "$TESTS_DIR" "$PARAM"
-    popd &>/dev/null
-
-elif [[ "$MSG" == "prod" ]]; then
-    export WEBSITE_ENV=prod
-    ./bin/website
-
-elif [[ "$MSG" == "dist" ]]; then
-    dist
-
-elif [[ "$MSG" == "install" ]]; then
-    source bash/install.bash
-    install
-
-elif [[ "$MSG" == "activate" ]]; then
-    source bash/install.bash
-    source bash/activate.bash
-    source $HOME/.bashrc
-    activate
-
-elif [[ "$MSG" == "deploy" ]]; then
-    $0 dist
-    deploy
-
-else
-    error_msg "Unexpected MSG. MSG = $MSG"
-    $0 help
-    exit 1
-fi
+if __name__ == "__main__":
+    main()
