@@ -199,6 +199,8 @@ def context():
     os.environ["WEBSITE_IP"] = "127.0.0.1"
     os.environ["WEBSITE_PORT"] = "3000"
     os.environ["WEBSITE_CONTEXT_IS_LIVE"] = "true"
+    os.environ["WEBSITE_LOGIN"] = ""
+    os.environ["WEBSITE_PASSWORD"] = ""
 
     if not os.environ.get("GUIX_ENVIRONMENT"):
         subprocess.run(["guix", "shell", "-m", "manifest.scm"])
