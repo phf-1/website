@@ -7,26 +7,29 @@
 ;; Context ;;
 ;;;;;;;;;;;;;
 
-(use-modules (ice-9 match)
-             (srfi srfi-1)
-             (website path)
-             (website article)
-             (website html)
-             (website text)
-             (website layout)
-             (website jpeg)
-             (sxml simple)
-             (website pdf)
-             (ice-9 textual-ports)
-             (srfi srfi-13)
-             (ice-9 peg)
-             (rnrs bytevectors)
-             (ice-9 binary-ports)
-             (ice-9 ftw))
+(use-modules
+ (ice-9 binary-ports)
+ (ice-9 ftw)
+ (ice-9 match)
+ (ice-9 peg)
+ (ice-9 textual-ports)
+ (rnrs bytevectors)
+ (srfi srfi-1)
+ (srfi srfi-13)
+ (srfi srfi-19)
+ (sxml simple)
+ (website article)
+ (website html)
+ (website utils)
+ (website jpeg)
+ (website layout)
+ (website path)
+ (website pdf)
+ (website text))
 
 (define-peg-pattern value-peg body (* (and (not-followed-by "\n") peg-any)))
 (define-peg-pattern prefix-peg none "#+TITLE:")
-(define-peg-pattern ws none (* " "))
+(define-peg-pattern ws none (* (or " " "\t")))
 (define-peg-pattern title-peg body (and prefix-peg ws value-peg))
 
 (define (bv->title bv)
@@ -40,6 +43,42 @@
       ""
       (with-output-to-string
         (lambda () (sxml->xml `(h1 ,str))))))
+
+(define (epoch->html epoch)
+  "Given epoch : Epoch, (epoch->html epoch) is a String that represents a HTML tag of
+the epoch using ISO8601 format reduced to YYYY-MM-DD."
+  (Nat#check epoch)
+  (let* ((tm (localtime epoch))
+         (year (+ 1900 (tm:year tm)))
+         (month (+ 1 (tm:mon tm)))
+         (day (tm:mday tm))
+         (date-str (format #f "~4,'0d-~2,'0d-~2,'0d" year month day)))
+    (with-output-to-string
+      (lambda ()
+        (sxml->xml `(span (@ (id "last-edit")) "Last edit: " (time (@ (datetime ,date-str)) ,date-str)))))))
+
+;; Begin String → Epoch | #f
+(define-peg-pattern digit body (range #\0 #\9))
+(define-peg-pattern date body
+  (and digit digit digit digit "-" digit digit "-" digit digit))
+(define-peg-pattern date-line body
+  (and ws (ignore "#+DATE:") ws date))
+
+(define (line->epoch line)
+  (match (match-pattern date-line line)
+    (#f #f)
+    (m (time-second (date->time-utc (string->date (peg:tree m) "~Y-~m-~d"))))))
+
+(define (string->epoch string)
+  "Given org-txt : String, look for the first line in org-txt such that it matches
+this pattern: #+DATE: YYYY-MM-DD. Return the date YYYY-MM-DD as an Epoch, #f
+otherwise."
+  (let ((lines (string-split string #\newline)))
+    (let loop ((ls lines))
+      (match ls
+        (() #f)
+        ((head tail ...) (or (line->epoch head) (loop tail)))))))
+;; End
 
 (define (directory->article dir layout)
   (Path#directory-check dir)
@@ -55,9 +94,11 @@
            (org-path (Path#join dir "article.org"))
            (data-path (Path#join dir "data"))
            (private? (string= second-to-last "private"))
-           (org (Text#mk "article.org" (call-with-input-file org-path get-bytevector-all)))
+           (org-txt (call-with-input-file org-path get-string-all))
+           (last-edit (string->epoch org-txt))
+           (org (Text#mk "article.org" (string->utf8 org-txt)))
            (title-str (bv->title (Text#bvector org)))
-           (html (lambda () (Html#mk "article.html" (Layout#embed layout (string-append (title title-str) (call-with-input-file html-path get-string-all))))))
+           (html (lambda () (Html#mk "article.html" (Layout#embed layout (string-append (epoch->html last-edit) (title title-str) (call-with-input-file html-path get-string-all))))))
            (datas (if (file-exists? data-path)
                       (filter-map
                        (lambda (filename)
@@ -73,7 +114,7 @@
                                  (else (raise-exception (format #f "Unexpected extension. extension = ~a" ext)))))))
                        (scandir data-path))
                       '())))
-      (Article#mk private? id title-str html org datas))))
+      (Article#mk private? id title-str html org datas last-edit))))
 
 
 (define (dir->articles content layout)

@@ -95,9 +95,9 @@ represents a PDF file.
 :END:
 
 an article :≡ Article#mk(…) represents an article. It is built from a boolean that
-tells if it is private or public, an id (a string), a title (a string), an
-HtmlResource, a TextResource and a set named data of resources of these types:
-HtmlResource, PdfResource, TextResource, JpegResource.
+tells if it is private or public, an id (a string), a title (a string), a last edit
+date (Epoch), an HtmlResource, a TextResource and a set named data of resources of
+these types: HtmlResource, PdfResource, TextResource, JpegResource.
 
 article#id() is its id, article#title() its title, and so on for article#html() and
 article#org() (the text resource). article#data(id) returns a resource such that

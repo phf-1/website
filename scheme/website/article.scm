@@ -10,9 +10,11 @@
 (use-modules (ice-9 match)
              (srfi srfi-1)
              (srfi srfi-13)
+             (srfi srfi-19)
              (website actor)
              (website list)
              (website data)
+             (website utils)
              (website jpeg)
              (website article-and-html)
              (website pdf)
@@ -29,7 +31,7 @@
 
 (define (init data)
   (match data
-    (`(,private ,id ,title ,html ,org ,datas)
+    (`(,private ,id ,title ,html ,org ,datas ,last-edit)
      (unless (boolean? private)
        (raise-exception (format #f "private is not a Boolean. private = ~a" private)))
      (String#check id)
@@ -38,10 +40,12 @@
        (raise-exception (format #f "html is not a procedure that returns a Html actor. html = ~a" html)))
      (Text#check org)
      (List#check datas valid-data?)
+     (Nat#check last-edit)
      (let ((state (make-hash-table 5))
            (resources (make-hash-table (length datas))))
        (hashq-set! state #:private private)
        (hashq-set! state #:id id)
+       (hashq-set! state #:last-edit last-edit)
        (hashq-set! state #:html html)
        (hashq-set! state #:org org)
        (for-each (lambda (data) (hash-set! resources (Data#id data) data)) datas)
@@ -58,13 +62,15 @@
               (html (hashq-ref state #:html))
               (org (hashq-ref state #:org))
               (resources (hashq-ref state #:resources))
-              (title (hashq-ref state #:title)))
+              (title (hashq-ref state #:title))
+              (last-edit (hashq-ref state #:last-edit)))
     (match message
       (`(#:interface? ,id)
        `(,(memq id '(#:Article)) ,state ,tx))
       (#:private `(,private ,state ,tx))
       (#:title `(,title ,state ,tx))
       (#:id `(,id ,state ,tx))
+      (#:last-edit `(,last-edit ,state ,tx))
       (#:html `(,(let ((value (html))) (Html#check value) value) ,state ,tx))
       (#:org `(,org ,state ,tx))
       (`(#:data ,id)
@@ -83,8 +89,8 @@
 
 (define mk (Actor#mk init tx))
 
-(define (Article#mk private id title html org datas)
-  (mk `(,private ,id ,title ,html ,org ,datas)))
+(define (Article#mk private id title html org datas last-edit)
+  (mk `(,private ,id ,title ,html ,org ,datas ,last-edit)))
 
 (define (Article#private? article)
   (Actor#send article #:private))
@@ -101,6 +107,9 @@
 (define (Article#html article)
   (Actor#send article #:html))
 
+(define (Article#last-edit article)
+  (Actor#send article #:last-edit))
+
 (define (Article#org article)
   (Actor#send article #:org))
 
@@ -110,7 +119,7 @@
 (define (Article#index articles layout)
   (define html (lambda () (set-of-article->index-html articles layout)))
   (define org (Text#mk "article.org" (string->utf8 "")))
-  (Article#mk #f "index" "Index of articles" html org '()))
+  (Article#mk #f "index" "Index of articles" html org '() (time-second (current-time))))
 
 (define (Article#? x)
   (and (procedure? x)
@@ -120,7 +129,7 @@
 
 (define (Article#check x)
   (unless (Article#? x)
-    (raise-exception "x is not an Article. x = ~a" x)))
+    (raise-exception (format #f "x is not an Article. x = ~a" x))))
 
 ;;;;;;;;;;;;;;;
 ;; Interface ;;
