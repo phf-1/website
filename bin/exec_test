@@ -1,21 +1,32 @@
-#!/usr/bin/env bash
+#!/usr/bin/env python3
 
-set -euo pipefail
-IFS=$'\n\t'
+import sys
+import os
+import subprocess
+from pathlib import Path
 
-TEST_DIR="${1:-}"
-if [[ ! -d "$TEST_DIR" ]]; then
-    echo "TEST_DIR is not a directory. TEST_DIR = $TEST_DIR"
-    exit 1
-fi
+def main():
+    # Get TEST_DIR from command line argument or empty string
+    test_dir = sys.argv[1] if len(sys.argv) > 1 else ""
 
-TEST_NAME="${2:-}"
-TEST_FILE="$TEST_DIR/$TEST_NAME.scm"
+    # Check if TEST_DIR is a valid directory
+    if not os.path.isdir(test_dir):
+        print(f"TEST_DIR is not a directory. TEST_DIR = {test_dir}")
+        sys.exit(1)
 
-if [[ -f "$TEST_FILE" ]]; then
-    guile -s "$TEST_FILE"
-else
-    for test_file in "$TEST_DIR"/*; do
-        guile -s "$test_file"
-    done
-fi
+    # Get TEST_NAME from command line argument if provided
+    test_name = sys.argv[2] if len(sys.argv) > 2 else ""
+    test_file = os.path.join(test_dir, f"{test_name}.scm")
+
+    if os.path.isfile(test_file):
+        # Run guile on the specific test file
+        subprocess.run(["guile", "-s", test_file], check=True)
+    else:
+        # Run guile on all files in the directory
+        test_path = Path(test_dir)
+        for test_file in sorted(test_path.iterdir()):
+            if test_file.is_file():
+                subprocess.run(["guile", "-s", str(test_file)], check=True)
+
+if __name__ == "__main__":
+    main()
