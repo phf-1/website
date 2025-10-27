@@ -350,11 +350,14 @@
        const toc = document.getElementById('table-of-contents');
        const c21 = document.querySelector('.c21');
        if (toc && c21) { c21.appendChild(toc); }
-     });
 
-     const lastEdit = document.getElementById('last-edit');
-     const c23 = document.querySelector('.c23');
-     if (lastEdit && c23) { c23.appendChild(lastEdit); }
+       const count = document.querySelectorAll('#last-edit').length;
+       if (count === 1) {
+         const lastEdit = document.getElementById('last-edit');
+         const c23 = document.querySelector('.c23');
+         if (lastEdit && c23) { c23.appendChild(lastEdit); }
+       }
+     });
     </script>
   </body>
 </html>

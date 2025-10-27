@@ -145,6 +145,7 @@
         Article#check
         Article#title
         Article#html
+        Article#last-edit
         Article#repr
         Article#org
         Article#data)
