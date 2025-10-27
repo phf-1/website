@@ -460,21 +460,29 @@ def main():
 #################
 
 def specification():
-    return """usage:
-  {script} msg
+    return """usage: {script} msg
 
-  msg                  | effect
-  ---------------------+---------------------------------------------------------------------------------
-  help                 | This message is printed.
-  context              | Build an environment where all necessary development dependencies are available.
-  html                 | Generates html for the content.
-  test                 | Tests are executed.
-  dist                 | An archive is built.
-  install              | The website is installed in the current system.
-  activate             | The website service is activate in the current system.
-  deploy ip user group | An archive is sent,installed and activate in a distant server using ip and user.
-deploy               | like `deploy ip user group', except default values are used.
-""".format(script=sys.argv[0])
+  Message              | Effect
+  ---------------------+-------------------------------------------------------------
+  help                 | Print this message.
+  ---------------------+-------------------------------------------------------------
+  context              | Build an environment with all necessary
+                       | development dependencies.
+  ---------------------+-------------------------------------------------------------
+  html                 | Generate HTML for the content.
+  ---------------------+-------------------------------------------------------------
+  test                 | Execute tests.
+  ---------------------+-------------------------------------------------------------
+  dist                 | Build an archive.
+  ---------------------+-------------------------------------------------------------
+  install              | Install the website on the current system.
+  ---------------------+-------------------------------------------------------------
+  activate             | Activate the website service on the current system.
+  ---------------------+-------------------------------------------------------------
+  deploy ip user group | Send, install, and activate an archive on a
+                       | remote server using ip and user.
+  ---------------------+-------------------------------------------------------------
+  deploy               | Like `deploy ip user group`, using default values.""".format(script=sys.argv[0])
 
 
 #############
