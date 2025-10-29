@@ -21,6 +21,7 @@
  (website article)
  (website html)
  (website utils)
+ (website string)
  (website jpeg)
  (website layout)
  (website path)
@@ -57,6 +58,17 @@ the epoch using ISO8601 format reduced to YYYY-MM-DD."
       (lambda ()
         (sxml->xml `(span (@ (id "last-edit")) "Last edit: " (time (@ (datetime ,date-str)) ,date-str)))))))
 
+(define (status->html status)
+  "Given status : String | #f, (status->html status) is a String that encodes the associated
+HTML tag."
+  (match status
+    (#f "")
+    (_
+     (String#check status)
+     (with-output-to-string
+       (lambda ()
+         (sxml->xml `(span (@ (id "status")) "Status: " ,(string-trim-both status))))))))
+
 ;; Begin String → Epoch | #f
 (define-peg-pattern digit body (range #\0 #\9))
 (define-peg-pattern date body
@@ -80,6 +92,25 @@ otherwise."
         ((head tail ...) (or (line->epoch head) (loop tail)))))))
 ;; End
 
+;; Begin String → Status | #f
+(define-peg-pattern status-line body
+  (and ws (ignore "#+STATUS:") ws value-peg))
+
+(define (line->status line)
+  (match (match-pattern status-line line)
+    (#f #f)
+    (m (peg:tree m))))
+
+(define (string->status string)
+  "Given org-txt : String, look for the first line in org-txt such that it matches
+this pattern: #+STATUS: value. Return the string value if any or #f."
+  (let ((lines (string-split string #\newline)))
+    (let loop ((ls lines))
+      (match ls
+        (() #f)
+        ((head tail ...) (or (line->status head) (loop tail)))))))
+;; End
+
 (define (directory->article dir layout)
   (Path#directory-check dir)
   (let ((components (Path#components dir))
@@ -96,9 +127,20 @@ otherwise."
            (private? (string= second-to-last "private"))
            (org-txt (call-with-input-file org-path get-string-all))
            (last-edit (string->epoch org-txt))
+           (status (string->status org-txt))
            (org (Text#mk "article.org" (string->utf8 org-txt)))
            (title-str (bv->title (Text#bvector org)))
-           (html (lambda () (Html#mk "article.html" (Layout#embed layout (string-append (epoch->html last-edit) (title title-str) (call-with-input-file html-path get-string-all))))))
+           (html
+            (lambda ()
+              (Html#mk
+               "article.html"
+               (Layout#embed
+                layout
+                (string-append
+                 (epoch->html last-edit)
+                 (status->html status)
+                 (title title-str)
+                 (call-with-input-file html-path get-string-all))))))
            (datas (if (file-exists? data-path)
                       (filter-map
                        (lambda (filename)
@@ -114,7 +156,7 @@ otherwise."
                                  (else (raise-exception (format #f "Unexpected extension. extension = ~a" ext)))))))
                        (scandir data-path))
                       '())))
-      (Article#mk private? id title-str html org datas last-edit))))
+      (Article#mk private? id title-str html org datas last-edit status))))
 
 
 (define (dir->articles content layout)

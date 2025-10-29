@@ -431,6 +431,10 @@
      // toc_mk() : TOC | undefined
      const toc_mk = () => by_id('table-of-contents')
 
+     // Status :≡ HTMLElement such that its id is "status".
+     // status_mk() : Status | undefined
+     const status_mk = () => by_id('status')
+
      // C21 :≡ HTMLElement such that its id is "c21".
      // c21_mk() : C21 | undefined
      const c21_mk = () => by_id('c21')
@@ -458,13 +462,17 @@
      // c23_mk() : C23 | undefined
      const c23_mk = () => by_id('c23')
 
-     // after toc_is_placed(), the TOC is located inside c23.
+     // after last_edit_is_placed(), the LastEdit is located inside c23.
      const last_edit_is_placed = () => el_is_placed(last_edit_mk,c23_mk)
+
+     // after status_is_placed(), the Status is located inside c23.
+     const status_is_placed = () => el_is_placed(status_mk,c23_mk)
 
      // after dom_is_ready(), the DOM does not need to change.
      const dom_is_ready = function() {
        toc_is_placed()
        last_edit_is_placed()
+       status_is_placed()
      }
      document.addEventListener('DOMContentLoaded', dom_is_ready);
 

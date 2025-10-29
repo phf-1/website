@@ -31,7 +31,7 @@
 
 (define (init data)
   (match data
-    (`(,private ,id ,title ,html ,org ,datas ,last-edit)
+    (`(,private ,id ,title ,html ,org ,datas ,last-edit ,status)
      (unless (boolean? private)
        (raise-exception (format #f "private is not a Boolean. private = ~a" private)))
      (String#check id)
@@ -41,7 +41,9 @@
      (Text#check org)
      (List#check datas valid-data?)
      (Nat#check last-edit)
-     (let ((state (make-hash-table 5))
+     (unless (or (string? status) (eq? status #f))
+       (raise-exception (format #f "status is not a string nor #f. status = ~a" status)))
+     (let ((state (make-hash-table (- (length data) 1)))
            (resources (make-hash-table (length datas))))
        (hashq-set! state #:private private)
        (hashq-set! state #:id id)
@@ -51,6 +53,7 @@
        (for-each (lambda (data) (hash-set! resources (Data#id data) data)) datas)
        (hashq-set! state #:resources resources)
        (hashq-set! state #:title title)
+       (hashq-set! state #:status status)
        state))
 
     (_
@@ -63,12 +66,14 @@
               (org (hashq-ref state #:org))
               (resources (hashq-ref state #:resources))
               (title (hashq-ref state #:title))
+              (status (hashq-ref state #:status))
               (last-edit (hashq-ref state #:last-edit)))
     (match message
       (`(#:interface? ,id)
        `(,(memq id '(#:Article)) ,state ,tx))
       (#:private `(,private ,state ,tx))
       (#:title `(,title ,state ,tx))
+      (#:status `(,status ,state ,tx))
       (#:id `(,id ,state ,tx))
       (#:last-edit `(,last-edit ,state ,tx))
       (#:html `(,(let ((value (html))) (Html#check value) value) ,state ,tx))
@@ -89,8 +94,8 @@
 
 (define mk (Actor#mk init tx))
 
-(define (Article#mk private id title html org datas last-edit)
-  (mk `(,private ,id ,title ,html ,org ,datas ,last-edit)))
+(define (Article#mk private id title html org datas last-edit status)
+  (mk `(,private ,id ,title ,html ,org ,datas ,last-edit ,status)))
 
 (define (Article#private? article)
   (Actor#send article #:private))
@@ -100,6 +105,9 @@
 
 (define (Article#title article)
   (Actor#send article #:title))
+
+(define (Article#status article)
+  (Actor#send article #:status))
 
 (define (Article#repr article)
   (Actor#send article #:repr))
@@ -119,7 +127,7 @@
 (define (Article#index articles layout)
   (define html (lambda () (set-of-article->index-html articles layout)))
   (define org (Text#mk "article.org" (string->utf8 "")))
-  (Article#mk #f "index" "Index of articles" html org '() (time-second (current-time))))
+  (Article#mk #f "index" "Index of articles" html org '() (time-second (current-time)) #f))
 
 (define (Article#? x)
   (and (procedure? x)
@@ -144,6 +152,7 @@
         Article#id
         Article#check
         Article#title
+        Article#status
         Article#html
         Article#last-edit
         Article#repr
