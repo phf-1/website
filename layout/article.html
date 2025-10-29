@@ -137,7 +137,7 @@
        margin: 2rem 0;
 
        img {
-         border: 1px solid var(--src-bg-color);
+         border: 1px solid var(--article-text-color);
          border-radius: 2px
        }
 
@@ -277,14 +277,14 @@
        font-style: italic;
        color: var(--color-blue-grey-900);
        border-radius: 2px;
-     }     
+     }
 
      :root {
        --color-beige: #fbf7f0;
        --color-black: #000000;
 
        --color-blue-warmer: #3546c2;
-       
+
        --color-white: #FFFFFF;
        --color-blue-900: #0D47A1;
        --color-blue-grey-100: #CFD8DC;
@@ -306,7 +306,7 @@
        --article-text-color: var(--color-black);
 
        --link-color: var(--color-blue-warmer);
-       
+
        --src-bg-color: var(--color-orange-50);
        --src-border-color: var(--color-orange-900);
        --src-text-color: var(--article-text-color);
@@ -322,10 +322,14 @@
        --border-color: var(--color-blue-grey-900);
 
        --topnav-bg-color: var(--article-white);
-     }     
+     }
 
      /* --- Responsive layout for mobile --- */
      @media (max-width: 1100px) {
+       html {
+         font-size: 14px;
+       }
+
        body {
          display: flex;
          flex-direction: column;
@@ -400,10 +404,10 @@
 
      // Given a string s, error(s) raises an exception with the message s.
      const error = function(s) { if (is_string(s)) { throw Error(s); } else { error(`s is not a string. s = ${s}`) } }
-     
+
      // Given a variable x, string_check(x) raise an exception iif x is not a string.
      const string_check = (x) => !is_string(x) && error(`x is not a String. x = ${x}`)
-     
+
      // Given a string s, by_id(s) : HTMLElement | undefined.
      // by_id(s) is the unique HTMLElement in the page such that its id is s.
      const by_id = function(id) {
@@ -412,13 +416,13 @@
        if (els.length !== 1) { return undefined; }
        return els.item(0)
      }
-     
+
      // is_html_element(x) = true iif x is an HTMLElement
      const is_html_element = (x) => x instanceof HTMLElement;
 
      // Given a variable x, html_element_check(x) raise an exception iif x is not a HTMLElement.
      const html_element_check = (x) => !is_html_element(x) && error(`x is not a HTMLElement. x = ${x}`)
-     
+
      // TOC :≡ HTMLElement such that its id is "table-of-contents".
      // toc_mk() : TOC | undefined
      const toc_mk = () => by_id('table-of-contents')
@@ -438,7 +442,7 @@
        html_element_check(place)
        place.appendChild(el);
      }
-     
+
      // after toc_is_placed(), the TOC is located inside c21.
      const toc_is_placed = () => el_is_placed(toc_mk,c21_mk)
 
@@ -448,22 +452,22 @@
 
      // C23 :≡ HTMLElement such that its id is "c23".
      // c23_mk() : C23 | undefined
-     const c23_mk = () => by_id('c23')     
+     const c23_mk = () => by_id('c23')
 
-     // after toc_is_placed(), the TOC is located inside c23.     
+     // after toc_is_placed(), the TOC is located inside c23.
      const last_edit_is_placed = () => el_is_placed(last_edit_mk,c23_mk)
 
      // after dom_is_ready(), the DOM does not need to change.
      const dom_is_ready = function() {
        toc_is_placed()
        last_edit_is_placed()
-     }     
+     }
      document.addEventListener('DOMContentLoaded', dom_is_ready);
 
-     // after body_is_visible(), the content is ready for the user to be viewed.     
+     // after body_is_visible(), the content is ready for the user to be viewed.
      const body_is_visible = function() {
        document.body.classList.add('loaded');
-     }     
+     }
      window.addEventListener('load', function (_event) {
        body_is_visible()
      });
