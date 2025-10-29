@@ -24,6 +24,7 @@
      }
 
      body {
+       visibility: hidden;
        margin: 0;
        height: 100vh;
        display: grid;
@@ -40,6 +41,9 @@
        .c22 { grid-area: c22; }
        .c23 { grid-area: c23; }
 
+       &.loaded {
+         visibility: visible;
+       }
      }
 
      .top-nav {
@@ -91,6 +95,15 @@
      code.privacy {
        font-size: 0.80em;
        margin-left: 1ch;
+       border-radius: 2px;
+
+       &.private {
+         background-color: var(--color-red-300);
+       }
+
+       &.public {
+         background-color: var(--color-green-300);
+       }
      }
 
      h1 {
@@ -135,12 +148,24 @@
        font-family: 'JetBrains Mono', monospace;
      }
 
+     pre.src, code {
+       font-family: 'JetBrains Mono', monospace;
+       color: var(--src-text-color);
+       font-size: 0.8em;
+     }
+
      pre.src {
-       border: 1px solid var(--src-bg-color);
+       border: 1px solid var(--src-border-color);
        background-color: var(--src-bg-color);
        border-radius: 2px;
-       color: var(--src-text-color);
        padding: 0.5em;
+       margin: 2rem 0;
+       overflow-x: auto;
+     }
+
+     code {
+       padding: 0 0.25em;
+       background-color: var(--src-bg-color);
      }
 
      span.todo, span.done {
@@ -219,7 +244,7 @@
        ul, ol {
          margin-inline-start: 0px;
          margin-inline-end: 0px;
-         padding-inline-start: 1.5em;
+         padding-inline-start: 1em;
          list-style-type: none;
        }
 
@@ -237,35 +262,29 @@
        padding-left: 1rem;
      }
 
-     :root {
-       /* Red */
-       --color-red-900: #B71C1C;
 
-       /* Blue */
-       --color-blue-900: #0D47A1;
-
-       /* Green */
-       --color-green-900: #1B5E20;
-
-       /* Orange */
-       --color-orange-900: #E65100;
-
-       /* Blue Grey */
-       --color-blue-grey-100: #CFD8DC;
-       --color-blue-grey-900: #263238;
-     }
+     blockquote {
+       background-color: var(--color-blue-grey-50);
+       border-left: 4px solid var(--color-blue-grey-900);
+       margin: 2rem 0;
+       padding: 1rem 1.5rem;
+       font-style: italic;
+       color: var(--color-blue-grey-900);
+       border-radius: 2px;
+     }     
 
      :root {
-       --src-bg-color: var(--color-blue-grey-900);
-       --src-text-color: #FFFFFF;
+       --src-bg-color: var(--color-orange-50);
+       --src-border-color: var(--color-orange-900);
+       --src-text-color: var(--content-text-color);
 
-       --content-bg-color: #FFFFFF;
-       --content-text-color: #000000;
+       --content-bg-color: var(--content-white);
+       --content-text-color: var(--color-black);
 
        --kw-todo-bg-color: var(--color-red-900);
        --kw-doing-bg-color: var(--color-orange-900);
        --kw-done-bg-color: var(--color-green-900);
-       --kw-text-color: #FFFFFF;
+       --kw-text-color: var(--content-white);
 
        --table-th-bg-color: var(--color-blue-grey-100);
        --table-border-color: var(--color-blue-grey-900);
@@ -273,7 +292,25 @@
        --border-color: var(--color-blue-grey-900);
        --link-color: var(--color-blue-900);
 
-       --topnav-bg-color: #FFFFFF;
+       --topnav-bg-color: var(--content-white);
+     }     
+
+     :root {
+       --color-white: #FFFFFF;
+       --color-black: #000000;
+       --color-blue-900: #0D47A1;
+       --color-blue-grey-100: #CFD8DC;
+       --color-blue-grey-50: #ECEFF1;
+       --color-blue-grey-900: #263238;
+       --color-green-900: #1B5E20;
+       --color-green-300: #81C784;
+       --color-indigo-50: #E8EAF6;
+       --color-indigo-900: #1A237E;
+       --color-orange-50: #FFF3E0;
+       --color-orange-900: #E65100;
+       --color-red-50: #FFEBEE;
+       --color-red-300: #E57373;
+       --color-red-900: #B71C1C;
      }
 
      /* --- Responsive layout for mobile --- */
@@ -293,7 +330,7 @@
        .c13,
        .c21,
        .c23 {
-         display: none; /* Hide side areas */
+         display: none;
        }
 
        header.c12,
@@ -312,7 +349,7 @@
        }
 
        .top-nav ul {
-         justify-content: center; /* Center navigation on mobile */
+         justify-content: center;
          gap: 1em;
        }
      }
@@ -327,15 +364,13 @@
         <ul>
           <li><a href="/">About</a></li>
           <li><a href="/articles">Articles</a></li>
-          <!-- <li><a href="/contact">Contact</a></li> -->
-          <!-- <li><a href="/articles">Articles</a></li> -->
         </ul>
       </nav>
     </header>
 
     <div class="c13"></div>
 
-    <aside class="c21"></aside>
+    <aside id="c21" class="c21"></aside>
 
     <main class="c22">
       <article>
@@ -343,20 +378,83 @@
       </article>
     </main>
 
-    <aside class="c23"></aside>
+    <aside id="c23" class="c23"></aside>
 
     <script>
-     document.addEventListener('DOMContentLoaded', function() {
-       const toc = document.getElementById('table-of-contents');
-       const c21 = document.querySelector('.c21');
-       if (toc && c21) { c21.appendChild(toc); }
+     // Given a variable x, is_string(x) = true iif x is a string.
+     const is_string = (x) => typeof x === 'string';
 
-       const count = document.querySelectorAll('#last-edit').length;
-       if (count === 1) {
-         const lastEdit = document.getElementById('last-edit');
-         const c23 = document.querySelector('.c23');
-         if (lastEdit && c23) { c23.appendChild(lastEdit); }
-       }
+     // Given a variable x, is_undefined(x) = true iif x is undefined.
+     const is_undefined = (x) => x === undefined;
+
+     // Given a string s, error(s) raises an exception with the message s.
+     const error = function(s) { if (is_string(s)) { throw Error(s); } else { error(`s is not a string. s = ${s}`) } }
+     
+     // Given a variable x, string_check(x) raise an exception iif x is not a string.
+     const string_check = (x) => !is_string(x) && error(`x is not a String. x = ${x}`)
+     
+     // Given a string s, by_id(s) : HTMLElement | undefined.
+     // by_id(s) is the unique HTMLElement in the page such that its id is s.
+     const by_id = function(id) {
+       string_check(id)
+       const els = document.querySelectorAll(`#${id}`)
+       if (els.length !== 1) { return undefined; }
+       return els.item(0)
+     }
+     
+     // is_html_element(x) = true iif x is an HTMLElement
+     const is_html_element = (x) => x instanceof HTMLElement;
+
+     // Given a variable x, html_element_check(x) raise an exception iif x is not a HTMLElement.
+     const html_element_check = (x) => !is_html_element(x) && error(`x is not a HTMLElement. x = ${x}`)
+     
+     // TOC :≡ HTMLElement such that its id is "table-of-contents".
+     // toc_mk() : TOC | undefined
+     const toc_mk = () => by_id('table-of-contents')
+
+     // C21 :≡ HTMLElement such that its id is "c21".
+     // c21_mk() : C21 | undefined
+     const c21_mk = () => by_id('c21')
+
+     // el_mk(), place_mk() : HTMLElement | undefined
+     // after el_is_placed(el_mk place_mk), el_mk() is placed in place_mk().
+     const el_is_placed = function(el_mk,place_mk) {
+       const el = el_mk()
+       if (is_undefined(el)) { return undefined; }
+       html_element_check(el)
+       const place = place_mk()
+       if (is_undefined(place)) { return undefined; }
+       html_element_check(place)
+       place.appendChild(el);
+     }
+     
+     // after toc_is_placed(), the TOC is located inside c21.
+     const toc_is_placed = () => el_is_placed(toc_mk,c21_mk)
+
+     // LastEdit :≡ HTMLElement such that its id is "last-edit".
+     // last_edit_mk() : C21 | undefined
+     const last_edit_mk = () => by_id('last-edit')
+
+     // C23 :≡ HTMLElement such that its id is "c23".
+     // c23_mk() : C23 | undefined
+     const c23_mk = () => by_id('c23')     
+
+     // after toc_is_placed(), the TOC is located inside c23.     
+     const last_edit_is_placed = () => el_is_placed(last_edit_mk,c23_mk)
+
+     // after dom_is_ready(), the DOM does not need to change.
+     const dom_is_ready = function() {
+       toc_is_placed()
+       last_edit_is_placed()
+     }     
+     document.addEventListener('DOMContentLoaded', dom_is_ready);
+
+     // after body_is_visible(), the content is ready for the user to be viewed.     
+     const body_is_visible = function() {
+       document.body.classList.add('loaded');
+     }     
+     window.addEventListener('load', function (_event) {
+       body_is_visible()
      });
     </script>
   </body>

@@ -35,15 +35,6 @@
 (define (article->link article)
   (link (Article#id article) (Article#title article)))
 
-(define (article->li article)
-  (let ((link (article->link article))
-        (private '(code (@ (class "privacy")) "(private)"))
-        (public '(code (@ (class "privacy")) "(public)")))
-    (li
-     (list
-      (article->link article)
-      (if (Article#private? article) private public)))))
-
 (define (epoch->sxml epoch)
   "TODO: remove this duplicated code.
 Given epoch : Epoch, (epoch->html epoch) is a String that represents a HTML tag of
@@ -69,8 +60,8 @@ recently edited article."
            (private? (Article#private? article))
            (epoch (Article#last-edit article))
            (privacy (if private?
-                        '(code (@ (class "privacy")) "private")
-                        '(code (@ (class "privacy")) "public")))
+                        '(code (@ (class "privacy private")) "private")
+                        '(code (@ (class "privacy public")) "public")))
            (link `(a (@ (href ,(format #f "/article/~a/html" id))) ,title))
            (date-html (epoch->sxml epoch)))
       `(tr

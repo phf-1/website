@@ -10,4 +10,6 @@
 (setq org-export-with-section-numbers nil)
 (setq org-todo-keywords '((sequence "TODO(t)" "WAITING(w)" "DOING(o)" "|" "DONE(d)" "FAILED(f)" "CANCELED(c)")))
 
+(defun citeproc-style-cite-superscript-p (x) t)
+
 (org-html-export-to-html nil nil nil t)

@@ -54,7 +54,7 @@
 (define Reply#challenge
   (Reply#mk
    (build-response #:code 401 #:headers (Header#for #:auth))
-   (string->utf8 "challenge")))
+   (string->utf8 "Authentication failed.")))
 
 ;;;;;;;;;;;;;;;
 ;; Interface ;;
