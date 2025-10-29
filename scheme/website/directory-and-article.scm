@@ -67,7 +67,8 @@ HTML tag."
      (String#check status)
      (with-output-to-string
        (lambda ()
-         (sxml->xml `(span (@ (id "status")) "Status: " ,(string-trim-both status))))))))
+         (let ((prefix '(a (@ (href "https://rfc.zeromq.org/spec/44/#26-evolution-of-public-contracts")) "Status")))
+           (sxml->xml `(span (@ (id "status")) ,prefix ": " ,(string-trim-both status)))))))))
 
 ;; Begin String → Epoch | #f
 (define-peg-pattern digit body (range #\0 #\9))

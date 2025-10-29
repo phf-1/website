@@ -174,26 +174,28 @@
        background-color: var(--src-bg-color);
      }
 
-     span.todo, span.done {
+     .todo, .done {
        font-family: 'JetBrains Mono', monospace;
        font-weight: bold;
-       color: var(--kw-text-color);
+       color: var(--article-bg-color);
        font-size: 0.7em;
        padding: 0.1em 0.2em;
        border-radius: 2px;
        margin-right: 0.33em;
-     }
+       text-decoration: none !important;
 
-     span.todo.TODO {
-       background-color: var(--kw-todo-bg-color);
-     }
+       &.TODO {
+         background-color: var(--kw-todo-bg-color);
+       }
 
-     span.todo.DOING {
-       background-color: var(--kw-doing-bg-color);
-     }
+       &.DOING {
+         background-color: var(--kw-doing-bg-color);
+       }
 
-     span.done.DONE {
-       background-color: var(--kw-done-bg-color);
+       &.DONE {
+         background-color: var(--kw-done-bg-color);
+       }
+
      }
 
      a {
