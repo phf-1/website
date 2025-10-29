@@ -16,7 +16,7 @@
      html {
        font-size: 16px;
        line-height: 1.30;
-       color: var(--content-text-color);
+       color: var(--article-text-color);
        text-rendering: optimizeLegibility;
        font-family: 'Source Sans Pro', sans-serif;
        letter-spacing: 0.01em;
@@ -61,17 +61,23 @@
        justify-content: left;
      }
 
-     .top-nav a {
-       text-decoration: none;
-       font-weight: normal;
-       text-transform: uppercase;
+     /* TopNavLink */
+     .top-nav {
+       .link {
+         a {
+           text-decoration: none;
+           font-weight: normal;
+           text-transform: uppercase;
+           color: var(--link-color);
+         }
+       }
      }
 
      article {
        position: relative;
        height: 100%;
        font-style: normal;
-       background-color: var(--content-bg-color);
+       background-color: var(--article-bg-color);
        margin: 0;
        padding: 12ch;
        border-left: solid 1px var(--border-color);
@@ -274,30 +280,12 @@
      }     
 
      :root {
-       --src-bg-color: var(--color-orange-50);
-       --src-border-color: var(--color-orange-900);
-       --src-text-color: var(--content-text-color);
-
-       --content-bg-color: var(--content-white);
-       --content-text-color: var(--color-black);
-
-       --kw-todo-bg-color: var(--color-red-900);
-       --kw-doing-bg-color: var(--color-orange-900);
-       --kw-done-bg-color: var(--color-green-900);
-       --kw-text-color: var(--content-white);
-
-       --table-th-bg-color: var(--color-blue-grey-100);
-       --table-border-color: var(--color-blue-grey-900);
-
-       --border-color: var(--color-blue-grey-900);
-       --link-color: var(--color-blue-900);
-
-       --topnav-bg-color: var(--content-white);
-     }     
-
-     :root {
-       --color-white: #FFFFFF;
+       --color-beige: #fbf7f0;
        --color-black: #000000;
+
+       --color-blue-warmer: #3546c2;
+       
+       --color-white: #FFFFFF;
        --color-blue-900: #0D47A1;
        --color-blue-grey-100: #CFD8DC;
        --color-blue-grey-50: #ECEFF1;
@@ -312,6 +300,29 @@
        --color-red-300: #E57373;
        --color-red-900: #B71C1C;
      }
+
+     :root {
+       --article-bg-color: var(--color-beige);
+       --article-text-color: var(--color-black);
+
+       --link-color: var(--color-blue-warmer);
+       
+       --src-bg-color: var(--color-orange-50);
+       --src-border-color: var(--color-orange-900);
+       --src-text-color: var(--article-text-color);
+
+       --kw-todo-bg-color: var(--color-red-900);
+       --kw-doing-bg-color: var(--color-orange-900);
+       --kw-done-bg-color: var(--color-green-900);
+       --kw-text-color: var(--article-white);
+
+       --table-th-bg-color: var(--color-blue-grey-100);
+       --table-border-color: var(--color-blue-grey-900);
+
+       --border-color: var(--color-blue-grey-900);
+
+       --topnav-bg-color: var(--article-white);
+     }     
 
      /* --- Responsive layout for mobile --- */
      @media (max-width: 1100px) {
@@ -362,8 +373,8 @@
     <header class="c12">
       <nav class="top-nav">
         <ul>
-          <li><a href="/">About</a></li>
-          <li><a href="/articles">Articles</a></li>
+          <li class="link"><a href="/">About</a></li>
+          <li class="link"><a href="/articles">Articles</a></li>
         </ul>
       </nav>
     </header>
