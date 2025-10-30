@@ -8,387 +8,26 @@
     <meta name="author" content="">
     <title>phfrohring</title>
     <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&family=Source+Serif+Pro:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="preload" href="/static/master.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <script type="module" src="/static/master.js" defer></script>
     <style>
-     * {
-       box-sizing: border-box;
-     }
-
-     html {
-       font-size: 16px;
-       line-height: 1.30;
-       color: var(--article-text-color);
-       text-rendering: optimizeLegibility;
-       font-family: 'Source Sans Pro', sans-serif;
-       letter-spacing: 0.01em;
-       height: 100%;
-     }
-
      body {
-       visibility: hidden;
-       margin: 0;
-       height: 100vh;
-       display: grid;
-       grid-template-columns: minmax(0, 1fr) 96ch minmax(0, 1fr); /* 80 ch + 2*12 ch */
-       grid-template-rows: auto 1fr;
-       grid-template-areas:
-         "c11 c12 c13"
-         "c21 c22 c23";
-
-       .c11 { grid-area: c11; }
-       .c12 { grid-area: c12; }
-       .c13 { grid-area: c13; }
-       .c21 { grid-area: c21; }
-       .c22 { grid-area: c22; }
-       .c23 { grid-area: c23; }
-
-       &.loaded {
-         visibility: visible;
-       }
+       opacity: 0;
      }
-
-     .top-nav {
-       background-color: var(--topnav-bg-color);
-       padding: 0.5em 0;
-     }
-
-     .top-nav ul {
-       display: flex;
-       gap: 1.5em;
-       margin: 0;
-       padding: 1rem 0;
-       list-style: none;
-       align-items: center;
-       justify-content: left;
-     }
-
-     /* TopNavLink */
-     .top-nav {
-       .link {
-         a {
-           text-decoration: none;
-           font-weight: normal;
-           text-transform: uppercase;
-           color: var(--link-color);
-         }
-       }
-     }
-
-     article {
-       position: relative;
-       height: 100%;
-       font-style: normal;
-       background-color: var(--article-bg-color);
-       margin: 0;
-       padding: 12ch;
-       border-left: solid 1px var(--border-color);
-       border-right: solid 1px var(--border-color);
-       border-top: solid 1px var(--border-color);
-       border-radius: 2px;
-     }
-
-     article > div.outline-2:first-of-type > h2 {
-       margin-top: 0;
-     }
-
-     h1, h2, h3, h4, h5 {
-       display: block;
-       font-weight: normal;
-       unicode-bidi: isolate;
-       margin-top: 4ch;
-       text-decoration: underline;
-     }
-
-     code.privacy {
-       font-size: 0.80em;
-       margin-left: 1ch;
-       border-radius: 2px;
-
-       &.private {
-         background-color: var(--color-red-300);
-       }
-
-       &.public {
-         background-color: var(--color-green-300);
-       }
-     }
-
-     h1 {
-       font-size: 1.75em;
-       margin-top: 0;
-       margin-bottom: 4em;
-       text-align: center;
-     }
-
-     h2 {
-       font-size: 1.5em;
-     }
-
-     p {
-       display: block;
-       margin-block-start: 1em;
-       margin-block-end: 1em;
-       margin-inline-start: 0px;
-       margin-inline-end: 0px;
-       unicode-bidi: isolate;
-     }
-
-     figure {
-       text-align: center;
-       margin: 2rem 0;
-
-       img {
-         border: 1px solid var(--article-text-color);
-         border-radius: 2px
-       }
-
-       figurecaption {
-         text-align: center;
-       }
-     }
-
-     strong {
-       font-weight: bold;
-     }
-
-     pre {
-       font-family: 'JetBrains Mono', monospace;
-     }
-
-     pre.src, code {
-       font-family: 'JetBrains Mono', monospace;
-       color: var(--src-text-color);
-       font-size: 0.8em;
-     }
-
-     pre.src {
-       border: 1px solid var(--src-border-color);
-       background-color: var(--src-bg-color);
-       border-radius: 2px;
-       padding: 0.5em;
-       margin: 2rem 0;
-       overflow-x: auto;
-     }
-
-     code {
-       padding: 0 0.25em;
-       background-color: var(--src-bg-color);
-     }
-
-     .todo, .done {
-       font-family: 'JetBrains Mono', monospace;
-       font-weight: bold;
-       color: var(--article-bg-color);
-       font-size: 0.7em;
-       padding: 0.1em 0.2em;
-       border-radius: 2px;
-       margin-right: 0.33em;
-       text-decoration: none !important;
-
-       &.TODO {
-         background-color: var(--kw-todo-bg-color);
-       }
-
-       &.DOING {
-         background-color: var(--kw-doing-bg-color);
-       }
-
-       &.DONE {
-         background-color: var(--kw-done-bg-color);
-       }
-
-     }
-
-     a {
-       outline-color: transparent;
-       text-decoration: underline;
-       color: var(--link-color);
-     }
-
-     article {
-       ul, ol {
-         padding-left: 1em;
-         li {
-           unicode-bidi: isolate;
-           margin-bottom: 1rem;
-         }
-         li:last-child {
-           margin-bottom: 0;
-         }
-       }
-     }
-
-
-     table {
-       border-collapse: collapse;
-       width: 100%;
-       margin-block-start: 1em;
-       margin-block-end: 1em;
-     }
-
-     th, td {
-       border: 1px solid var(--table-border-color);
-       padding: 0.5em;
-       text-align: left;
-     }
-
-     th {
-       background-color: var(--table-th-bg-color);
-       font-weight: bold;
-     }
-
-     td.org-left {
-       text-align: left;
-     }
-
-     nav#table-of-contents {
-       margin-left: auto;
-       padding-left: 0.2rem;
-       padding-right: 1rem;
-       width: fit-content;
-       overflow-y: auto;
-       max-height: 80vh;
-       position: sticky;
-       top: 1rem;
-       ul, ol {
-         margin-inline-start: 0px;
-         margin-inline-end: 0px;
-         padding-inline-start: 1em;
-         list-style-type: none;
-       }
-
-       & > h2:first-child {
-         margin-top: 0;
-         font-size: 1rem;
-       }
-
-       #text-table-of-contents > ul:first-child {
-         padding-left: 0;
-       }
-     }
-
-     .c23 {
-       display: flex;
-       flex-direction: column;
-       padding-left: 1rem;
-     }
-
-
-     blockquote {
-       background-color: var(--color-blue-grey-50);
-       border-left: 4px solid var(--color-blue-grey-900);
-       margin: 2rem 0;
-       padding: 1rem 1.5rem;
-       font-style: italic;
-       color: var(--color-blue-grey-900);
-       border-radius: 2px;
-     }
-
-     :root {
-       --color-beige: #fbf7f0;
-       --color-black: #000000;
-
-       --color-blue-warmer: #3546c2;
-
-       --color-white: #FFFFFF;
-       --color-blue-900: #0D47A1;
-       --color-blue-grey-100: #CFD8DC;
-       --color-blue-grey-50: #ECEFF1;
-       --color-blue-grey-900: #263238;
-       --color-green-900: #1B5E20;
-       --color-green-300: #81C784;
-       --color-indigo-50: #E8EAF6;
-       --color-indigo-900: #1A237E;
-       --color-orange-50: #FFF3E0;
-       --color-orange-900: #E65100;
-       --color-red-50: #FFEBEE;
-       --color-red-300: #E57373;
-       --color-red-900: #B71C1C;
-     }
-
-     :root {
-       --article-bg-color: var(--color-beige);
-       --article-text-color: var(--color-black);
-
-       --link-color: var(--color-blue-warmer);
-
-       --src-bg-color: var(--color-orange-50);
-       --src-border-color: var(--color-orange-900);
-       --src-text-color: var(--article-text-color);
-
-       --kw-todo-bg-color: var(--color-red-900);
-       --kw-doing-bg-color: var(--color-orange-900);
-       --kw-done-bg-color: var(--color-green-900);
-       --kw-text-color: var(--article-white);
-
-       --table-th-bg-color: var(--color-blue-grey-100);
-       --table-border-color: var(--color-blue-grey-900);
-
-       --border-color: var(--color-blue-grey-900);
-
-       --topnav-bg-color: var(--article-white);
-     }
-
-     /* --- Responsive layout for mobile --- */
-     @media (max-width: 1100px) {
-       html {
-         font-size: 14px;
-       }
-
-       body {
-         display: flex;
-         flex-direction: column;
-         max-width: 85ch;
-         margin: auto;
-       }
-
-       main {
-         flex: 1;
-       }
-
-       .c11,
-       .c13,
-       .c21,
-       .c23 {
-         display: none;
-       }
-
-       .c12 {
-         background-color: var(--article-bg-color);
-       }
-
-       header.c12,
-       main.c22 {
-         width: 100%;
-         grid-area: unset;
-       }
-
-       header.c12 {
-         padding: 0 1rem;
-       }
-
-       article {
-         padding: 1rem;
-         border-radius: 0;
-         border-left: none;
-         border-right: none;
-       }
-
-       .top-nav ul {
-         justify-content: center;
-         gap: 1em;
-       }
-     }
-
     </style>
   </head>
   <body>
     <div class="c11"></div>
-
     <header class="c12">
       <nav class="top-nav">
         <ul>
-          <li class="link"><a href="/">About</a></li>
-          <li class="link"><a href="/articles">Articles</a></li>
+          <div class="left">
+            <li class="link"><a href="/">About</a></li>
+            <li class="link"><a href="/articles">Articles</a></li>
+          </div>
+          <div class="right">
+            <li class="link"><a href="#" role="button" id="qa-Btn">Q&A</a></li>
+          </div>
         </ul>
       </nav>
     </header>
@@ -398,7 +37,22 @@
     <aside id="c21" class="c21"></aside>
 
     <main class="c22">
-      <article>
+      <div id="reviewer" class="reviewer">
+        <div class="question">
+          <div class="content"></div>
+          <div class="buttons">
+            <button class="reveal">Reveal</button>
+            <button class="stop">Stop</button>
+          </div>
+        </div>
+        <div class="answer">
+          <div class="content"></div>
+          <div class="buttons">
+            <button class="next">Next</button>
+          </div>
+        </div>
+      </div>
+      <article id="article">
         __BODY__
       </article>
     </main>
@@ -406,91 +60,5 @@
     <aside id="c23" class="c23">
       <span id="license">License: <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a></span>
     </aside>
-
-    <script>
-     // Given a variable x, is_string(x) = true iif x is a string.
-     const is_string = (x) => typeof x === 'string';
-
-     // Given a variable x, is_undefined(x) = true iif x is undefined.
-     const is_undefined = (x) => x === undefined;
-
-     // Given a string s, error(s) raises an exception with the message s.
-     const error = function(s) { if (is_string(s)) { throw Error(s); } else { error(`s is not a string. s = ${s}`) } }
-
-     // Given a variable x, string_check(x) raise an exception iif x is not a string.
-     const string_check = (x) => !is_string(x) && error(`x is not a String. x = ${x}`)
-
-     // Given a string s, by_id(s) : HTMLElement | undefined.
-     // by_id(s) is the unique HTMLElement in the page such that its id is s.
-     const by_id = function(id) {
-       string_check(id)
-       const els = document.querySelectorAll(`#${id}`)
-       if (els.length !== 1) { return undefined; }
-       return els.item(0)
-     }
-
-     // is_html_element(x) = true iif x is an HTMLElement
-     const is_html_element = (x) => x instanceof HTMLElement;
-
-     // Given a variable x, html_element_check(x) raise an exception iif x is not a HTMLElement.
-     const html_element_check = (x) => !is_html_element(x) && error(`x is not a HTMLElement. x = ${x}`)
-
-     // TOC :≡ HTMLElement such that its id is "table-of-contents".
-     // toc_mk() : TOC | undefined
-     const toc_mk = () => by_id('table-of-contents')
-
-     // Status :≡ HTMLElement such that its id is "status".
-     // status_mk() : Status | undefined
-     const status_mk = () => by_id('status')
-
-     // C21 :≡ HTMLElement such that its id is "c21".
-     // c21_mk() : C21 | undefined
-     const c21_mk = () => by_id('c21')
-
-     // el_mk(), place_mk() : HTMLElement | undefined
-     // after el_is_placed(el_mk place_mk), el_mk() is placed in place_mk().
-     const el_is_placed = function(el_mk,place_mk) {
-       const el = el_mk()
-       if (is_undefined(el)) { return undefined; }
-       html_element_check(el)
-       const place = place_mk()
-       if (is_undefined(place)) { return undefined; }
-       html_element_check(place)
-       place.appendChild(el);
-     }
-
-     // after toc_is_placed(), the TOC is located inside c21.
-     const toc_is_placed = () => el_is_placed(toc_mk,c21_mk)
-
-     // LastEdit :≡ HTMLElement such that its id is "last-edit".
-     // last_edit_mk() : C21 | undefined
-     const last_edit_mk = () => by_id('last-edit')
-
-     // C23 :≡ HTMLElement such that its id is "c23".
-     // c23_mk() : C23 | undefined
-     const c23_mk = () => by_id('c23')
-
-     // after last_edit_is_placed(), the LastEdit is located inside c23.
-     const last_edit_is_placed = () => el_is_placed(last_edit_mk,c23_mk)
-
-     // after status_is_placed(), the Status is located inside c23.
-     const status_is_placed = () => el_is_placed(status_mk,c23_mk)
-
-     // after dom_is_ready(), the DOM does not need to change.
-     const dom_is_ready = function() {
-       toc_is_placed()
-       last_edit_is_placed()
-       status_is_placed()
-     }
-     document.addEventListener('DOMContentLoaded', dom_is_ready);
-
-     // after body_is_visible(), the content is ready for the user to be viewed.
-     const body_is_visible = function() {
-       document.body.classList.add('loaded');
-     }
-     window.addEventListener('load', function (_event) {
-       body_is_visible()
-     });
-    </script>
   </body>
 </html>

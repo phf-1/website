@@ -24,7 +24,7 @@
   (Path#directory-check dir)
   (let* ((path (Path#join dir "article.html"))
          (mtime (Path#mtime path))
-         (layout (call-with-input-file path get-string-all)))
+         (layout (Path#string path)))
     `(,dir ,path ,mtime ,layout)))
 
 (define (tx state msg)
@@ -33,7 +33,7 @@
       (#:update
        (list
         #t
-        (list dir path (Path#mtime path) (call-with-input-file path get-string-all))
+        (list dir path (Path#mtime path) (Path#string path))
         tx))
 
       (`(#:bvector ,str)

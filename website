@@ -187,6 +187,14 @@ def context():
     dir_check(scheme_dir)
     os.environ["GUILE_LOAD_PATH"] = str(scheme_dir)
 
+    js_dir = Path.cwd() / "js"
+    dir_check(js_dir)
+    os.environ["WEBSITE_JS"] = str(js_dir)
+
+    css_dir = Path.cwd() / "css"
+    dir_check(css_dir)
+    os.environ["WEBSITE_CSS"] = str(css_dir)
+
     content_dir = Path.cwd().parent / "content"
     dir_check(content_dir)
     os.environ["WEBSITE_CONTENT"] = str(content_dir)
@@ -288,7 +296,7 @@ def dist():
     temp_dir = tempfile.mkdtemp()
     temp_archive = Path(temp_dir) / archive_stem
     temp_archive.mkdir(parents=True)
-    items = ["bin", "scheme", "config", "bash", "website.service", "website"]
+    items = ["bin", "scheme", "config", "bash", "website.service", "website", "js", "css"]
     for item in items:
         src = Path(item)
         if src.exists():
@@ -375,6 +383,28 @@ def deploy(ip, user, group):
             "--delete",
             "layout/",
             f"root@{ip}:/var/www/website/layout/",
+        ],
+        check=True,
+    )
+
+    subprocess.run(
+        [
+            "rsync",
+            "-az",
+            "--delete",
+            "js/",
+            f"root@{ip}:/var/www/website/js/",
+        ],
+        check=True,
+    )
+
+    subprocess.run(
+        [
+            "rsync",
+            "-az",
+            "--delete",
+            "css/",
+            f"root@{ip}:/var/www/website/css/",
         ],
         check=True,
     )

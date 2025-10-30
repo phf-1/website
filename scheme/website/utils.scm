@@ -8,7 +8,8 @@
 ;;;;;;;;;;;;;
 
 (use-modules (ice-9 format)
-             (ice-9 pretty-print))
+             (ice-9 pretty-print)
+             (website string))
 
 (define-macro (pvar var)
   (let* ((name (symbol->string var))

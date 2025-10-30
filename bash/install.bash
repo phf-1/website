@@ -64,10 +64,12 @@ user_and_group_exist() {
 }
 
 install_dir_has_been_built() {
-    mkdir -p "$INSTALL_DIR"/{bin,scheme,layout}
+    mkdir -p "$INSTALL_DIR"/{bin,scheme,layout,js,css}
     cp -r ./bin/* "$INSTALL_DIR/bin/"
     cp -r ./scheme/* "$INSTALL_DIR/scheme/"
     cp -r ./layout/* "$INSTALL_DIR/layout/"
+    cp -r ./js/* "$INSTALL_DIR/js/"
+    cp -r ./css/* "$INSTALL_DIR/css/"
     find "$INSTALL_DIR" -type d -exec chmod 755 {} \;
     find "$INSTALL_DIR" -type f -exec chmod 644 {} \;
     chmod 755 "$INSTALL_DIR/bin/website"

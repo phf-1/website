@@ -126,7 +126,7 @@ this pattern: #+STATUS: value. Return the string value if any or #f."
            (org-path (Path#join dir "article.org"))
            (data-path (Path#join dir "data"))
            (private? (string= second-to-last "private"))
-           (org-txt (call-with-input-file org-path get-string-all))
+           (org-txt (Path#string org-path))
            (last-edit (string->epoch org-txt))
            (status (string->status org-txt))
            (org (Text#mk "article.org" (string->utf8 org-txt)))
@@ -141,7 +141,7 @@ this pattern: #+STATUS: value. Return the string value if any or #f."
                  (epoch->html last-edit)
                  (status->html status)
                  (title title-str)
-                 (call-with-input-file html-path get-string-all))))))
+                 (Path#string html-path))))))
            (datas (if (file-exists? data-path)
                       (filter-map
                        (lambda (filename)

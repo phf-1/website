@@ -18,6 +18,8 @@ Environment=WEBSITE_LOGIN=__WEBSITE_LOGIN__
 Environment=WEBSITE_PASSWORD=__WEBSITE_PASSWORD__
 Environment=WEBSITE_LAYOUT=__WEBSITE_LAYOUT__
 Environment=WEBSITE_CONTENT=__WEBSITE_CONTENT__
+Environment=WEBSITE_JS=__WEBSITE_JS__
+Environment=WEBSITE_CSS=__WEBSITE_CSS__
 Environment=WEBSITE_ENV="prod"
 ExecStart=__INSTALL_DIR__/bin/website
 Restart=on-failure

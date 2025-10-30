@@ -18,6 +18,8 @@ function service_is_active() {
     sed -i "s|__WEBSITE_GROUP__|$WEBSITE_GROUP|" "$SERVICE_DIR/$SERVICE_FILE"
     sed -i "s|__WEBSITE_IP__|$WEBSITE_IP|" "$SERVICE_DIR/$SERVICE_FILE"
     sed -i "s|__WEBSITE_PORT__|$WEBSITE_PORT|" "$SERVICE_DIR/$SERVICE_FILE"
+    sed -i "s|__WEBSITE_JS__|$WEBSITE_JS|" "$SERVICE_DIR/$SERVICE_FILE"
+    sed -i "s|__WEBSITE_CSS__|$WEBSITE_CSS|" "$SERVICE_DIR/$SERVICE_FILE"
 
     # Values taken from the local environment.
     source "$HOME/website_env"
@@ -25,7 +27,7 @@ function service_is_active() {
     sed -i "s|__WEBSITE_PASSWORD__|$WEBSITE_PASSWORD|" "$SERVICE_DIR/$SERVICE_FILE"
     sed -i "s|__WEBSITE_CONTENT__|$WEBSITE_CONTENT|" "$SERVICE_DIR/$SERVICE_FILE"
     sed -i "s|__WEBSITE_LAYOUT__|$WEBSITE_LAYOUT|" "$SERVICE_DIR/$SERVICE_FILE"
-    
+
     chown root:root "$SERVICE_DIR/$SERVICE_FILE"
     chmod 644 "$SERVICE_DIR/$SERVICE_FILE"
     systemctl daemon-reload

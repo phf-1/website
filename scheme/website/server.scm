@@ -38,8 +38,8 @@
              #f)))
         (else #f))))
 
-(define (params->handler env content layout login password)
-  (define website (Website#mk env content layout login password))
+(define (params->handler env content layout login password js-dir css-dir)
+  (define website (Website#mk env content layout login password js-dir css-dir))
   (lambda (request _request-body)
     (let ((verb (request-method request))
           (path (split-and-decode-uri-path (uri-path (request-uri request))))
@@ -50,6 +50,9 @@
                 (match path
                   ('("hello")
                    (Website#hello website))
+
+                  (`("static" ,name)
+                   (Website#static website name))
 
                   (`("article" ,id "html")
                    (Website#article website identity id #:html))
@@ -74,8 +77,8 @@
                 (Website#404 website)))
       (values (Reply#response reply) (Reply#content reply)))))
 
-(define (Server#mk env ip port content layout login password)
-  (let ((handler (params->handler env content layout login password)))
+(define (Server#mk env ip port content layout login password js-dir css-dir)
+  (let ((handler (params->handler env content layout login password js-dir css-dir)))
     (run-server handler
                 'http
                 `(#:addr ,(inet-pton AF_INET ip)

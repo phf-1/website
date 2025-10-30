@@ -23,10 +23,10 @@
      `(,(or (getenv "WEBSITE_PORT") "3000") ,state ,tx))
 
     (#:content
-     `(,(getenv "WEBSITE_CONTENT") ,state ,tx))      
+     `(,(getenv "WEBSITE_CONTENT") ,state ,tx))
 
     (#:layout
-     `(,(getenv "WEBSITE_LAYOUT") ,state ,tx))      
+     `(,(getenv "WEBSITE_LAYOUT") ,state ,tx))
 
     (#:env
      `(,(getenv "WEBSITE_ENV") ,state ,tx))
@@ -35,7 +35,13 @@
      `(,(getenv "WEBSITE_LOGIN") ,state ,tx))
 
     (#:password
-     `(,(getenv "WEBSITE_PASSWORD") ,state ,tx))      
+     `(,(getenv "WEBSITE_PASSWORD") ,state ,tx))
+
+    (#:js
+     `(,(getenv "WEBSITE_JS") ,state ,tx))
+
+    (#:css
+     `(,(getenv "WEBSITE_CSS") ,state ,tx))
 
     (_
      (raise-exception (format #f "Unexpected message. msg = ~a" msg)))))
@@ -63,6 +69,12 @@
 (define (Conf#password conf)
   (Actor#send conf #:password))
 
+(define (Conf#js conf)
+  (Actor#send conf #:js))
+
+(define (Conf#css conf)
+  (Actor#send conf #:css))
+
 (define (Conf#repr conf)
   (Actor#send conf #:repr))
 
@@ -74,7 +86,9 @@
         Conf#ip
         Conf#port
         Conf#content
-        Conf#layout        
+        Conf#layout
         Conf#env
         Conf#login
-        Conf#password)
+        Conf#password
+        Conf#js
+        Conf#css)

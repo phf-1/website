@@ -23,6 +23,7 @@
              (website header)
              (website html)
              (website layout)
+             (website static)
              (website identity)
              (website jpeg)
              (website list)
@@ -30,6 +31,8 @@
              (website pdf)
              (website reply)
              (website string)
+             (website js)
+             (website css)
              (website text)
              (website verb))
 
@@ -77,25 +80,47 @@
 
 (define (init data)
   (match data
-    (`(,env ,content ,layout-dir ,login ,password)
+    (`(,env ,content ,layout-dir ,login ,password ,js-dir ,css-dir)
      (display "TODO: check env\n")
      (Path#directory-check content)
      (Path#directory-check layout-dir)
+     (Path#directory-check js-dir)
+     (Path#directory-check css-dir)
      (String#check login)
      (String#check password)
 
      (let* ((layout (Layout#mk layout-dir))
             (db (Db#mk (contentdirectory->articles content layout) layout))
-            (identity (Identity#mk login password)))
-       `(,db ,identity ,layout)))
+            (identity (Identity#mk login password))
+            (static (Static#mk)))
+       (Static#index static js-dir)
+       (Static#index static css-dir)
+       `(,db ,identity ,layout ,static)))
     (_
      (raise-exception (format #f "Unexpected data. data = ~a" data)))))
 
 (define (tx state message)
-  (match-let ((`(,db ,expected-identity ,layout) state))
+  (match-let ((`(,db ,expected-identity ,layout ,static) state))
     (match message
       (#:hello
        `(,Reply#hello ,state ,tx))
+
+      (`(#:static ,name)
+       (let ((reply #f))
+         (set! reply
+               (match (Static#get static name)
+                 (#f Reply#404)
+                 ((? Js#? js)
+                  (Reply#mk
+                   (build-response #:code 200 #:headers (Header#for #:js))
+                   (Js#bvector js)))
+                 ((? Css#? css)
+                  (Reply#mk
+                   (build-response #:code 200 #:headers (Header#for #:css))
+                   (Css#bvector css)))
+                 (resource
+                  (raise-exception (format #f "Unexpected resource. resource = ~a" resource)))))
+         `(,reply ,state ,tx)))
 
       (#:x404
        `(,Reply#404 ,state ,tx))
@@ -156,8 +181,8 @@
 
 (define mk (Actor#mk init tx))
 
-(define (Website#mk env content layout login password)
-  (mk `(,env ,content ,layout ,login ,password)))
+(define (Website#mk env content layout login password js-dir css-dir)
+  (mk `(,env ,content ,layout ,login ,password ,js-dir ,css-dir)))
 
 (define (Website#hello website)
   (Actor#send website #:hello))
@@ -167,6 +192,9 @@
 
 (define (Website#article website identity id type)
   (Actor#send website `(#:article ,identity ,id ,type)))
+
+(define (Website#static website name)
+  (Actor#send website `(#:static ,name)))
 
 (define (Website#index website)
   (Actor#send website #:index))
@@ -181,6 +209,7 @@
 (export Website#mk
         Website#hello
         Website#article
+        Website#static
         Website#resource
         Website#index
         Website#404)

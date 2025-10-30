@@ -1,4 +1,5 @@
 * DONE Index of articles generated & deployed
+* TODO localstorage
 * TODO Python has been replaced by Guile
 * TODO Bash has been replaced by Guile
 * TODO WEBSITE_ENV is used

@@ -9,7 +9,9 @@
 
 (use-modules (ice-9 match)
              (srfi srfi-1)
-             (srfi srfi-13))
+             (srfi srfi-13)
+             (ice-9 textual-ports)
+             (rnrs bytevectors))
 
 (define (Path#components path)
   (string-split path #\/))
@@ -36,7 +38,13 @@
          (dot-pos (string-rindex name #\.)))
     (if dot-pos
         (string-drop name (+ dot-pos 1))
-        #f)))
+        "")))
+
+(define (Path#string path)
+  (call-with-input-file path get-string-all))
+
+(define (Path#utf8 path)
+  (string->utf8 (Path#string path)))
 
 ;;;;;;;;;;;;;;;
 ;; Interface ;;
@@ -45,6 +53,8 @@
 (export Path#components
         Path#extension
         Path#mtime
+        Path#utf8
+        Path#string
         Path#directory-check
         Path#regular-check
         Path#join)

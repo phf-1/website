@@ -115,6 +115,17 @@ article#id() = id, else nothing. In addition, db#article("index") is an article
 computed from articles which represents the index of the articles. db#article("1") is
 the article that serves as the landing page.
 
+* Static
+:PROPERTIES:
+:TYPE: ca53237e-a27a-40d0-aeae-5d4bf4fd4e2f
+:ID: 7dcb4d1b-7881-4834-af1b-ce581461a56f
+:END:
+
+static :≡ Static#mk() is an actor such that Static#index(static dir) indexes all
+files under the directory path dir. If a file — /e.g./ dir/master.js — has been
+indexed, then Static#get(static master.js) returns the appropriate resource, else:
+#f. An exception is raised in case of name conflicts.
+
 * LayoutDirectory
 
 A LayoutDirectory is a path to a directory with the following structure:
@@ -182,8 +193,9 @@ Reply#404. website#article(identity id :html) is a reply built from the
 article#html(), provided article ∈ db and article#id() = id ; else: Reply#404. A
 challenge (Basic Auth) might be replied if necessary. website#article(identity id
 :org) is similar. website#index() is like website#article(nothing "index"
-:html). Finally, website#resource(identity id resource-id) replies
-article#data(resource-id) if any, or Reply#404.
+:html). website#resource(identity id resource-id) replies article#data(resource-id)
+if any, or Reply#404. website#static(name) replies with a satic resource named name
+if any, alse: Reply#404.
 
 * Conf
 :PROPERTIES:
@@ -233,6 +245,8 @@ browser can expect the following protocol to be satisfied:
 | GET auth /articles          | website#index()                  |
 | GET auth /                  | website#article(auth "1" :html)  |
 | GET auth /id                | website#resource(auth "1" id)    |
+| GET _    /static/name.js    | website#static(name.js)          |
+| GET _    /static/name.css   | website#static(name.css)         |
 | _                           | website#404()                    |
 |-----------------------------+----------------------------------|
 

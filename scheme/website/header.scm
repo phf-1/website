@@ -15,10 +15,16 @@
     (#:text '((content-type . (text/plain (charset . "utf-8")))))
     (#:jpeg '((content-type . (image/jpeg))))
     (#:html '((content-type . (text/html (charset . "utf-8")))))
-    (#:pdf '((content-type . (application/pdf))))
+    (#:pdf  '((content-type . (application/pdf))))
     (#:auth '((www-authenticate . ((basic (realm . "private"))))
               (content-type . (text/plain (charset . "utf-8")))))
-    (_ (raise-exception (format #f "Unexpected type. type = ~a" type)))))
+    (#:js   '((content-type . (application/javascript (charset . "utf-8")))))
+    (#:css  '((content-type . (text/css (charset . "utf-8")))))
+    (_ (raise-exception
+        (make-exception
+         (make-format-exception)
+         (make-irritants-condition (list type))))
+       (format #f "Unexpected header type: ~a" type))))
 
 ;;;;;;;;;;;;;;;
 ;; Interface ;;
