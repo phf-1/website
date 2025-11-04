@@ -1,11 +1,20 @@
-* DONE Index of articles generated & deployed
-* TODO localstorage
+* TODO Exercises are discussion subjects
+
+Each exercise may be subject to discussions. They have a "discuss" button that
+pre-fills an email, ready to be updated and sent. As a result, the recipient of the
+message may respond. In this sense, the "exercise" answers back and may be error-
+corrected or improved.
+
+* TODO Data collected and stored in the browser.
+
+When a user reviews an exercise, they may rate their own performance. The generated data
+is stored in their browser and never transmitted to the server or anyone else.
+
+* TODO Review algorithms execute in the browser.
+
+The exercise scheduling algorithm uses the stored data to schedule exercises and maximize
+learning efficiency.
+
 * TODO Python has been replaced by Guile
 * TODO Bash has been replaced by Guile
-* TODO WEBSITE_ENV is used
-Depending on the value, articles and layout should be cached for performance reasons
-or re-read from disk for a live content editing property.
-
-* TODO The development process is documented
-* TODO Clean-up the code
-* TODO Add tests
+* TODO Clean up the code
