@@ -5,6 +5,12 @@ pre-fills an email, ready to be updated and sent. As a result, the recipient of 
 message may respond. In this sense, the "exercise" answers back and may be error-
 corrected or improved.
 
+* TODO development mode is implemented
+
+By "development mode" we mean that after ~./website dev~, all source code changes are
+reflected in the browser. For instance, if =master.js= is updated, then the browser
+reloads.
+
 * TODO Data collected and stored in the browser.
 
 When a user reviews an exercise, they may rate their own performance. The generated data
