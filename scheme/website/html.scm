@@ -1,3 +1,8 @@
+;; This Source Code Form is subject to the terms of the Mozilla Public
+;; License, v. 2.0. If a copy of the MPL was not distributed with this
+;; file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+
 ;; :REF: ca53237e-a27a-40d0-aeae-5d4bf4fd4e2f
 ;; :ID: a29c5dd3-ada2-4323-a3ae-5176762c86b0
 

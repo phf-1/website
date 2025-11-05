@@ -1,3 +1,8 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+
 ////////
 // :≡ //
 ////////
@@ -157,8 +162,9 @@ const DomEl = {
     // current document that has the appropriate id, otherwise: undefined.
     find_by_id: function(id) {
         Str.check(id)
-        const result = document.getElementById(id)
-        if (Null.is(result)) { return undefined; }
+        const results = document.querySelectorAll(`#${id}`)
+        if (results.length !== 1) { return undefined; }
+        const result = results.item(0)
         DomEl.check(result)
         return result
     }

@@ -1,6 +1,11 @@
 #!/usr/bin/env guile
 !#
 
+;; This Source Code Form is subject to the terms of the Mozilla Public
+;; License, v. 2.0. If a copy of the MPL was not distributed with this
+;; file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+
 ;; :REF: d7f8a08a-98fd-4086-af4e-dd4e2b1fa68a
 ;; :ID: 9df53885-56eb-45a0-839f-0ff6913a49e7
 
