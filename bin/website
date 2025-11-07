@@ -33,4 +33,5 @@
            (Conf#login conf)
            (Conf#password conf)
            (Conf#js conf)
-           (Conf#css conf))
+           (Conf#css conf)
+           (Conf#db conf))

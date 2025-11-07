@@ -14,7 +14,8 @@
 
 (use-modules (ice-9 match)
              (srfi srfi-1)
-             (website actor))
+             (website actor)
+             (website path))
 
 (define (init _data)
   #f)
@@ -48,6 +49,20 @@
     (#:css
      `(,(getenv "WEBSITE_CSS") ,state ,tx))
 
+    (#:db
+     (let* ((name "WEBSITE_DB")
+            (p (getenv name)))
+       (with-exception-handler
+           (lambda (ex)
+             (display (format #f "$~a is not a regular file." name))
+             (newline)
+             ;; TODO: (raise-exception ex)
+             `(,p ,state ,tx))
+         (lambda ()
+           (Path#regular-check p)
+           `(,p ,state ,tx))
+         #:unwind? #t)))
+
     (_
      (raise-exception (format #f "Unexpected message. msg = ~a" msg)))))
 
@@ -80,6 +95,9 @@
 (define (Conf#css conf)
   (Actor#send conf #:css))
 
+(define (Conf#db conf)
+  (Actor#send conf #:db))
+
 (define (Conf#repr conf)
   (Actor#send conf #:repr))
 
@@ -96,4 +114,5 @@
         Conf#login
         Conf#password
         Conf#js
-        Conf#css)
+        Conf#css
+        Conf#db)

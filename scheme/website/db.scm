@@ -42,7 +42,7 @@
 
 (define mk (Actor#mk init tx))
 
-(define (Db#mk articles layout)
+(define (Db#mk articles layout _db-path)
   (mk `(,articles ,layout)))
 
 (define (Db#article db id)

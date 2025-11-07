@@ -46,6 +46,11 @@
    (build-response #:code 404 #:headers (Header#for #:text))
    (string->utf8 "No content available.")))
 
+(define Reply#500
+  (Reply#mk
+   (build-response #:code 500 #:headers (Header#for #:text))
+   (string->utf8 "Server error.")))
+
 (define Reply#hello
   (Reply#mk
    (build-response #:code 200 #:headers (Header#for #:text))

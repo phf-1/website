@@ -16,6 +16,7 @@
              (srfi srfi-1))
 
 (define Verb#get 'GET)
+(define Verb#post 'POST)
 (define (Verb#= v1 v2) (eq? v1 v2))
 (define Verb `(,Verb#get))
 (define (Verb#? x) (member x Verb))
@@ -29,6 +30,7 @@
 
 (export Verb#mk
         Verb#get
+        Verb#post
         Verb#?
         Verb#=
         Verb#get?

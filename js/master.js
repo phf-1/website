@@ -565,6 +565,20 @@ const Logger = (function(){
 })()
 
 
+//////////
+// Sink //
+//////////
+
+// A sink is an actor which objective is to provide actors that do… nothing. They are
+// useful as placeholders in order to "neutralize" actions of actors in construction.
+
+const Sink = (function(){
+    const init = (_data) => undefined
+    const tx = (state, _msg, _self) => ['ok',state, tx]
+    return Actor.mk(init, tx)
+})()
+
+
 /////////
 // Toc //
 /////////
@@ -714,7 +728,8 @@ const QaBtn = (function(){
         return next_tx(state,msg,self)
     }
 
-    return Actor.mk(init, tx)
+    // return Actor.mk(init, tx)
+    return Sink
 })();
 
 
@@ -762,6 +777,13 @@ const Reviewer = (function(){
         const next = root.querySelector('.next')
         DomEl.check(next)
 
+        const discuss = root.querySelector('.discuss')
+        DomEl.check(discuss)
+
+        const discussion = root.querySelector('.discussion')
+        DomEl.check(discussion)
+
+
         const observers = new Set();
 
         const all_qa = list_all_qa()
@@ -793,16 +815,32 @@ const Reviewer = (function(){
             next,
             observers,
             all_qa,
-            qa_iter
+            qa_iter,
+            discuss,
+            discussion
         };
     }
 
     const tx = function(state,msg,self) {
-        const { reveal, stop, next, observers } = state
+        const { reveal, stop, next, observers, discuss, discussion } = state
 
         reveal.addEventListener("click", (evt) => { evt.preventDefault(); RevealM.send(self); });
         stop.addEventListener("click", (evt) => { evt.preventDefault(); StopM.send(self,self); });
         next.addEventListener("click", (evt) => { evt.preventDefault(); NextM.send(self); });
+        discuss.addEventListener("click", (evt) => { evt.preventDefault(); discussion.style.display = 'flex'; });
+        discussion.addEventListener("submit", (evt) => {
+            evt.preventDefault();
+            const form = evt.target;
+            const formData = new FormData(form);
+            const data = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams(new FormData(form))
+            }
+            const action = form.action || window.location.href
+            fetch(action, data);
+            NextM.send(self);
+        });
 
         const signal_observers = function(msg) {
             observers.forEach((actor) => Actor.send(actor,msg))
@@ -840,6 +878,7 @@ const Reviewer = (function(){
                 question.classList.remove(hidden);
                 answer.classList.add(hidden);
                 set_content(qa_iter.next())
+                discussion.style.display = 'none';
                 return ['ok', state, next_tx]
             }
 
@@ -870,7 +909,8 @@ const Reviewer = (function(){
         return next_tx(state,msg,self)
     }
 
-    return Actor.mk(init, tx)
+    // return Actor.mk(init, tx)
+    return Sink
 })();
 
 

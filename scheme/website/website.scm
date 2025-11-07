@@ -85,7 +85,7 @@
 
 (define (init data)
   (match data
-    (`(,env ,content ,layout-dir ,login ,password ,js-dir ,css-dir)
+    (`(,env ,content ,layout-dir ,login ,password ,js-dir ,css-dir ,db-path)
      (display "TODO: check env\n")
      (Path#directory-check content)
      (Path#directory-check layout-dir)
@@ -93,9 +93,10 @@
      (Path#directory-check css-dir)
      (String#check login)
      (String#check password)
+     ;; TODO: (Path#regular-check db-path)
 
      (let* ((layout (Layout#mk layout-dir))
-            (db (Db#mk (contentdirectory->articles content layout) layout))
+            (db (Db#mk (contentdirectory->articles content layout) layout db-path))
             (identity (Identity#mk login password))
             (static (Static#mk)))
        (Static#index static js-dir)
@@ -129,6 +130,9 @@
 
       (#:x404
        `(,Reply#404 ,state ,tx))
+
+      (#:x500
+       `(,Reply#500 ,state ,tx))
 
       (#:index
        (tx state '(#:article #f "index" #:html)))
@@ -186,14 +190,17 @@
 
 (define mk (Actor#mk init tx))
 
-(define (Website#mk env content layout login password js-dir css-dir)
-  (mk `(,env ,content ,layout ,login ,password ,js-dir ,css-dir)))
+(define (Website#mk env content layout login password js-dir css-dir db-path)
+  (mk `(,env ,content ,layout ,login ,password ,js-dir ,css-dir ,db-path)))
 
 (define (Website#hello website)
   (Actor#send website #:hello))
 
 (define (Website#404 website)
   (Actor#send website #:x404))
+
+(define (Website#500 website)
+  (Actor#send website #:x500))
 
 (define (Website#article website identity id type)
   (Actor#send website `(#:article ,identity ,id ,type)))
@@ -217,4 +224,5 @@
         Website#static
         Website#resource
         Website#index
-        Website#404)
+        Website#404
+        Website#500)

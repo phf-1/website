@@ -8,4 +8,5 @@
    "guile"
    "guile-json"
    "guile-gcrypt"
+   "guile-sqlite3"
    ))

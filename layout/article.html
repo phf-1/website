@@ -43,7 +43,7 @@
     <aside id="c21" class="c21"></aside>
 
     <main class="c22">
-      <div id="reviewer" class="reviewer">
+      <div id="reviewer" class="reviewer hidden">
         <div class="question">
           <div class="content"></div>
           <div class="buttons">
@@ -51,12 +51,32 @@
             <button class="stop">Stop</button>
           </div>
         </div>
+
         <div class="answer">
           <div class="content"></div>
           <div class="buttons">
             <button class="next">Next</button>
+            <button class="discuss">Discuss</button>
           </div>
         </div>
+
+        <form class="discussion" method="POST">
+          <div class="email">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required placeholder="you@example.com">
+          </div>
+          <div class="content">
+            <label for="content">Content:</label>
+            <textarea
+              id="content"
+              name="content"
+              required
+              placeholder="Enter your text here… (5000 chars max)."
+              maxlength="5000"
+              rows="5"></textarea>
+          </div>
+          <button type="submit">Send</button>
+        </form>
       </div>
       <article id="article">
         __BODY__

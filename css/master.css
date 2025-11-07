@@ -341,6 +341,30 @@ blockquote {
     display: none;
 }
 
+form.discussion {
+    margin: 2rem 0;
+    display: none;
+    flex-direction: column;
+    gap: 1rem;
+
+    .email {
+        display: inherit;
+        flex-direction: inherit;
+    }
+
+    .content {
+        display: inherit;
+        flex-direction: inherit;
+        textarea {
+            margin-bottom: 1rem;
+        }
+    }
+
+    button {
+        align-self: flex-end;
+    }
+}
+
 /* --- Responsive layout for mobile --- */
 @media (max-width: 1100px) {
     html {
