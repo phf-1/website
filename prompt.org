@@ -24,8 +24,7 @@
 
 ** Objective
 
-Write a README for a GitHub repo.
-Make sure that I can either download it or copy/paste it.
+Fix test/server.scm
 
 ** Context
 *** Error                                                          :noexport:

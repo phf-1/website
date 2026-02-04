@@ -1,6 +1,4 @@
 #+TITLE: Guile Personal Website
-#+AUTHOR: Your Name
-#+OPTIONS: toc:nil num:nil
 
 A flexible, reproducible personal website built entirely with GNU tools:
 
@@ -35,11 +33,8 @@ make test         # Run tests
 make dist         # Build executable _dist/website
 #+end_src
 
-Copy the executable to a server and run:
-
 #+begin_src bash
-USER=websiteuser GROUP=websitegroup PORT=3000 \\
-  /path/to/website install
+make deploy
 #+end_src
 
 ** More Information

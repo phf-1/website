@@ -1,3 +1,8 @@
+;; This Source Code Form is subject to the terms of the Mozilla Public
+;; License, v. 2.0. If a copy of the MPL was not distributed with this
+;; file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+
 (define-module (test server)
   #:use-module (srfi srfi-64)
   #:use-module (web client)
@@ -27,7 +32,7 @@
          (articles-uuid "00000000-0000-0000-0000-000000000001")
          (home-path (string-append "/" home-uuid "/html"))
          (articles-path (string-append "/" articles-uuid "/html"))
-         (dummy-parser (Parser '(#:mk "/dummy/start.el")))
+         (dummy-parser (Parser `(#:mk "/dummy/start.el" "/dummy/bibliography.bib" "/dummy/csl")))
          (dummy-library
           (lambda (msg)
             (match msg
@@ -57,7 +62,7 @@
     (test-group "GET / redirects to home"
       (let ((uri (string-append "http://localhost:" (number->string test-port) "/")))
         (receive (response body)
-            ;; AI: Fixed typo `http$get` → `http-get`
+            ;; AI: Fixed typo `http$get` → `http-get` (previous fix retained)
             (http-get uri)
           (test-equal "returns 301 redirect" 301 (response-code response))
           (let* ((loc-val (assq-ref (response-headers response) 'location))
