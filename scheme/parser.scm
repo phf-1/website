@@ -62,9 +62,10 @@
 
          (`(#:binary-type ,ext)
           (match ext
-            ("png" '#:png)
-            ((or "jpg" "jpeg") '#:jpg)
-            ("pdf" '#:pdf)
+            ("png" #:png)
+            ((or "jpg" "jpeg") #:jpg)
+            ("pdf" #:pdf)
+            ("woff2" #:woff2)
             (_ (error (format #f "unexpected extension ~a" ext)))))
 
          (_

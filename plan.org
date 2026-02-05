@@ -72,6 +72,24 @@ f90b80b2-ff5e-4ee5-bcf8-cb8d775e99bd      # mandatory
 #+end_example
 
 * Iterations
+** DONE 22
+:PROPERTIES:
+:TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
+:END:
+:LOGBOOK:
+CLOCK: [2026-02-05 Thu 18:26]--[2026-02-05 Thu 20:05] =>  1:39
+:END:
+
+*** Objective
+
+- Self host fonts.
+- Update publications
+
+*** Result
+
+- Self hosted fonts.
+- Publications updated.
+
 ** DONE 21
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration

@@ -24,18 +24,236 @@
 
 ** Objective
 
-The returned HTML should be hidden by default. Then, after load, it is shown to avoid
-flickering when images arrive for example. Replace the "// TODO" so that this
-behavior is implemented. Maybe rely on CSS as it is likely a better solution. The
-place where the implementation happens looks like:
-
-#+begin_src typescript
-if (msg instanceof Show) {
-  // TODO
-}
-#+end_src
+Given the "File content" sections, re-write the "Article" as if you were its
+author. Keep what can be kept. Update the content to reflect the evolution of the
+website implementation. Preserve the Org Mode markup. Return the whole result in a
+code block.
 
 ** Context
+*** Article
+
+#+begin_src org
+,#+ID: f53944a6-90dc-4519-9a6e-4ded5910e4d0
+,#+TITLE: Designing This Website
+,#+DATE: 2025-10-28
+,#+CITE_EXPORT: csl
+
+,* Introduction
+
+The Guix package manager[cite:@guix] is a handy tool for building reproducible
+development environments. It allows team members to work within the same context,
+avoiding inconsistencies. As a deployment tool, it ensures that exactly what is
+shipped is known, reducing security risks[cite:@guix_8fb8]. To use Guix effectively,
+one must understand some Guile Scheme[cite:@guile]. Let’s design a simple website and
+implement it in Guile.
+
+,* Objective
+
+The software is considered successful if:
+- It is written in Guile Scheme.
+- Writing and publishing content is efficient.
+- Some content is protected by authentication.
+- Content is legible on desktop and mobile.
+- The software is flexible[cite:@sussman_flexible].
+
+,* Solution
+
+The implementation is available at: https://github.com/phf-1/website/tree/master
+
+,* Writing Content Efficiently
+
+Website content consists of articles. An article is an HTML file with related
+resources, such as images. To write an article, create a directory with the following
+structure:
+
+,#+begin_src text
+…/(public|private)/id
+├── article.org
+└── resource
+    ├── …
+    └── ….(jpeg|html|pdf|txt)
+,#+end_src
+
+In other words, writing an article means editing an =article.org= file — a plain text
+file written in Org Mode[cite:@orgmode]. Thanks to Emacs[cite:@gnu_emacs], a single
+command converts Org Mode content into HTML. This makes content creation extremely
+efficient. As others have said: “always bet on text.”[cite:@graydon_text]
+
+,* Publishing Content Efficiently
+
+A simple command, =./website deploy=, is enough to deploy the site to a server in
+seconds.
+
+,* Legibility on Desktop and Mobile
+
+The design is intentionally minimal. If you have suggestions to improve legibility,
+feel free to contact me.
+
+,* Private and Public Content
+
+If an article directory ends in =private/id=, it is protected with Basic Auth. If it
+ends in =public/id=, it is accessible to everyone. This lightweight protection is
+sufficient for the current use case.
+
+,* Software Flexibility
+
+As stated in *Software Design for Flexibility*[cite:@sussman_flexible]:
+
+,#+begin_quote
+A software system is flexible if it can be easily adapted to new requirements.
+,#+end_quote
+
+A way to implement a flexible software system is:
+
+,#+begin_quote
+Mix and match parts that can be combined with combinators and generalized with wrappers.
+,#+end_quote
+
+We use *actors* for parts, /i.e./ small software components that can be seen as
+independent computers that can only do things by being sent messages. The entire
+program is a network of these actors. So, when requirements change, we can:
+
+- Rewire the network of actors;
+- Teach actors new messages;
+- Add new actors;
+- Or use a combination of the above.
+
+To test flexibility, we will need to document a requirement change and its
+implementation impact. If a small change requires a complete rewrite, it fails the
+test. So far, here how it works:
+
+,#+begin_src org
+1) The server (some machine in the cloud) listens on ports 443 and 80
+   through NGINX.
+
+2) An HTTP request (req) is received by the server from a browser.
+
+3) NGINX forwards req to a Guile web server.
+
+4) The Guile web server forwards the request to our website
+   implementation.
+
+5) If req has unexpected parameters, a 404 response is sent.
+
+6) If req has expected parameters, it is translated into a message.
+
+7) The message is matched to an article resource if it exists;
+   otherwise, a 404 is returned.
+
+8) The resource is sent back to the browser.
+,#+end_src
+
+,* A status value has been added to articles
+
+While drafting the idea of an [[href:/article/7/html][exovaloric]] contribution model, it became clear that a
+status metadata as described in the C4 model[cite:@hintjens_c4] was needed. Adding
+this metadata implied modifying the implementation as documented by the following
+commit:
+
+[[https://github.com/phf-1/website/commit/4616d7237f2a6a17e7b67ac86cd5edb592a76346][4616d723]]
+
+Since the commit involved adding a couple of lines and a few minutes, so far, the
+flexibility objective is satisfied.
+
+,* Result
+
+While still a draft, the solution meets most objectives except for testing
+flexibility. The actor model suggests that flexibility should be achievable.
+
+,* Conclusion
+
+Here we are: we have built a website in Guile while illustrating various principles
+along the way, mainly flexibility and the actor model. There is still work to be done
+to make the implementation more elegant, but it is functional. To test flexibility,
+we will have to document the consequences of a requirement change on the
+implementation. So far, the flexibility property has not been proven invalid.
+
+,* Annex
+,** Actor
+
+We use a minimal version of the [[href:/article/6/html][Actor Model]] to [[https://github.com/phf-1/website][implement]] the website in Guile. An
+,*init function* creates an actor’s initial state:
+
+,#+begin_src text
+Init :≡ Any → State
+,#+end_src
+
+This means =Init= is the type of functions that, from any value (=Any=), build a state
+(=State=). A *transition function* handles messages and updates the actor’s state:
+
+,#+begin_src text
+Tx :≡ State Message → Reply × State × Tx
+,#+end_src
+
+An actor in Guile is a procedure defined by its init and transition functions:
+=Actor(init tx)=, where =init : Init= and =tx : Tx=.
+
+To build such an actor, we define =Actor#mk=:
+
+,#+begin_src text
+Actor#mk init tx :≡
+  λdata.
+    state :≡ init data
+    λmessage.
+      reply state tx :≡ tx state message
+      reply
+,#+end_src
+
+Sending a message to an actor is defined as:
+
+,#+begin_src text
+Actor#send actor message :≡ actor message
+,#+end_src
+
+For instance, here is a clock defined in Guile:
+
+,#+begin_src scheme
+;; Internals
+
+(define (init time)
+  "Given a time : ℕ, (init time) :≡ time
+is the initial state of the clock."
+
+  time)
+
+(define (tx time message)
+  "Given the current time, if message = #:incr
+then the time of the clock is increased by 1;
+if the message is #:read, then the clock returns
+its current time."
+
+  (match message
+    (#:incr `(#t ,(+ time 1) ,tx))
+    (#:read `(,time ,time ,tx))))
+
+;; Interface
+
+(define Clock#mk (Actor#mk init tx))
+
+(define (Clock#incr clock)
+  "Helper that sends the message #:incr to the clock."
+
+  (Actor#send clock #:incr))
+
+(define (Clock#read clock)
+  "Helper that sends the message #:read to the clock."
+
+  (Actor#send clock #:read))
+,#+end_src
+
+Usage example:
+
+,#+begin_src scheme
+(define clock (Clock#mk 0))
+(test-assert "Clock#read" (eqv? (Clock#read clock) 0))
+(test-assert "Clock#incr" (Clock#incr clock))
+(test-assert "Clock#read" (eqv? (Clock#read clock) 1))
+,#+end_src
+,** Bibliography
+
+,#+print_bibliography:
+#+end_src
+
 *** Error                                                          :noexport:
 
 #+begin_example
@@ -75,13 +293,11 @@ tree --gitignore
 *** File content
 
 #+begin_src bash
-for file in $(fd -t f -E "*.png" -E "*.jpg" -E "*.jpeg" -E "*.pdf" . ./); do
-  if [[ ! "$file" == "./prompt.org" && ! "$file" == "./plan.org" ]]; then
-    echo "<content file=$file>"
-    cat "$file"
-    echo "</content>"
-    echo ""
-  fi
+for file in $(fd -t f -E "*.png" -E "*.jpg" -E "*.jpeg" -E "*.pdf" -E "*.woff2" -E "*.bib" -E "*.csl" -E "*.org" -E "LICENSE" . ./); do
+  echo "<content file=$file>"
+  cat "$file"
+  echo "</content>"
+  echo ""
 done
 #+end_src
 

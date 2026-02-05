@@ -53,6 +53,7 @@
               (#:pdf '(application/pdf))
               (#:png '(image/png))
               (#:jpg '(image/jpeg))
+              (#:woff2 '(font/woff2))
               (_ '(application/octet-stream)))))
        (values
         (build-response

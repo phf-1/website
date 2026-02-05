@@ -4,6 +4,25 @@
 #+CITE_EXPORT: csl
 #+STATUS: draft
 
+* Abstract
+
+This article presents a lightweight implementation of the actor model in JavaScript,
+designed for client-side web applications despite the language’s single-threaded
+event loop. The implementation emphasizes the core actor principles—private state,
+asynchronous message passing, and immutability—while providing strong local reasoning
+guarantees through runtime invariant checks, explicitly typed immutable messages, and
+a simple Maybe type for safe optional values.
+
+The core Actor class processes messages sequentially, supports fire-and-forget signal
+broadcasting via a built-in pub/sub mechanism, and enables encapsulated DOM
+manipulation without shared mutable state. Concrete examples include a global logger,
+table-of-contents integration, and dynamic page assembly. The actor system running
+this very page serves as a live demonstration.
+
+The design shows that the intellectual benefits of the actor model—modularity,
+composability, and reasoning about concurrency—are readily achievable in everyday
+JavaScript development, even without true parallelism or distributed workers.
+
 * Introduction
 
 An actor has an address and maintains private state through its behavior. In response
@@ -36,7 +55,7 @@ ideas, with minimal code snippets to illustrate each concept. The design is deli
 lightweight: it embraces actor principles (encapsulation, message-passing, immutability)
 while working within JavaScript’s single-threaded event loop.
 
-** Runtime Invariant Checks
+* Runtime Invariant Checks
 
 Robustness starts with explicit runtime checks. Rather than rely on TypeScript’s
 static types alone (which are erased at runtime), I introduce a ~Check~ facility
@@ -67,7 +86,7 @@ Check.Actor = Check.mk((x) => x instanceof Actor, 'not an Actor')
 
 Checks are used throughout to guard constructors and message handlers.
 
-** Immutable, Typed Messages
+* Immutable, Typed Messages
 
 Messages are the only way actors communicate. They must be immutable and carry
 explicit type information to enable safe pattern-matching.
@@ -119,7 +138,7 @@ const Subscribe = define_message_class('Subscribe', Check.Actor);
 Each message type is its own class, enabling ~instanceof~ dispatch and guaranteeing
 immutability (no setters).
 
-** Optional Values with Maybe
+* Optional Values with Maybe
 
 To avoid ~null~/~undefined~ pitfalls, I use a simple ~Maybe~ type:
 
@@ -139,7 +158,7 @@ const Maybe = {
 
 Signals (broadcasts) use ~Just(Message)~ or ~Nothing~.
 
-** The Core Actor
+* The Core Actor
 
 The heart of the system is the ~Actor~ class. An actor holds private state and a
 transition function ~tx~. Its address is the object reference itself.
@@ -180,7 +199,7 @@ class Actor {
 Note the sequential processing (one message at a time per actor when awaited) and
 fire-and-forget broadcasting for lightweight concurrency.
 
-** A Logging Actor
+* A Logging Actor
 
 A simple example: a global logger.
 
@@ -206,7 +225,7 @@ class Logger extends Actor {
 const logger = Logger.mk();
 #+end_src
 
-** DOM Element Actors
+* DOM Element Actors
 
 Actors that wrap specific page elements:
 
@@ -245,7 +264,7 @@ class Cell extends Actor {
 
 These provide safe, encapsulated access to the DOM.
 
-** Page Coordination
+* Page Coordination
 
 The ~Article~ actor assembles the page on load:
 
