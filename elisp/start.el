@@ -3,19 +3,11 @@
 ;; file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 
-;;;;;;;;;;;;;;;;;;;
-;; Specification ;;
-;;;;;;;;;;;;;;;;;;;
-;;
 ;; [[id:e6d438cd-85c0-40d1-a2db-3101fdbe2c12]]
 ;;
-;; Given that this file is evaluated by Emacs, then executing (start) makes Emacs
-;; wait for content from stdin. After receiving org formatted text data, then HTML
-;; is sent to stdout.
-
-;;;;;;;;;;;;;;;;;;;;
-;; Implementation ;;
-;;;;;;;;;;;;;;;;;;;;
+;;   Given that this file is evaluated by Emacs, then executing (start) makes Emacs
+;;   wait for content from stdin. After receiving org formatted text data, then HTML
+;;   is sent to stdout.
 
 (require 'org)
 (require 'ox)
@@ -50,8 +42,12 @@
         (error nil))
       (insert stdin-content))
     (org-mode)
-    (org-html-export-as-html nil nil nil t)
-    (princ (buffer-string))))
+    (let ((title (org-get-title)))
+      (org-html-export-as-html nil nil nil t)
+      (when title
+        (goto-char (point-min))
+        (insert (format "<h1>%s</h1>" title)))
+      (princ (buffer-string)))))
 
 
 ;; TODO: print

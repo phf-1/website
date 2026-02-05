@@ -30,27 +30,27 @@ ExoCode should:
 ExoCode is the process used by this project to update its code. When in doubt, refer
 to the C4.1 process[cite:@hintjens_c4].
 
-** License
+* License
 
 The project uses a share-alike license such as:
 - MPLv2[cite:@mplv2]
 - LGPLv3[cite:@lgplv3]
 - GPLv3[cite:@gplv3]
 
-** Platform
+* Platform
 
 The /platform/ is where the code is hosted — e.g. github.com, codeberg.org.
 
-** Issue
+* Issue
 
 An issue is created using the platform’s issue tracker. It consists of an assertion
 and a predicate that must be true for a patch to be considered a solution.
 
-** Patch
+* Patch
 
 A patch is a Git commit containing data intended to be added to the project.
 
-** Valid patch
+* Valid patch
 
 A valid patch is a patch such that it:
 - Solves one issue.
@@ -70,7 +70,7 @@ A valid patch is a patch such that it:
 
 [fn:393a]: https://rfc.zeromq.org/spec/44/#26-evolution-of-public-contracts
 
-** Contributor
+* Contributor
 
 From a contributor’s point of view — /i.e./ someone who wishes to submit a patch to the
 project — the process is:
@@ -83,7 +83,7 @@ project — the process is:
 6) Submit a pull request.
 7) After the pull request is merged by a maintainer, close the issue.
 
-** Maintainer
+* Maintainer
 
 From a maintainer’s point of view — /i.e./ someone who reviews and merges patches — the
 process is:
@@ -96,7 +96,7 @@ process is:
    - or reject the pull request.
 5) If the patch is valid, merge it into the "master" branch.
 
-** Administrator
+* Administrator
 
 From an administrator’s point of view — /i.e./ someone who manages maintainers — the
 process is:
@@ -105,7 +105,7 @@ process is:
 2) Remove inactive maintainers.
 3) Ban "bad actors" after public discussion.
 
-** Founder
+* Founder
 
 From a founder’s point of view — /i.e./ someone who created the project and/or is its
 moral owner — the process is:

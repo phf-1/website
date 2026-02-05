@@ -3,20 +3,12 @@
 ;; file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 
-;;;;;;;;;;;;;;;;;;;
-;; Specification ;;
-;;;;;;;;;;;;;;;;;;;
-;;
 ;; [[id:f4b947d7-9ed1-4d43-9841-f041c761d58a]]
 ;;
 ;; Given Publication, then Library<Publication> :≡ Library#mk(Publication) allows to
 ;; build collections of publications called libraries. Given dir : LibraryDir, then
 ;; library :≡ Library<Publication>#mk(dir) represents the collections of
 ;; publications encoded in dir. Notably, library adds an index of publictions.
-
-;;;;;;;;;;;;;;;;;;;;
-;; Implementation ;;
-;;;;;;;;;;;;;;;;;;;;
 
 (define-module (library)
   #:use-module (ice-9 match)
@@ -38,7 +30,7 @@
    "#+ID: " index-uuid "\n"
    "#+TITLE: Articles\n"
    "\n"
-   "* Articles\n"
+   "* List\n"
    "\n"
    (string-join (map publication->href publications) "\n")
    "\n"))
