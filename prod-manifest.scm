@@ -12,6 +12,8 @@
      "guile-uuid"
      "bash-minimal"
      "make"
+     "fd"
+     "coreutils-minimal"
      "emacs"
      "emacs-citeproc"
      "emacs-htmlize")))

@@ -8,13 +8,11 @@
   (concatenate-manifests
    (list prod-manifest
          (specifications->manifest
-          '("coreutils-minimal"
-            "git"
+          '("git"
             "tar"
             "zstd"
             "gawk"
             "tree"
-            "fd"
             "sed"
             "openssh-sans-x")))))
 

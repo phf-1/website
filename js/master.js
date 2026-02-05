@@ -1,992 +1,541 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+/**
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
 
 
-////////
-// :≡ //
-////////
+/**
+ * A Check is a function Any → Undefined such that if a value x does not verify some
+ * invariant, then an error is raised.
+ *
+ * For instance, given point : Check, then point(x) = undefined means that x is a
+ * point /i.e./ has been built using a Point constructor.
+ *
+ * [[id:fb8e2f12-4097-4490-93e9-439d2da24b17]]
+ */
+class Check {
+  static mk(pred, msg) { return new Check(pred, msg); }
 
-// The expression `x :≡ y' means that whenever one reads `x', then he could as well
-// have been reading `y'. In other words, `x' is a name for `y'. For instance, after
-// reading `add :≡ λx.x+1', one might understand the expression `add(1)' as
-// `λx.x+1(1)', which, applying the lambda calculous, means `2' after reduction.
-
-
-//////////
-// Type //
-//////////
-
-// When we say `type' we mean a set of values that satisfy some invariant. To define
-// a type we define algorithms to build and use instances. For instance, to define
-// the type `Point', we define:
-//
-//   Point#mk : Int Int → Point :≡ λx,y.Point#mk(x y)
-//   Point#elim : (Int Int → C) → Point → C :≡ λf,Point#mk(x y).f(x y)
-//
-// Then, given `p : Point :≡ Point#mk(1 2)', we may define
-//
-//   Point#x : Point → Int :≡ Point#elim(λx,y.x)
-//
-// So that `Point#x(p) = 1'.
-//
-// We call `Interface' the algorithms used to build and use a given type an
-// `Implementation' whatever choice has been made to represent instances of this
-// type.
-//
-// For instance, the interface of Point is Point#mk, Point#elim and Point#x so far
-// but we may implement these in different ways. In JavaScript, we may choose one of:
-//
-//   const Point.mk = (x,y) => ({ x, y })
-//   const Point.elim = (f) => (point) => f(point.x,point.y)
-//
-//   const Point.mk = (x,y) => ([ x, y ])
-//   const Point.elim = (f) => (point) => f(point[0],point[1])
-//
-// or something else. What matters is to use the interface, so that flexibility is
-// allowed in the implementation.
-
-
-/////////
-// Err //
-/////////
-
-// When an invariant is violated in the current program, an error is built in the
-// hope that some other program corrects it, else the current program stops
-// explaining to the developper why it stopped i.e. which invariant was violated,
-// stack trace and so on.
-
-const Err = {
-    // Given any : Any, Error#mk(s) builds and throw an error.  It can conveniently be
-    // used within expressions of the form: cond() || Err.mk(s).
-    mk(any) { throw Error(any); },
-
-    // Given `func() : X', `alternative : Y → Z', then `func()' throws an error, we have:
-    // `Error#attempt(func alternative) :≡ alternative(err)' where `err' is the error
-    // value that has been caught, else `Error#attempt(func alternative) :≡ func()',
-    // while avoiding the try/catch syntax.
-    attempt(func, alternative) { try { return func(); } catch(error) { return alternative(error); } }
-}
-
-
-/////////////////
-// PlainObject //
-/////////////////
-
-// Most values are Objects, but we want to be able to distinguish a more coherent
-// subset. We call these PlainObject. There are three ways to build a PlainObject:
-//
-// - {}
-// - new Object()
-// - Object.create(null)
-
-const PlainObject = {
-    // Given x, PlainObject#is(x) = true iff x : PlainObject
-    is: (x) => Object.prototype.toString.call(x) === '[object Object]',
-
-    // Given a variable x, PlainObject#check(x) raises an exception iff x is not a PlainObject.
-    check: (x) => PlainObject.is(x) || Err.mk(`x is not a PlainObject. x = ${x}.`)
-}
-
-
-////////////
-// String //
-////////////
-
-// Utility functions around String.
-
-const Str = {
-    // Given x, String#is(x) = true iff x : String
-    is: (x) => typeof x === 'string',
-
-    // Given a variable x, String#check(x) raise an exception iff x is not a string.
-    check: (x) => Str.is(x) || Err.mk(`x is not a String. x = ${x}.`)
-}
-
-
-/////////////
-// Integer //
-/////////////
-
-// Utility functions around Integer.
-
-const Integer = {
-    // Given x, Integer#is(x) = true iff x : Integer
-    is: (x) => Number.isInteger(x),
-
-    // Given a variable x, Integer#check(x) raise an exception iff x is not a integer.
-    check: (x) => Integer.is(x) || Err.mk(`x is not a Integer. x = ${x}.`)
-}
-
-
-//////////
-// Null //
-//////////
-
-// We do not use null an use undefined instead. We still have to know when a value is
-// null because of external API for instance.
-
-const Null = {
-    // Given x, Null#is(x) = true iff x : Null
-    is: (x) => x === null
-}
-
-
-///////////////
-// Undefined //
-///////////////
-
-// By now, most things should be obvious.
-
-const Undefined = {
-    // Given x, Undefined#is(x) = true iff x : Undefined
-    is: (x) => x === undefined,
-
-    // Given a variable x, Undefined#check(x) raise an exception iff x is not a undefined.
-    check: (x) => Undefined.is(x) || Err.mk(`x is not a Undefined. x = ${x}`)
-}
-
-
-///////////
-// DomEl //
-///////////
-
-const DomEl = {
-    // Given x, DomEl#is(x) = true iff x : HTMLElement
-    is: (x) => x instanceof HTMLElement,
-
-    // Given a variable x, DomEl#check(x) raises an exception iff x is not a DomEl.
-    check: (x) => DomEl.is(x) || Err.mk(`x is not a DomEl. x = ${x}`),
-
-    // Given a string id, DomEl.find_by_id(id) returns the first DomEl in the
-    // current document that has the appropriate id, otherwise: undefined.
-    find_by_id: function(id) {
-        Str.check(id)
-        const results = document.querySelectorAll(`#${id}`)
-        if (results.length !== 1) { return undefined; }
-        const result = results.item(0)
-        DomEl.check(result)
-        return result
+  #pred; #msg;
+  constructor(pred, msg) {
+    this.#pred = pred
+    this.#msg = msg
+    const callable = (x) => {
+      if(pred(x)) { return undefined; }
+      throw new TypeError(msg + `. x = ${x}`);
     }
+    Object.setPrototypeOf(callable, Check.prototype);
+    return callable
+  }
+
+  get pred() { return this.#pred; }
+  get msg() { return this.#msg; }
+
+  static use(proc) { return (check) => proc(check.pred, check.msg) }
 }
 
-
-////////////
-// Struct //
-////////////
-
-// We need to represent conjunctions of values that satisfy some invariant. For
-// instance, we may need to represent a point `p' such that `p.x' and ̀p.y' are
-// meaninful.
-//
-// We also need the ability to tell if some value is a point or not /i.e./ if it
-// satisfies the defined invariant.
-//
-// We also need to define sub-types for instance to represents points such that
-// `sqrt(p.x^2 + p.y^2) ≤ 1' and call them `DiskPoint'.
-//
-// The `Struct' construct satisfy these conditions: it allows to define types of
-// conjunction of values and extend them.
-
-class Struct {
-    static mk() { return new Struct(); }
-    static is(x) { return x instanceof Struct; }
-    static check(x) { return Struct.is(x) || Err.mk(`x is not a Struct. x = ${x}`); }
-    static elim(f) { return (struct) => { Struct.check(struct); return f(); }; }
-    toString() { return 'Struct#mk()'; }
-}
+Check.Symbol = Check.mk((x) => typeof x === 'symbol', 'not a Symbol')
+Check.String = Check.mk((x) => typeof x === 'string' || x instanceof String, 'not a String')
+Check.Integer = Check.mk((x) => Number.isInteger(x), 'not a Integer')
+Check.HTMLElement = Check.mk((x) => x instanceof HTMLElement, 'not a HTMLElement')
+Check.Any = Check.mk((_x) => true, '')
+Check.Check = Check.mk((x) => x instanceof Check, 'not a Check')
+Check.Unexpected = Check.mk((_x) => false, 'Unexpected value')
 
 
-///////////
-// Point //
-///////////
+/**
+ * Let I be an invariant. `I(x) = false' means that the invariant I is not satisfied
+ * by x but should be. We want the calling program to be notified of this fact. So,
+ * an Error2 is built and thrown to that end.
+ *
+ * For instance, if I(x) :≡ x > 0 and I(0) is executed, then err : Error2 is built
+ * capturing relevant data and then thrown.
+ *
+ * [[id:2dbe8366-e235-49c8-83b7-ddeb3780b1a5]]
+ */
+class Error2 extends Error {
+  static mk(code, msg, value = undefined) { return new Error2(code, msg, value); }
 
-// We define Point to illustrate how Struct is intended to be used. A Point is a pair
-// of integers, which represent coordinates w.r.t. some reference point.
+  #code; #msg; #value;
+  constructor(code, msg, value = undefined) {
+    Check.Symbol(code)
+    Check.String(msg)
+    Check.Any(value)
+    super(msg);
+    if (Error.captureStackTrace) { Error.captureStackTrace(this, Err); }
+    this.#code = code;
+    this.#msg = msg;
+    this.#value = value;
+  }
 
-class Point extends Struct {
-    constructor(x, y) {
-        super()
-        Integer.check(x)
-        this._x = x
-        Integer.check(y)
-        this._y = y
+  get code()   { return this.#code; }
+  get msg()    { return this.#msg; }
+  get value()  { return this.#value; }
+  get stack()  { return super.stack; }
+
+  static use(proc) {
+    return (err) => {
+      Check.Error2(err)
+      return proc(err.code, err.msg, err.value, err.stack);
     }
+  }
+}
 
-    // Interface
-    static mk(x,y) { return new Point(x,y); }
-    static is(x) { return x instanceof Point; }
-    static check(x) { return Point.is(x) || Err.mk(`x is not a Point. x = ${x}`); }
-    static elim(f) { return (p) => { Point.check(p); return f(p._x,p._y); }; }
-    static x(point) { Point.check(point); return point._x; }
-    static y(point) { Point.check(point); return point._y; }
-    toString() { return `Point#mk(${this._x} ${this._y})`; }
+Check.Error2 = Check.mk((x) => x instanceof Error2, 'Not an Error2')
+
+
+/**
+ * Given id : String, then return the first HTMLElement in the current document or
+ * undefined.
+ *
+ * [[id:24ba1999-b5f5-4581-ad65-57040f553669]]
+ */
+const find_by_id = (id) => {
+  Check.String(id)
+  const results = document.querySelectorAll(`#${id}`)
+  if (results.length !== 1) { return undefined; }
+  const result = results.item(0)
+  Check.HTMLElement(result)
+  return result
 }
 
 
-/////////////
-// Message //
-/////////////
+/**
+ * A Message represents an immutable piece of information sent from one actor to
+ * another.
+ *
+ * For instance, "hello".
+ *
+ * [[id:764ae761-12e0-47c0-a39b-93b02a91b564]]
+ */
+class Message {
+  static mk(code, value = undefined) { return new Message(code, value); }
 
-// A Message is a Struct that represents immutable data that may be exchanged by two
-// programs. If any, it has an arbitrary content.
+  #code; #value;
+  constructor(code, value = undefined) {
+    Check.Symbol(code)
+    Check.Any(value)
+    this.#code = code;
+    this.#value = value;
+  }
 
-class Message extends Struct {
-    constructor(content) {
-        super()
-        this._content = content
+  get code()   { return this.#code; }
+  get value()  { return this.#value; }
+
+  static use(proc) {
+    return (message) => {
+      Check.Message(message)
+      return proc(message.code, message.value);
     }
-
-    // Interface
-    static mk(content) { return new Message(content); }
-    static is(x) { return x instanceof Message; }
-    static check(x) { return Message.is(x) || Err.mk(`x is not a Message. x = ${x}`); }
-    static elim(f) { return (m) => { Message.check(m); return f(m._content); }; }
-    static content(msg) { Message.check(msg); return msg._content; }
-    toString() { return `Message(${this._content})`; }
+  }
 }
 
+Check.Message = Check.mk((x) => x instanceof Message, 'Not a Message')
 
-///////////
-// Actor //
-///////////
+const define_message_class = (name, valueChecker = null) => {
+  const code = Symbol(name);
 
-// An actor may be thought of as a program with which communication only occurs by
-// sending an receiving messages to it. An actor may be used to model some UI
-// component that has a state and react to user inputs.
+  class M extends Message {
+    static #code = code;
 
-// A actor is defined by an init function that builds it initial state. We write:
-// init : Init and Init :≡ Data → State where Data and State are abitrary
-// types. Then, after receiving a message, it computes its reply, next state and
-// designate how it will handle the next message using a transition function. We
-// write: tx : Tx and Tx :≡ State Message Self → Reply × State × Tx. Finally, an
-// actor is build using Actor#mk : Init Tx → Type as follows:
-//
-// Actor(init tx)#mk :≡
-//   λdata.
-//     state :≡ init data
-//     self :≡
-//       λmsg.
-//         reply state tx :≡ tx state msg self
-//         reply
-//     self
+    constructor(value = undefined) {
+      if (valueChecker) valueChecker(value);
+      super(code, value);
+    }
+  }
 
+  if (valueChecker) {
+    M.mk = (value) => new M(value);
+  } else {
+    M.mk = () => new M();
+  }
+
+  Check[name] = Check.mk(x => x instanceof M, `Not a ${name}`);
+  return M;
+};
+
+const Ping = define_message_class('Ping');
+const Pong = define_message_class('Pong');
+const Html = define_message_class('Html');
+const Show = define_message_class('Show');
+const Subscribe = define_message_class('Subscribe', Check.Actor);
+const Unsubscribe = define_message_class('Unsubscribe', Check.Actor);
+const Adopt = define_message_class('Adopt', Check.HTMLElement);
+const Warning = define_message_class('Warning', Check.String);
+const Info = define_message_class('Info', Check.String);
+const Debug = define_message_class('Debug', Check.String);
+const ErrorMessage = define_message_class('ErrorMessage', Check.String);
+
+
+/**
+ * A Just represents a present value, wrapping any value to indicate presence.
+ *
+ * For instance, Just("hello") represents the present string "hello".
+ *
+ * [[id:9aae292a-b43b-44d8-a08f-d10d61dbb29e]]
+ */
+class Just {
+  static mk(value) { return new Just(value); }
+
+  #value;
+  constructor(value) {
+    Check.Any(value)
+    this.#value = value;
+  }
+
+  get value() { return this.#value; }
+
+  static use(proc) {
+    return (just) => {
+      Check.Just(just);
+      return proc(just.value);
+    }
+  }
+}
+
+Check.Just = Check.mk((x) => x instanceof Just, 'Not a Just')
+
+
+/**
+ * A Nothing represents the absence of a value.
+ *
+ * For instance, Nothing.mk().
+ *
+ * [[id:08e50354-a62a-4790-9ebb-e076c304b2a1]]
+ */
+class Nothing {
+  static mk() { return new Nothing(); }
+
+  constructor() {}
+
+  static use(constant) {
+    return (nothing) => {
+      Check.Nothing(nothing);
+      return constant;
+    }
+  }
+}
+
+Check.Nothing = Check.mk((x) => x instanceof Nothing, 'Not a Nothing')
+
+
+/**
+ * Maybe is the optional type formed by the union of Nothing and Just(X).
+ *
+ * For instance:
+ *   Maybe.use(0, (v) => v + 10)(Just.mk(5))   // returns 15
+ *   Maybe.use(0, (v) => v + 10)(Nothing.mk()) // returns 0
+ *
+ * [[id:34b6a43b-a408-46f6-a28e-52c70ce66f96]]
+ */
+const Maybe = {
+  use(default_value, proc) {
+    return (maybe) => {
+      Check.Maybe(maybe);
+      if (maybe instanceof Nothing) {
+        return default_value;
+      }
+      return proc(maybe.value);
+    }
+  }
+};
+
+Check.Maybe = Check.mk(
+  (x) => x instanceof Nothing || x instanceof Just,
+  'Not a Maybe'
+);
+
+
+/**
+ * An Actor is a stateful entity that processes messages, updates its state, and may
+ * broadcast a signal to subscribed actors.
+ *
+ * For instance, with an appropriate tx, we may define clock :≡ Actor.mk(0, tx) so
+ * that clock#tick#read = 1.
+ *
+ * [[id:63874e71-cb3e-4445-bc70-f054d347b7a7]]
+ */
 class Actor {
-    // Interface
-    static mk(init,tx) {
+  static mk(state, tx) { return new Actor(state, tx); }
 
-        const ActorType = class extends Actor {
-            constructor(data) {
-                super()
-                this._state = init(data)
-                this._tx = tx
-            }
+  #state;
+  #tx;
+  #subscribers = new Set();
 
-            // Interface
-            static init() { return init; }
-            static tx() { return tx; }
-            static mk(data) { return new ActorType(data); }
-            static is(x) { return x instanceof ActorType; }
-            static check(x) { return ActorType.is(x) || Err.mk(`x is not a ActorType. x = ${x}`); }
-            rcv (message) {
-                Message.check(message)
-                const [reply, next_state, next_tx] = this._tx(this._state, message, this)
-                this._state = next_state
-                this._tx = next_tx
-                return reply
-            }
-            toString() {
-                // TODO: would it be possible to have the names of init and tx?
-                return 'Actor#mk(init tx)'
-            }
-        }
+  constructor(state, tx) {
+    Check.Any(state);
+    Check.Any(tx);
+    this.#state = state;
+    this.#tx = tx;
+  }
 
-        return ActorType
+  async rcv(msg) {
+    Check.Message(msg);
+
+    if (msg instanceof Ping) { return Pong.mk(); }
+    if (msg instanceof Subscribe) { this.#subscribers.add(msg.value); return this; }
+    if (msg instanceof Unsubscribe) { this.#subscribers.delete(msg.value); return this; }
+
+    const [reply, next_state, signal] = await this.#tx(this.#state, msg);
+    this.#state = next_state;
+
+    if (signal instanceof Just) {
+      const broadcast_msg = signal.value;
+      for (const sub of this.#subscribers) { sub.rcv(broadcast_msg); }
     }
-    static is(x) { return x instanceof Actor; }
-    static check(x) { return Actor.is(x) || Err.mk(`x is not a Actor. x = ${x}`); }
-    static send(actor, msg) { Actor.check(actor); Message.check(msg); return actor.rcv(msg); }
-    static send_async(actor, msg) { return Promise.resolve().then(() => Actor.send(actor,msg)); }
+
+    return reply;
+  }
+
+  static use(msg) {
+    return (actor) => {
+      Check.Actor(actor);
+      return actor.rcv(msg);
+    }
+  }
+
+  subscribe(actor) { return this.rcv(Subscribe.mk(actor)); }
+  unsubscribe(actor) { return this.rcv(Unsubscribe.mk(actor)); }
+}
+
+Check.Actor = Check.mk((x) => x instanceof Actor, 'Not an Actor')
+
+
+/**
+ * A Logger is an actor that logs messages it receives.
+ *
+ * For instance, logger#error("x > 1")
+ *
+ * [[id:cfcb07f8-5390-4c47-9f4e-53554fca76cf]]
+ */
+class Logger extends Actor {
+  static mk() { return new Logger(); }
+
+  constructor() {
+    const nothing = Nothing.mk();
+    const tx = async (state, msg) => {
+      if (msg instanceof Debug) {
+        console.log(`DEBUG | ${msg.value}`);
+      }
+      else if (msg instanceof Info) {
+        console.log(`INFO | ${msg.value}`);
+      }
+      else if (msg instanceof Warning) {
+        console.warn(`WARNING | ${msg.value}`);
+      }
+      else if (msg instanceof ErrorMessage) {
+        console.error(`ERROR | ${msg.value}`);
+      }
+      else {
+        Check.Unexpected(msg);
+      }
+      return [this, state, nothing];
+    }
+    super({}, tx);
+  }
+
+  debug(msg) { return this.rcv(Debug.mk(msg)); }
+  info(msg) { return this.rcv(Info.mk(msg)); }
+  warning(msg) { return this.rcv(Warning.mk(msg)); }
+  error(msg) { return this.rcv(ErrorMessage.mk(msg)); }
 }
 
 
-//////////
-// SubM //
-//////////
+const logger = Logger.mk()
 
-// A SubM, shorthand for SubscriptionMessage, is a Message that contains the address of an
-// actor a1. If an actor a2 receives it, then whenever it emits a message m, it will
-// send m to a1. We say that a1 is a subscriber of a2 and listen to its messages.
 
-class SubM extends Message {
-    constructor(actor) {
-        Actor.check(actor);
-        super(actor);
+/**
+ * A Toc actor manages the table-of-contents HTMLElement and provides access to it.
+ *
+ * For instance, Toc.mk().html() returns the element with id 'table-of-contents'.
+ *
+ * [[id:cb9a99f9-17fa-47d3-9f3b-9191350e11be]]
+ */
+class Toc extends Actor {
+  static mk() { return new Toc(); }
+
+  constructor() {
+    const nothing = Nothing.mk();
+    const result = find_by_id('table-of-contents')
+    Check.HTMLElement(result)
+    const tx = async (state, msg) => {
+      const { html } = state
+      let reply = this;
+      if (msg instanceof Html) { reply = html; }
+      else { Check.Unexpected(msg); }
+      return [reply, state, nothing];
     }
+    super({ html: result }, tx);
+  }
 
-    // Interface
-    static mk(content) { return new SubM(content); }
-    static is(x) { return x instanceof SubM; }
-    static check(x) { return SubM.is(x) || Err.mk(`x is not a SubM. x = ${x}`); }
-    static elim(f) { return (m) => { SubM.check(m); return f(m._content); }; }
-    static content(m) { SubM.check(m); return m._content; }
-    static send(actor1, actor2) { return Actor.send(actor1, SubM.mk(actor2)); }
-    toString() { return `SubM(${this._content})`; }
+  html() { return this.rcv(Html.mk()); }
 }
 
 
-//////////////
-// ElementM //
-//////////////
+/**
+ * A LastEdit actor manages the last-edit HTMLElement (if present) and provides access to it.
+ *
+ * For instance, LastEdit.mk().html() returns the element with id 'last-edit'.
+ *
+ * [[id:2ef2a775-eb16-4b6a-a997-dc54453c4f16]]
+ */
+class LastEdit extends Actor {
+  static mk() { return new LastEdit(); }
 
-// An ElementM is a sub-type of Message. If actor1 sends an ElementM to actor2, then
-// actor1 expects a DOM Element associated with actor2. The content of the message is
-// the address of actor1.
-
-class ElementM extends Message {
-    constructor(actor) {
-        Actor.check(actor);
-        super(actor);
+  constructor() {
+    const nothing = Nothing.mk();
+    const result = find_by_id('last-edit')
+    Check.HTMLElement(result)
+    const tx = async (state, msg) => {
+      const { html } = state
+      let reply = this;
+      if (msg instanceof Html) { reply = html; }
+      else { Check.Unexpected(msg); }
+      return [reply, state, nothing];
     }
+    super({ html: result }, tx);
+  }
 
-    // Interface
-    static mk(content) { return new ElementM(content); }
-    static is(x) { return x instanceof ElementM; }
-    static check(x) { return ElementM.is(x) || Err.mk(`x is not a ElementM. x = ${x}`); }
-    static elim(f) { return (m) => { ElementM.check(m); return f(m._content); }; }
-    static content(m) { ElementM.check(m); return m._content; }
-    static send(actor1) { return Actor.send(actor1, ElementM.mk(actor1)); }
-    toString() { return `ElementM(${this._content})`; }
+  html() { return this.rcv(Html.mk()); }
 }
 
 
-////////////
-// AdoptM //
-////////////
+/**
+ * A Status actor manages the status HTMLElement (if present) and provides access to it.
+ *
+ * For instance, Status.mk().html() returns the element with id 'status'.
+ *
+ * [[id:60b273dc-fe99-4e8b-a6d9-04a85cb771ae]]
+ */
+class Status extends Actor {
+  static mk() { return new Status(); }
 
-// An AdoptM is a sub-type of Message. If actor receives AdoptM#mk(el) where el :
-// HTMLElement, then actor is expected to add el as a child of the DOM it is
-// managing. actor is now the unique owner of el.
-
-class AdoptM extends Message {
-    constructor(el) {
-        DomEl.check(el);
-        super(el);
+  constructor() {
+    const nothing = Nothing.mk();
+    const result = find_by_id('status')
+    Check.HTMLElement(result)
+    const tx = async (state, msg) => {
+      const { html } = state
+      let reply = this;
+      if (msg instanceof Html) { reply = html; }
+      else { Check.Unexpected(msg); }
+      return [reply, state, nothing];
     }
+    super({ html: result }, tx);
+  }
 
-    // Interface
-    static mk(content) { return new AdoptM(content); }
-    static is(x) { return x instanceof AdoptM; }
-    static check(x) { return AdoptM.is(x) || Err.mk(`x is not a AdoptM. x = ${x}`); }
-    static elim(f) { return (m) => { AdoptM.check(m); return f(m._content); }; }
-    static content(m) { AdoptM.check(m); return m._content; }
-    static send(actor1, el) { return Actor.send(actor1, AdoptM.mk(el)); }
-    toString() { return `AdoptM(${this._content})`; }
+  html() { return this.rcv(Html.mk()); }
 }
 
 
-////////////
-// ClickM //
-////////////
+/**
+ * A Cell actor manages a specific HTMLElement by id, allowing child adoption and html queries.
+ *
+ * For instance, Cell.mk('c21').adopt(child) appends the child element.
+ *
+ * [[id:60b273dc-fe99-4e8b-a6d9-04a85cb771ae]]
+ */
+class Cell extends Actor {
+  static mk(id) { return new Cell(id); }
 
-// An ClickM is a sub-type of Message. If actor emits ClickM#mk(actor) then a
-// receiving actor is expected to interpret this message as "actor has been clicked
-// by the user".
-
-class ClickM extends Message {
-    constructor(actor) {
-        Actor.check(actor);
-        super(actor);
+  constructor(id) {
+    Check.String(id)
+    const nothing = Nothing.mk();
+    const result = find_by_id(id)
+    Check.HTMLElement(result)
+    const tx = async (state, msg) => {
+      const { html } = state
+      let reply = this;
+      if (msg instanceof Html) { reply = html; }
+      else if (msg instanceof Adopt) { html.appendChild(msg.value); }
+      else { Check.Unexpected(msg); }
+      return [reply, state, nothing];
     }
+    super({ html: result }, tx);
+  }
 
-    // Interface
-    static mk(content) { return new ClickM(content); }
-    static is(x) { return x instanceof ClickM; }
-    static check(x) { return ClickM.is(x) || Err.mk(`x is not a ClickM. x = ${x}`); }
-    static elim(f) { return (m) => { ClickM.check(m); return f(m._content); }; }
-    static content(m) { ClickM.check(m); return m._content; }
-    static send(actor1, actor2) { return Actor.send(actor1, ClickM.mk(actor2)); }
-    toString() { return `ClickM(${this._content})`; }
+  adopt(html) { return this.rcv(Adopt.mk(html)); }
+  html() { return this.rcv(Html.mk()); }
 }
 
 
-///////////
-// HideM //
-///////////
-
-// A HideM is a sub-type of Message. If an actor receives it, then it is expected to
-// hide the DOM part it owns.
-
-class HideM extends Message {
-    constructor() {
-        super(undefined);
-    }
-
-    // Interface
-    static mk() { return new HideM(); }
-    static is(x) { return x instanceof HideM; }
-    static check(x) { return HideM.is(x) || Err.mk(`x is not a HideM. x = ${x}`); }
-    static elim(f) { return (m) => { HideM.check(m); return f(m._content); }; }
-    static content(m) { HideM.check(m); return m._content; }
-    static send(actor1) { return Actor.send(actor1, HideM.mk()); }
-    toString() { return `HideM(${this._content})`; }
+/**
+ * A C21 actor is the Cell managing the HTMLElement with id 'c21'.
+ *
+ * [[id:b5da62a1-0f66-4d16-9a51-e776b25df269]]
+ */
+class C21 extends Cell {
+  static mk() { return new C21(); }
+  constructor() { super('c21'); }
 }
 
 
-//////////////
-// IsEmptyM //
-//////////////
-
-// A IsEmptyM is a sub-type of Message. If an actor receives it, then it is expected
-// to reply with a boolean indicating if it is empty or not.
-
-class IsEmptyM extends Message {
-    constructor() {
-        super(undefined);
-    }
-
-    // Interface
-    static mk() { return new IsEmptyM(); }
-    static is(x) { return x instanceof IsEmptyM; }
-    static check(x) { return IsEmptyM.is(x) || Err.mk(`x is not a IsEmptyM. x = ${x}`); }
-    static elim(f) { return (m) => { IsEmptyM.check(m); return f(m._content); }; }
-    static content(m) { IsEmptyM.check(m); return m._content; }
-    static send(actor) { return Actor.send(actor, IsEmptyM.mk()); }
-    toString() { return `IsEmptyM(${this._content})`; }
+/**
+ * A C23 actor is the Cell managing the HTMLElement with id 'c23'.
+ *
+ * [[id:d5512f3e-6692-4ac7-abd3-6ab076be3d08]]
+ */
+class C23 extends Cell {
+  static mk() { return new C23(); }
+  constructor() { super('c23'); }
 }
 
+/**
+ * An Article actor coordinates the page layout by placing components (TOC, last-edit, status)
+ * into the appropriate cells and responds to Show messages.
+ *
+ * For instance, await Article.mk() builds the structure, and article.show() activates it on load.
+ *
+ * [[id:2f320f4c-1f91-469a-927f-c74db83851fb]]
+ */
+class Article extends Actor {
+  static async mk() {
+    const nothing = Nothing.mk();
+    const toc = Toc.mk()
+    const html = find_by_id('article')
+    const c21 = C21.mk()
+    const c23 = C23.mk()
+    c21.adopt(await toc.html())
 
-///////////
-// NextM //
-///////////
-
-// A NextM is a sub-type of Message. If an actor receives it, then it is expected to
-// reach a next state.
-
-class NextM extends Message {
-    constructor() {
-        super(undefined);
+    try {
+      const last_edit = LastEdit.mk()
+      c23.adopt(await last_edit.html())
+    }
+    catch(_err) {
+      // ignore
     }
 
-    // Interface
-    static mk() { return new NextM(); }
-    static is(x) { return x instanceof NextM; }
-    static check(x) { return NextM.is(x) || Err.mk(`x is not a NextM. x = ${x}`); }
-    static elim(f) { return (m) => { NextM.check(m); return f(m._content); }; }
-    static content(m) { NextM.check(m); return m._content; }
-    static send(actor) { return Actor.send(actor, NextM.mk()); }
-    toString() { return `NextM(${this._content})`; }
+    try {
+      const status = Status.mk()
+      c23.adopt(await status.html())
+    }
+    catch(_err) {
+      // ignore
+    }
+
+    return new Article();
+  }
+
+  constructor() {
+    const nothing = Nothing.mk();
+    const tx = async (state, msg) => {
+      if (msg instanceof Show) {
+        document.documentElement.classList.remove("loading");
+      }
+      return [this, state, nothing]
+    };
+    super({}, tx);
+  }
+
+  show() { return this.rcv(Show.mk()); }
 }
 
-
-///////////
-// StopM //
-///////////
-
-// A StopM is a sub-type of Message. After receiving this message, an actor is
-// expected to ignore all other messages and free whatever resources it claimed in
-// order to be garbage collected..
-
-class StopM extends Message {
-    constructor(actor) {
-        Actor.check(actor)
-        super(actor);
-    }
-
-    // Interface
-    static mk(actor) { return new StopM(actor); }
-    static is(x) { return x instanceof StopM; }
-    static check(x) { return StopM.is(x) || Err.mk(`x is not a StopM. x = ${x}`); }
-    static elim(f) { return (m) => { StopM.check(m); return f(m._content); }; }
-    static content(m) { StopM.check(m); return m._content; }
-    static send(actor1, actor2) { return Actor.send(actor1, StopM.mk(actor2)); }
-    toString() { return `StopM(${this._content})`; }
-}
-
-
-/////////////
-// RevealM //
-/////////////
-
-// A RevealM is a sub-type of Message. After receiving this message, an actor is
-// expected to make sure that the DOM it owns and was hidden to the user is now
-// visible.
-
-class RevealM extends Message {
-    constructor() {
-        super(undefined);
-    }
-
-    // Interface
-    static mk() { return new RevealM(); }
-    static is(x) { return x instanceof RevealM; }
-    static check(x) { return RevealM.is(x) || Err.mk(`x is not a RevealM. x = ${x}`); }
-    static elim(f) { return (m) => { RevealM.check(m); return f(m._content); }; }
-    static content(m) { RevealM.check(m); return m._content; }
-    static send(actor) { return Actor.send(actor, RevealM.mk()); }
-    toString() { return `RevealM(${this._content})`; }
-}
-
-
-///////////
-// ShowM //
-///////////
-
-// A ShowM is a sub-type of Message. After receiving this message, an actor is
-// expected to make sure that the DOM it visible to the user, even partially.
-
-class ShowM extends Message {
-    constructor() {
-        super(undefined);
-    }
-
-    // Interface
-    static mk() { return new ShowM(); }
-    static is(x) { return x instanceof ShowM; }
-    static check(x) { return ShowM.is(x) || Err.mk(`x is not a ShowM. x = ${x}`); }
-    static elim(f) { return (m) => { ShowM.check(m); return f(m._content); }; }
-    static content(m) { ShowM.check(m); return m._content; }
-    static send(actor) { return Actor.send(actor, ShowM.mk()); }
-    toString() { return `ShowM(${this._content})`; }
-}
-
-
-////////////
-// Logger //
-////////////
-
-// A logger is an actor which objective is to provide a convinient API to log
-// messages for development purposes.
-
-const Logger = (function(){
-    const init = (_data) => undefined
-    const tx = (state, msg, self) => { console.log(msg); return ['ok',state, tx]; }
-    return Actor.mk(init, tx)
-})()
-
-
-//////////
-// Sink //
-//////////
-
-// A sink is an actor which objective is to provide actors that do… nothing. They are
-// useful as placeholders in order to "neutralize" actions of actors in construction.
-
-const Sink = (function(){
-    const init = (_data) => undefined
-    const tx = (state, _msg, _self) => ['ok',state, tx]
-    return Actor.mk(init, tx)
-})()
-
-
-/////////
-// Toc //
-/////////
-
-// A Toc represents the table of content of the current article.
-
-const Toc = (function(){
-    const init = function(_data) {
-        const result = DomEl.find_by_id('table-of-contents')
-        DomEl.check(result)
-        return result
-    }
-
-    const tx = function(state, msg, self) {
-        const html_element = state
-        if (ElementM.is(msg)) { return [html_element, state, tx]; }
-        Err.mk(`Unexpected msg. msg = ${JSON.stringify(msg)}`)
-    }
-
-    return Actor.mk(init, tx)
-})()
-
-
-//////////////
-// LastEdit //
-//////////////
-
-// A LastEdit represents the last time the current article has been edited.
-
-const LastEdit = (function(){
-    const init = function(_data) {
-        const el = DomEl.find_by_id('last-edit')
-        DomEl.check(el)
-        return el
-    }
-
-    const tx = function(state, msg, self) {
-        const html_element = state
-        if (ElementM.is(msg)) { return [html_element, state, tx]; }
-        Err.mk(`Unexpected msg. msg = ${JSON.stringify(msg)}`)
-    }
-
-    return Actor.mk(init, tx)
-})();
-
-
-////////////
-// Status //
-////////////
-
-// A Status represents the status of the current article. The values and meanings are
-// described in the associated HTML link.
-
-const Status = (function(){
-    const init = function(_data) {
-        const el = DomEl.find_by_id('status')
-        DomEl.check(el)
-        return el
-    }
-
-    return Actor.mk(init, LastEdit.tx())
-})();
-
-
-/////////
-// C21 //
-/////////
-
-// An instance of C21 represents the cell row 2 and column 1 of the grid.
-
-const C21 = (function(){
-    const init = function(_data) {
-        const result = DomEl.find_by_id('c21')
-        DomEl.check(result)
-        return result
-    }
-
-    const tx = function(state, msg, self) {
-        const html_element = state
-
-        if (AdoptM.is(msg)) {
-            const el = AdoptM.content(msg)
-            html_element.appendChild(el);
-            return ['ok', state, tx]
-        }
-
-        Err.mk(`Unexpected msg. msg = ${JSON.stringify(msg)}`)
-    }
-
-    return Actor.mk(init, tx)
-})();
-
-
-/////////
-// C23 //
-/////////
-
-// An instance of C23 represents the cell row 2 and column 3 of the grid.
-
-const C23 = (function(){
-    const init = function(_data) {
-        const result = DomEl.find_by_id('c23')
-        DomEl.check(result)
-        return result
-    }
-
-    return Actor.mk(init, C21.tx())
-})();
-
-
-///////////
-// QaBtn //
-///////////
-
-// a QaBtn represents the button on the page which function is to capture an intent
-// of the user. The intent is: "Let me review the exercises of the article".
-
-const QaBtn = (function(){
-    const init = function(_data) {
-        const el = DomEl.find_by_id('qa-Btn')
-        DomEl.check(el)
-        const observers = new Set()
-        return { el, observers }
-    }
-
-    const tx = function(state, msg, self) {
-        const { el, observers } = state
-        const click = ClickM.mk(self)
-        const signal_observers = function() { observers.forEach((actor) => Actor.send(actor,click)); }
-        el.addEventListener('click', (evt) => { evt.preventDefault(); signal_observers(); })
-        const next_tx = function(state, msg, self) {
-            const { el, observers } = state
-
-            if (SubM.is(msg)) {
-                const actor = SubM.content(msg)
-                observers.add(actor)
-                return ['ok', state, next_tx]
-            }
-
-            if (HideM.is(msg)) {
-                el.classList.add('hidden')
-                return ['ok', state, next_tx]
-            }
-
-            Err.mk(`Unexpected msg. msg = ${JSON.stringify(msg)}`)
-        }
-        return next_tx(state,msg,self)
-    }
-
-    // return Actor.mk(init, tx)
-    return Sink
-})();
-
-
-//////////////
-// Reviewer //
-//////////////
-
-// A Reviewer is an actor which objective is to offer for reviewing to the user the
-// exercises found in the current article.
-
-const Reviewer = (function(){
-    const exercise_to_qa = function(node) {
-        const question = node.querySelector('.question');
-        const answer = node.querySelector('.answer');
-        return { question, answer }
-    }
-
-    const list_all_qa = function() {
-        const all_exercises = [...document.querySelectorAll('.exercise')];
-        return all_exercises.map(exercise_to_qa)
-    }
-
-    const init = function(root_id) {
-        const root = DomEl.find_by_id(root_id)
-        DomEl.check(root)
-
-        const question = root.querySelector('.question')
-        DomEl.check(question)
-
-        const question_content = question.querySelector('.content')
-        DomEl.check(question_content)
-
-        const reveal = question.querySelector('.reveal')
-        DomEl.check(reveal)
-
-        const stop = question.querySelector('.stop')
-        DomEl.check(stop)
-
-        const answer = root.querySelector('.answer')
-        DomEl.check(answer)
-
-        const answer_content = answer.querySelector('.content')
-        DomEl.check(answer_content)
-
-        const next = root.querySelector('.next')
-        DomEl.check(next)
-
-        const discuss = root.querySelector('.discuss')
-        DomEl.check(discuss)
-
-        const discussion = root.querySelector('.discussion')
-        DomEl.check(discussion)
-
-
-        const observers = new Set();
-
-        const all_qa = list_all_qa()
-        const qa_iter = all_qa.values()
-        const qa_cursor = qa_iter.next()
-        if (qa_cursor.done) {
-            question_content.replaceChildren("No more questions.")
-            answer_content.replaceChildren("No more answers.")
-        }
-        else {
-            const qa = qa_cursor.value;
-            question_content.replaceChildren(qa.question)
-            answer_content.replaceChildren(qa.answer)
-        }
-
-        const hidden = 'hidden'
-        root.classList.remove(hidden);
-        question.classList.remove(hidden);
-        answer.classList.add(hidden);
-
-        return {
-            root,
-            question,
-            question_content,
-            reveal,
-            stop,
-            answer,
-            answer_content,
-            next,
-            observers,
-            all_qa,
-            qa_iter,
-            discuss,
-            discussion
-        };
-    }
-
-    const tx = function(state,msg,self) {
-        const { reveal, stop, next, observers, discuss, discussion } = state
-
-        reveal.addEventListener("click", (evt) => { evt.preventDefault(); RevealM.send(self); });
-        stop.addEventListener("click", (evt) => { evt.preventDefault(); StopM.send(self,self); });
-        next.addEventListener("click", (evt) => { evt.preventDefault(); NextM.send(self); });
-        discuss.addEventListener("click", (evt) => { evt.preventDefault(); discussion.style.display = 'flex'; });
-        discussion.addEventListener("submit", (evt) => {
-            evt.preventDefault();
-            const form = evt.target;
-            const formData = new FormData(form);
-            const data = {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: new URLSearchParams(new FormData(form))
-            }
-            const action = form.action || window.location.href
-            fetch(action, data);
-            NextM.send(self);
-        });
-
-        const signal_observers = function(msg) {
-            observers.forEach((actor) => Actor.send(actor,msg))
-        }
-
-        const next_tx = function(state,msg,self) {
-            const { root, all_qa, question, answer, question_content, answer_content, qa_iter, observers } = state
-            const hidden = 'hidden'
-            const set_content = function(qa_cursor) {
-                if (qa_cursor.done) {
-                    question_content.replaceChildren("No more questions.")
-                    answer_content.replaceChildren("No more answers.")
-                }
-                else {
-                    const qa = qa_cursor.value;
-                    question_content.replaceChildren(qa.question)
-                    answer_content.replaceChildren(qa.answer)
-                }
-            }
-
-            if (ShowM.is(msg)) {
-                state.qa_iter = all_qa.values()
-                set_content(state.qa_iter.next())
-                root.classList.remove(hidden);
-                return ['ok', state, next_tx]
-            }
-
-            if (HideM.is(msg)) {
-                root.classList.add(hidden);
-                return ['ok', state, next_tx]
-            }
-
-            if (NextM.is(msg)) {
-                root.classList.remove(hidden);
-                question.classList.remove(hidden);
-                answer.classList.add(hidden);
-                set_content(qa_iter.next())
-                discussion.style.display = 'none';
-                return ['ok', state, next_tx]
-            }
-
-            if (RevealM.is(msg)) {
-                root.classList.remove(hidden);
-                question.classList.remove(hidden);
-                answer.classList.remove(hidden);
-                return ['ok', state, next_tx]
-            }
-
-            if (StopM.is(msg)) {
-                signal_observers(StopM.mk(self))
-                return ['ok', state, next_tx]
-            }
-
-            if (IsEmptyM.is(msg)) {
-                return [all_qa.length === 0, state, next_tx]
-            }
-
-            if (SubM.is(msg)) {
-                observers.add(SubM.content(msg))
-                return ['ok', state, next_tx]
-            }
-
-            Err.mk(`Unexpected msg. msg = ${JSON.stringify(msg)}`)
-        }
-
-        return next_tx(state,msg,self)
-    }
-
-    // return Actor.mk(init, tx)
-    return Sink
-})();
-
-
-/////////
-// Dom //
-/////////
-
-// An instance of Dom is an actor that represents the current HTML page.
-
-const Dom = (function(){
-    const init = function(_data) {
-        const toc = Err.attempt(() => Toc.mk(), (_err) => undefined)
-        const status = Err.attempt(() => Status.mk(), (_err) => undefined)
-        const last_edit = Err.attempt(() => LastEdit.mk(), (_err) => undefined)
-        const reviewer = Reviewer.mk('reviewer')
-        const qa = QaBtn.mk()
-        const article = DomEl.find_by_id('article')
-        const c21 = C21.mk()
-        const c23 = C23.mk()
-
-        HideM.send(reviewer)
-        IsEmptyM.send(reviewer) && HideM.send(qa)
-        toc && AdoptM.send(c21,ElementM.send(toc))
-        last_edit && AdoptM.send(c23,ElementM.send(last_edit))
-        status && AdoptM.send(c23,ElementM.send(status))
-
-        return {
-            qa,
-            reviewer,
-            article
-        }
-    }
-
-    const tx = function(state, msg, self) {
-        const { qa, reviewer } = state
-
-        SubM.send(qa, self)
-        SubM.send(reviewer, self)
-
-        const next_tx = function(state, msg, self) {
-            const { qa, article, reviewer } = state
-
-            if (ShowM.is(msg)) {
-                document.body.classList.add('visible');
-                return ['ok', state, next_tx]
-            }
-
-            if (ClickM.is(msg) && ClickM.content(msg) === qa) {
-                article.classList.add('hidden');
-                ShowM.send(reviewer)
-                return ['ok', state, next_tx]
-            }
-
-            if (StopM.is(msg) && StopM.content(msg) === reviewer) {
-                article.classList.remove('hidden');
-                HideM.send(reviewer)
-                return ['ok', state, next_tx]
-            }
-
-            Err.mk(`Unexpected msg. msg = ${JSON.stringify(msg)}`)
-        }
-
-        return next_tx(state,msg,self)
-    }
-
-    return Actor.mk(init, tx)
-
-})();
-
-
-//////////
-// Main //
-//////////
-
+/**
+ * Initializes the Article actor when the DOM is ready and triggers its show action on window load.
+ */
 (function(){
-    let dom = undefined;
-    window.addEventListener('DOMContentLoaded', () => { dom = Dom.mk(); });
-    window.addEventListener('load', () => { ShowM.send(dom); });
+  let article = undefined;
+  window.addEventListener('DOMContentLoaded', async () => { article = await Article.mk() });
+  window.addEventListener('load', () => { article.show(); });
 })();

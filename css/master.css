@@ -1,4 +1,4 @@
-/*
+/**
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
@@ -20,6 +20,14 @@ html {
     font-family: 'Source Sans Pro', sans-serif;
     letter-spacing: 0.01em;
     height: 100%;
+}
+
+/**
+ * Unless all content has been loaded, the page is hidden. After load, it is
+ * shown.
+ */
+html.loading {
+    opacity: 0;
 }
 
 body {

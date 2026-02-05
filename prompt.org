@@ -24,7 +24,16 @@
 
 ** Objective
 
-Fix test/server.scm
+The returned HTML should be hidden by default. Then, after load, it is shown to avoid
+flickering when images arrive for example. Replace the "// TODO" so that this
+behavior is implemented. Maybe rely on CSS as it is likely a better solution. The
+place where the implementation happens looks like:
+
+#+begin_src typescript
+if (msg instanceof Show) {
+  // TODO
+}
+#+end_src
 
 ** Context
 *** Error                                                          :noexport:

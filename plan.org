@@ -72,6 +72,87 @@ f90b80b2-ff5e-4ee5-bcf8-cb8d775e99bd      # mandatory
 #+end_example
 
 * Iterations
+** DONE 20
+:PROPERTIES:
+:TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
+:END:
+:LOGBOOK:
+CLOCK: [2026-02-05 Thu 09:45]--[2026-02-05 Thu 16:00] =>  6:15
+CLOCK: [2026-02-04 Wed 22:09]--[2026-02-05 Thu 01:30] =>  3:21
+:END:
+
+*** Objective
+
+Simplify the JS by a better actor implementation.
+
+*** Result
+
+Refactored js.
+
+*** Log
+
+A type A is a representation of some intuition. For instance, Point (type) represents
+all points (intuition). An single point is represented by a pair of coordinates, x
+and y (intuition). So, we define point : Point :≡ Point#mk(x y) (type
+constructor). point#x :≡ x and point#y :≡ y. The invariant is that all points are a
+pair of coordinates (intuition). In other words Point :≡ X × Y (type). Two points are
+the same if they have the same coordinates (intuition). In other words Point#eq(p1
+p2) :≡ (p1#x = p2#x ∧ p1#y = p2#y) (type). To use a point is to start from a point,
+compute something and get a result (intuition). So, Point#use(proc) :≡ point ↦
+proc(point#x point#y) (type).
+
+So, a type is defined iff the type states what it represents and how to build/use its
+instances. Since types may use other types, they for a partially ordered graph which
+can be topologically sorted into a list: [T1, T2, …, Tn] called the /context/.
+
+A type A can be viewed as a program that provide at least these functionnalities: how
+to build, use, and compare datastructures. It also has documentation that describes
+what it represents. An example may be given to ease the understanding.
+
+#+begin_src typescript
+/**
+ ,* A Check is a function Any → Undefined such that if a value x does not verify some         // what it represents
+ ,* invariant, then an error is raised.
+ ,*
+ ,* For instance, given point : Check, then point(x) = undefined means that x is a            // example
+ ,* point /i.e./ has been built using a Point constructor.
+ ,*
+ ,* [[id:fb8e2f12-4097-4490-93e9-439d2da24b17]]                                               // address
+ ,*/
+class Check {
+  static mk(pred, msg) { return new Check(pred, msg); }                                      // constructor
+
+  #pred; #msg;
+  constructor(pred, msg) {
+    this.#pred = pred
+    this.#msg = msg
+    const callable = (x) => {
+      if(pred(x)) { return undefined; }
+      throw new TypeError(msg + `. x = ${x}`);
+    }
+    Object.setPrototypeOf(callable, Check.prototype);
+    return callable
+  }
+
+  get pred() { return this.#pred; }
+  get msg() { return this.#msg; }
+
+  static use(proc) { return (check) => proc(check.pred, check.msg); }                        // eliminator
+
+  // c1 === c2 is implicit                                                                   // equality
+}
+
+Check.Symbol = Check.mk((x) => typeof x === 'symbol', 'not a Symbol')                        // Symbol : Check
+Check.String = Check.mk((x) => typeof x === 'string' || x instanceof String, 'not a String') // String : Check
+Check.Integer = Check.mk((x) => Number.isInteger(x), 'not a Integer')                        // Integer : Check
+Check.HTMLElement = Check.mk((x) => x instanceof HTMLElement, 'not a HTMLElement')           // HTMLElement : Check
+#+end_src
+
+Since any program can be viewed as an Actor, then mathematical types may be
+represented as actors. For instance, the word =Point= is viewed as the address of the
+actor that represents the Point type. =Point#mk(x y)= is viewed as sending the message
+=mk(x y)= to =Point=. =point#x= is viewed as sending the message =x= to =point=.
+
 ** DONE 19
 SCHEDULED: <2026-02-04 Wed>
 :PROPERTIES:
@@ -84,21 +165,7 @@ CLOCK: [2026-02-04 Wed 10:25]--[2026-02-04 Wed 10:45] =>  0:20
 
 *** Objective
 
-Refactor using the idea that:
-- Type A ~ Actor A
-- A#mk : X Y … → A
-- A#x : A → X
-- …
-- documentation states what it represents.
-- The code may be generated using A.I. from the documentation.
-
-
-Remaining questions:
-- Where are supposed to be stored "morphisms"?
-
-*** Result
-
-- Fixed documentation.
+Documentation of the code is fine.
 
 ** DONE 18
 SCHEDULED: <2026-02-04 Wed>
