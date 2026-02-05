@@ -8,17 +8,12 @@
 ;; file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 
-;;;;;;;;;;;;;;;;;;;
-;; Specification ;;
-;;;;;;;;;;;;;;;;;;;
-;;
-;; [[id:4d45b997-7990-4629-9255-1bd94f14a295]]
-;;
-;; Given port : Port, dir : LibraryDir, then `$0 :start port dir' implies
-;; server#start(port).
-;;
 ;; [[ref:4ee84d7f-12d6-4bcf-a00f-a049631063f1][LibraryDir]]
 ;; [[ref:876d6839-7a43-4215-80f4-459f13c29870][server]]
+;; [[id:4d45b997-7990-4629-9255-1bd94f14a295]]
+;;
+;;   Given port : Port, dir : LibraryDir, then `$0 :start port dir' implies
+;;   server#start(port).
 
 (define root-dir (string-append (dirname (current-filename)) "/.."))
 (add-to-load-path (string-append root-dir "/scheme"))

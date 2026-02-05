@@ -1,0 +1,296 @@
+#+ID: a94d4ca0-9656-4c8d-8bc2-f21a2e9c5d0e
+#+TITLE: Toward a JavaScript actor implementation 
+#+DATE: 2026-02-05
+#+CITE_EXPORT: csl
+#+STATUS: draft
+
+* Introduction
+
+An actor has an address and maintains private state through its behavior. In response
+to receiving a message, it can concurrently: create new actors (obtaining their
+addresses), send messages to addresses it knows, and designate a new behavior to
+handle the next message[cite:@hewitt1977lawsA; @hewitt1977laws]. An actor system is a
+collection of actors that interact exclusively through asynchronous message passing,
+without shared mutable state or explicit locks. Actor systems are computationally
+universal: they can perform any effective (Turing-computable) computation and, due to
+unbounded nondeterminism, express behaviors beyond Turing
+machines[cite:@clinger1981foundations].
+
+This article presents a practical JavaScript implementation of the actor model,
+despite the single-threaded nature of the JavaScript event loop. The benefits of the
+actor model extend beyond true parallelism to its semantics, which support local
+reasoning about concurrent and distributed systems. To facilitate correct reasoning
+and safe distribution, messages are immutable and typed[cite:@agha1986actors;
+@hewitt2010actormodel]. The implementation developed here is used on this very page
+as a running example.
+
+* Objective
+
+Define an actor system used to provide behavior to this very page.
+
+* Implementation
+
+In this section, I present the key parts of the actor system I built for this page.
+The full source is available in the repository, but here I focus on the essential
+ideas, with minimal code snippets to illustrate each concept. The design is deliberately
+lightweight: it embraces actor principles (encapsulation, message-passing, immutability)
+while working within JavaScript’s single-threaded event loop.
+
+** Runtime Invariant Checks
+
+Robustness starts with explicit runtime checks. Rather than rely on TypeScript’s
+static types alone (which are erased at runtime), I introduce a ~Check~ facility
+that throws descriptive errors when invariants fail.
+
+#+begin_src typescript
+class Check {
+  static mk(pred, msg) { return new Check(pred, msg); }
+
+  #pred; #msg;
+  constructor(pred, msg) {
+    this.#pred = pred
+    this.#msg = msg
+    const callable = (x) => {
+      if(pred(x)) { return undefined; }
+      throw new TypeError(msg + `. x = ${x}`);
+    }
+    Object.setPrototypeOf(callable, Check.prototype);
+    return callable
+  }
+}
+
+Check.String = Check.mk((x) => typeof x === 'string' || x instanceof String, 'not a String')
+Check.HTMLElement = Check.mk((x) => x instanceof HTMLElement, 'not a HTMLElement')
+Check.Actor = Check.mk((x) => x instanceof Actor, 'not an Actor')
+// ... others
+#+end_src
+
+Checks are used throughout to guard constructors and message handlers.
+
+** Immutable, Typed Messages
+
+Messages are the only way actors communicate. They must be immutable and carry
+explicit type information to enable safe pattern-matching.
+
+I use a ~Message~ base class with a private ~Symbol~ code and optional value,
+plus a factory to define typed message classes:
+
+#+begin_src typescript
+class Message {
+  static mk(code, value = undefined) { return new Message(code, value); }
+
+  #code; #value;
+  constructor(code, value = undefined) {
+    Check.Symbol(code)
+    Check.Any(value)
+    this.#code = code;
+    this.#value = value;
+  }
+  get code()   { return this.#code; }
+  get value()  { return this.#value; }
+}
+
+const define_message_class = (name, valueChecker = null) => {
+  const code = Symbol(name);
+
+  class M extends Message {
+    constructor(value = undefined) {
+      if (valueChecker) valueChecker(value);
+      super(code, value);
+    }
+  }
+
+  if (valueChecker) {
+    M.mk = (value) => new M(value);
+  } else {
+    M.mk = () => new M();
+  }
+
+  Check[name] = Check.mk(x => x instanceof M, `Not a ${name}`);
+  return M;
+};
+
+const Html = define_message_class('Html');
+const Adopt = define_message_class('Adopt', Check.HTMLElement);
+const Show = define_message_class('Show');
+const Subscribe = define_message_class('Subscribe', Check.Actor);
+#+end_src
+
+Each message type is its own class, enabling ~instanceof~ dispatch and guaranteeing
+immutability (no setters).
+
+** Optional Values with Maybe
+
+To avoid ~null~/~undefined~ pitfalls, I use a simple ~Maybe~ type:
+
+#+begin_src typescript
+class Just { /* ... */ }
+class Nothing { /* ... */ }
+
+const Maybe = {
+  use(default_value, proc) {
+    return (maybe) => {
+      if (maybe instanceof Nothing) return default_value;
+      return proc(maybe.value);
+    }
+  }
+};
+#+end_src
+
+Signals (broadcasts) use ~Just(Message)~ or ~Nothing~.
+
+** The Core Actor
+
+The heart of the system is the ~Actor~ class. An actor holds private state and a
+transition function ~tx~. Its address is the object reference itself.
+
+#+begin_src typescript
+class Actor {
+  static mk(state, tx) { return new Actor(state, tx); }
+
+  #state;
+  #tx;
+  #subscribers = new Set();
+
+  constructor(state, tx) {
+    this.#state = state;
+    this.#tx = tx;
+  }
+
+  async rcv(msg) {
+    Check.Message(msg);
+
+    // Built-in messages
+    if (msg instanceof Subscribe) { this.#subscribers.add(msg.value); return this; }
+    if (msg instanceof Unsubscribe) { this.#subscribers.delete(msg.value); return this; }
+
+    const [reply, next_state, signal] = await this.#tx(this.#state, msg);
+    this.#state = next_state;
+
+    if (signal instanceof Just) {
+      const broadcast = signal.value;
+      for (const sub of this.#subscribers) { sub.rcv(broadcast); }  // fire-and-forget
+    }
+
+    return reply;
+  }
+}
+#+end_src
+
+Note the sequential processing (one message at a time per actor when awaited) and
+fire-and-forget broadcasting for lightweight concurrency.
+
+** A Logging Actor
+
+A simple example: a global logger.
+
+#+begin_src typescript
+class Logger extends Actor {
+  static mk() { return new Logger(); }
+
+  constructor() {
+    const nothing = Nothing.mk();
+    const tx = async (state, msg) => {
+      if (msg instanceof Info) console.log(`INFO | ${msg.value}`);
+      else if (msg instanceof Warning) console.warn(`WARNING | ${msg.value}`);
+      // ... etc.
+      return [this, state, nothing];
+    }
+    super({}, tx);
+  }
+
+  info(msg) { return this.rcv(Info.mk(msg)); }
+  // convenience methods
+}
+
+const logger = Logger.mk();
+#+end_src
+
+** DOM Element Actors
+
+Actors that wrap specific page elements:
+
+#+begin_src typescript
+class Toc extends Actor {
+  static mk() { return new Toc(); }
+
+  constructor() {
+    const el = find_by_id('table-of-contents');
+    Check.HTMLElement(el);
+    const tx = async (state, msg) => {
+      if (msg instanceof Html) return [el, state, Nothing.mk()];
+      Check.Unexpected(msg);
+    };
+    super({ html: el }, tx);
+  }
+
+  html() { return this.rcv(Html.mk()); }
+}
+
+class Cell extends Actor {
+  constructor(id) {
+    const el = find_by_id(id);
+    Check.HTMLElement(el);
+    const tx = async (state, msg) => {
+      if (msg instanceof Html) return [el, state, Nothing.mk()];
+      if (msg instanceof Adopt) { el.appendChild(msg.value); }
+      return [this, state, Nothing.mk()];
+    };
+    super({ html: el }, tx);
+  }
+
+  adopt(child) { return this.rcv(Adopt.mk(child)); }
+}
+#+end_src
+
+These provide safe, encapsulated access to the DOM.
+
+** Page Coordination
+
+The ~Article~ actor assembles the page on load:
+
+#+begin_src typescript
+class Article extends Actor { static async mk() { const toc = Toc.mk(); const c21 =
+  C21.mk(); // subclass of Cell for id 'c21' c21.adopt(await toc.html());
+
+    // Optional elements with try/catch try { C23.mk().adopt(await
+    LastEdit.mk().html()); } catch {} try { C23.mk().adopt(await Status.mk().html());
+    } catch {}
+
+    return new Article(); }
+
+  constructor() { const tx = async (state, msg) => { if (msg instanceof Show) {
+    document.documentElement.classList.remove("loading"); } return [this, state,
+    Nothing.mk()]; }; super({}, tx); }
+
+  show() { return this.rcv(Show.mk()); } }
+
+// Bootstrap (function(){ let article; window.addEventListener('DOMContentLoaded',
+async () => { article = await Article.mk(); }); window.addEventListener('load', () =>
+{ article?.show(); }); })();
+#+end_src
+
+This runs right now on this page, placing the table of contents and other elements.
+
+* Discussion
+
+The design choices—immutable messages, explicit checks, private state, and
+asynchronous but sequential-per-actor processing—give strong local reasoning
+guarantees even in JavaScript’s cooperative concurrency model. There is no shared
+mutable state anywhere; all coordination happens via messages. The subscription
+mechanism provides lightweight pub/sub without a central event bus.
+
+Limitations are clear: no true mailbox queue (messages are delivered immediately),
+and no distribution across workers yet. Still, the semantics are faithful enough to
+the actor model to make the code modular and testable.
+
+* Conclusion
+
+This small actor system demonstrates that the intellectual benefits of the actor
+model—clear encapsulation, composability, and local reasoning—are readily available
+in everyday web development. The code running this page is a living proof of concept:
+simple, robust, and aligned with foundational concurrent computation ideas.
+
+* Bibliography
+
+#+print_bibliography:

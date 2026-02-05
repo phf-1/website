@@ -3,17 +3,8 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 
-#################
-# Specification #
-#################
-#
 # Makefile rules defined below use a single Bash session, strict mode and minimize
 # noise written to stdout/stderr.
-
-##################
-# Implementation #
-##################
-
 SHELL := bash
 .SHELLFLAGS := -ceuo pipefail
 MAKEFLAGS += --no-print-directory
@@ -21,34 +12,16 @@ MAKEFLAGS += --no-print-directory
 .SILENT:
 
 
-#################
-# Specification #
-#################
-#
 # env is a rule that builds a development environment that contains all necessary
 # dependencies to execute the following rules.
-
-##################
-# Implementation #
-##################
-
 .PHONY: env
 env:
 	echo "INFO | Build a development environment."
 	guix shell -C -F -N -m dev-manifest.scm
 
 
-#################
-# Specification #
-#################
-#
 # Given that the current environment is built by env, and port, then start is a rule
 # that starts the web server.
-
-##################
-# Implementation #
-##################
-
 .PHONY: start
 SCHEME := ${PWD}/scheme
 BIN := ${PWD}/bin
@@ -59,16 +32,7 @@ start:
 	${BIN}/website :start "$${PORT}" ${PWD}/library
 
 
-#################
-# Specification #
-#################
-#
 # test is a rule that executes all tests.
-
-##################
-# Implementation #
-##################
-
 .PHONY: test
 TEST := ${PWD}/test
 test:
@@ -76,17 +40,8 @@ test:
 	guix shell -C -F -N -m dev-manifest.scm -- bash -c 'GUILE_LOAD_PATH="${SCHEME}:${TEST}:$${GUILE_LOAD_PATH}" guile ${TEST}/server.scm'
 
 
-#################
-# Specification #
-#################
-#
-#+ID: 3c446152-6565-44b6-ab73-7faf6c7273b1
+# [[id:3c446152-6565-44b6-ab73-7faf6c7273b1]]
 # archive is a rule that builds an archive containing the project files.
-
-##################
-# Implementation #
-##################
-
 .PHONY: archive
 ARCHIVE_DIR := ${PWD}/_archive
 ARCHIVE := ${ARCHIVE_DIR}/archive.tar.zst
@@ -114,10 +69,6 @@ ${ARCHIVE}: ${FILES}
 	rm -rf "$${TMPDIR}"
 
 
-#################
-# Specification #
-#################
-#
 # Given ARCHIVE, then dist is a rule that builds a single executable WEBSITE
 # such that after:
 #
@@ -130,11 +81,6 @@ ${ARCHIVE}: ${FILES}
 #
 #     then a sysD service is installed on the current system that supervises a
 #     process started with `PORT=3000 ${WEBSITE} start' by the user usr.
-
-##################
-# Implementation #
-##################
-
 .PHONY: dist
 WEBSITE := ${PWD}/_dist/website
 dist: ${WEBSITE}
@@ -143,18 +89,9 @@ ${WEBSITE}: ${ARCHIVE}
 	./script/build_dist --in "$^" --out "$@"
 
 
-#################
-# Specification #
-#################
-#
 # Given WEBSITE, then prod is a rule that executes
 #
 #   PORT=3000 ${WEBSITE} start
-
-##################
-# Implementation #
-##################
-
 .PHONY: prod
 prod: ${WEBSITE}
 	echo "INFO | Given a distribution, then start it ..."
@@ -162,17 +99,8 @@ prod: ${WEBSITE}
 	PORT="$${PORT:-3000}" ${WEBSITE} start
 
 
-#################
-# Specification #
-#################
-#
 # `make install USER=usr GROUP=grp EXEC=${WEBSITE} PORT=3000' implements `USER=usr
 # GROUP=grp PORT=3000 ${WEBSITE} install'
-
-##################
-# Implementation #
-##################
-
 .PHONY: install
 ETC := ${PWD}/etc
 install: ${WEBSITE}
@@ -192,18 +120,9 @@ install: ${WEBSITE}
 	systemctl status website.service
 
 
-#################
-# Specification #
-#################
-#
 # Given the coordinates of a VPS, a user and where to send WEBSITE in the VPS, then
 # deploy is a rule such that it copies WEBSITE to the VPS and execute `${WEBSITE}
 # install' on the VPS.
-
-##################
-# Implementation #
-##################
-
 .PHONY: deploy
 VPS_IP=138.197.186.104
 VPS_PORT=3000
@@ -218,46 +137,35 @@ deploy: ${WEBSITE}
 	set +x
 
 
-#################
-# Specification #
-#################
-#
 # `make all' :≡ `make clean test deploy'
-
-##################
-# Implementation #
-##################
-
 .PHONY: all
 all: clean test deploy
 
 
-#################
-# Specification #
-#################
-#
 # health is a rule that return /health of the deployed instance on the VPS.
-
-##################
-# Implementation #
-##################
-
 .PHONY: health
 health:
 	curl https://phfrohring.com/health
 	echo ""
 
+# live is a rule that starts a local development server and restarts it on file
+# changes.  Intended for development purposes.
+.PHONY: live
+live:
+	echo "Starting development server with live reload..."
+	export GUILE_AUTO_COMPILE=0
+	${MAKE} start &
+	PID=$$!
+	trap 'kill $$PID 2>/dev/null || true; echo "Live server stopped."; exit 0' INT TERM EXIT
+	while true; do
+		inotifywait -r -q -e close_write -e create -e delete -e move . >/dev/null
+		echo "File changes detected — restarting server..."
+		kill $$PID 2>/dev/null || true
+		${MAKE} start &
+		PID=$$!
+	done
 
-#################
-# Specification #
-#################
-#
 # clean is a rule that deletes all generated files.
-
-##################
-# Implementation #
-##################
-
 .PHONY: clean
 clean:
 	echo "INFO | Clean all constructed files ..."

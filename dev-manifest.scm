@@ -14,6 +14,7 @@
             "gawk"
             "tree"
             "sed"
+            "inotify-tools"
             "openssh-sans-x")))))
 
 dev-manifest

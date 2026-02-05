@@ -3,26 +3,16 @@
 ;; file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 
-;;;;;;;;;;;;;;;;;;;
-;; Specification ;;
-;;;;;;;;;;;;;;;;;;;
-;;
-;; [[id:876d6839-7a43-4215-80f4-459f13c29870]]
-;;
-;; Given Library, parser, then Server<Library,parser> :≡ Server#mk(Library parser) :
-;; Type. Given dir : LibraryDir, then server :≡
-;; Server<library,parser>#mk(dir). Given port : Port, then server#start(port) starts
-;; a WEB server that implements the HTTP protocol. The content is derived from a
-;; Library#mk(dir).
-;;
 ;; [[ref:4ee84d7f-12d6-4bcf-a00f-a049631063f1][LibraryDir]]
 ;; [[ref:f4b947d7-9ed1-4d43-9841-f041c761d58a][Library]]
 ;; [[ref:c4fa289d-1eed-4bd3-b61a-78159eb36aab][parser]]
-;; [[ref:da7b66f8-4977-4d55-ab82-d0f2b5c072fb][HTTP protocol]]
-
-;;;;;;;;;;;;;;;;;;;;
-;; Implementation ;;
-;;;;;;;;;;;;;;;;;;;;
+;; [[ref:da7b66f8-4977-4d55-ab82-d0f2b5c072fb][HTTPprotocol]]
+;; [[id:876d6839-7a43-4215-80f4-459f13c29870]]
+;;
+;;   Given Library, parser, then Server<Library,parser> :≡ Server#mk(Library parser) : Type. Given
+;;   dir : LibraryDir, then server :≡ Server<library,parser>#mk(dir). Given port : Port, then
+;;   server#start(port) starts a WEB server that implements the HTTP protocol. The content is
+;;   derived from a Library#mk(dir).
 
 (define-module (server)
   #:use-module (web server)

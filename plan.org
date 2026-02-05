@@ -72,6 +72,25 @@ f90b80b2-ff5e-4ee5-bcf8-cb8d775e99bd      # mandatory
 #+end_example
 
 * Iterations
+** DONE 21
+:PROPERTIES:
+:TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
+:END:
+:LOGBOOK:
+CLOCK: [2026-02-05 Thu 16:50]--[2026-02-05 Thu 18:26] =>  1:36
+:END:
+
+*** Objective
+
+Write an article to end this cycle, review, publish.
+
+*** Result
+
+- https://phfrohring.com/a94d4ca0-9656-4c8d-8bc2-f21a2e9c5d0e/html
+  - Augmented bibliography
+- $ make live
+  - Fixed dependencies (inotify-tools)
+
 ** DONE 20
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration

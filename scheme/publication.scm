@@ -3,23 +3,14 @@
 ;; file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 
-;;;;;;;;;;;;;;;;;;;
-;; Specification ;;
-;;;;;;;;;;;;;;;;;;;
-;;
+;; [[ref:c4fa289d-1eed-4bd3-b61a-78159eb36aab][Parser]]
+;; [[ref:4ee84d7f-12d6-4bcf-a00f-a049631063f1][PublicationDir]]
 ;; [[id:11262bd0-6696-4a20-9164-2191e53d4d2f]]
 ;;
-;; Given parser : [1], then Publication<parser> : Type :≡
-;; Publication#mk(parser). Given publication : Publication<parser>, then publication
-;; may be viewed as an HTML file (publication#html()). Notably, a publication may be
-;; built from a PublicationDir[2] using Publication<parser>#mk(dir).
-;;
-;; [1]: [[ref:c4fa289d-1eed-4bd3-b61a-78159eb36aab]]
-;; [2]: [[ref:4ee84d7f-12d6-4bcf-a00f-a049631063f1]]
-
-;;;;;;;;;;;;;;;;;;;;
-;; Implementation ;;
-;;;;;;;;;;;;;;;;;;;;
+;;   Given parser : Parser, then Publication<parser> : Type :≡
+;;   Publication#mk(parser). Given publication : Publication<parser>, then publication
+;;   may be viewed as an HTML file (publication#html()). Notably, a publication may be
+;;   built from a PublicationDir using Publication<parser>#mk(dir).
 
 (define-module (publication)
   #:use-module (ice-9 ftw)
