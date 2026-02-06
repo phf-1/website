@@ -1,5 +1,5 @@
 #+ID: 00000000-0000-0000-0000-000000000000
-#+DATE: 2025-10-20
+#+DATE: 2026-02-06
 
 @@html:<img src="portrait.jpeg" alt="Portrait" class="portrait">@@ Hello, I'm
 Pierre-Henry — a software engineer with experience as a developer, manager, and

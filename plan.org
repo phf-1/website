@@ -1,14 +1,15 @@
 #+OPTIONS: author:nil
 #+PROPERTY: header-args:bash :exports both :results output raw :wrap example
 
-* State
-** Specification
+* Website
+** State
+*** Specification
 :PROPERTIES:
 :ID:       ea17f50d-7dd0-4bfb-a0f3-4a88747ef35d
 :CUSTOM_ID: spec
 :END:
 
-*** HTTP protocol
+**** HTTP protocol
 :PROPERTIES:
 :ID:       da7b66f8-4977-4d55-ab82-d0f2b5c072fb
 :END:
@@ -38,14 +39,14 @@ Given publications : Set([[ref:11262bd0-6696-4a20-9164-2191e53d4d2f][Publication
 | _      | _                  | 400                                                          | HTML |
 |--------+--------------------+--------------------------------------------------------------+------|
 
-*** LibraryDir
+**** LibraryDir
 :PROPERTIES:
 :ID:       4ee84d7f-12d6-4bcf-a00f-a049631063f1
 :END:
 
 A LibraryDir is a path to a directory which contains a list of [[ref:da15973f-f7f9-449b-9afa-e4ea4fbece19][PublicationDir]].
 
-*** PublicationDir
+**** PublicationDir
 :PROPERTIES:
 :ID:       da15973f-f7f9-449b-9afa-e4ea4fbece19
 :END:
@@ -71,8 +72,112 @@ f90b80b2-ff5e-4ee5-bcf8-cb8d775e99bd      # mandatory
     └── 1.org
 #+end_example
 
-* Iterations
-** DONE 27
+** Message
+*** TODO VM
+:PROPERTIES:
+:TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
+:END:
+:LOGBOOK:
+CLOCK: [2026-01-24 Sat 11:30]--[2026-01-24 Sat 11:36] =>  0:06
+:END:
+
+**** Objective
+=make vm= builds a qcow2 image of a Guix system optimized to execute the website. This
+qcow2 image is intented to be deployed to some VPS.
+
+**** Log
+#+begin_src bash
+sudo apt update && sudo apt install qemu-utils
+#+end_src
+
+*** TODO Ma
+
+actors should ask surrounding context — /i.e./ a Ma instance — for functionalities. For
+instance, =ma#parse-binary(str)=. If parser ∈ ma, then ma#parse-binary(str) =
+parser#parse-binary(str). In other words, an actor may ask its surrounding
+environment for help. The question is when should an actor internalize a
+functionality — /e.g./ parser — and when to ask its context for it — /e.g./
+ma#binary-type(str) ? In other words, if an actor needs to be updated so that it can
+use #binary-type(str) then should the actor:
+1. Build its own internal parser ?
+   - ⇒ no interface changes
+2. Ask at build time for a parser ?
+   - actor#mk() ↦ actor#mk(parser)
+3. Ask its surrounding environment for #binary-type(str) ?
+   - ma#binary-type(str) (ultra late biding)
+
+**** Response
+#+begin_example
+This is a classic architectural trade-off involving **coupling, cohesion, and lifecycle management**. Choosing between internalizing a capability or externalizing it to the environment depends on how "essential" that functionality is to the actor's identity.
+
+Here is a breakdown of how to choose between your three strategies:
+
+---
+
+### Comparison of Strategies
+
+| Strategy | Coupling | Flexibility | Maintenance Overhead | Best For... |
+| --- | --- | --- | --- | --- |
+| **1. Internalization** | None (Self-contained) | Low (Hard-coded) | High (Duplication risk) | Core, unique logic. |
+| **2. Build-time Injection** | Explicit | High (Swappable) | Medium (Interface changes) | Specific collaborators. |
+| **3. Context Lookup** | Implicit (Magic) | Ultra-high | Low (Global updates) | Cross-cutting utilities. |
+
+---
+
+### When to use each approach
+
+#### 1. Internalize (The "Loner" Actor)
+
+Choose this if the functionality is **intrinsically tied** to the actor’s state or is a private implementation detail that no one else should care about.
+
+,* **Logic:** If the parser logic is unique to *only* this actor and changing it elsewhere would break this actor, keep it inside.
+,* **Math Logic:** .
+
+#### 2. Build-time Injection (The "Contractor" Actor)
+
+Choose this when the actor needs a specific tool to do its job, but you want the ability to swap that tool out (e.g., for testing or different binary formats).
+
+,* **The Trade-off:** You mentioned "interface changes." While `actor#mk() \mapsto actor#mk(parser)` is a breaking change, it makes the dependency **explicit**. You avoid "magic" behavior where an actor fails at runtime because the environment is missing a piece.
+,* **Use case:** When different actors need different *versions* of a parser.
+
+#### 3. Context Lookup (The "Socialite" Actor)
+
+This "Ultra-late binding" is powerful but risky. It treats the `Ma` instance as a **Service Locator**.
+
+,* **Logic:** Use this for **cross-cutting concerns**—functionalities that are ubiquitous, stable, and used by almost every actor (like logging, time, or standard type-checking).
+,* **The "Ma" Rule:** If  is a platform standard, the actor shouldn't have to carry the weight of that logic.
+,* **Danger:** If the environment changes, the actor might break silently. It is harder to unit-test an actor if it requires a full `Ma` instance to function.
+
+---
+
+### The Decision Matrix
+
+To decide which path to take, ask yourself these three questions:
+
+1. **Is the parser a "Standard Utility"?** * *Yes:* Use **Option 3** (Context). Let the environment handle the heavy lifting.
+2. **Does the actor's behavior change based on the parser type?** * *Yes:* Use **Option 2** (Injection). This ensures the actor is configured correctly at birth.
+3. **Is the parser logic "Top Secret" or highly specialized?** * *Yes:* Use **Option 1** (Internal). Don't leak private logic into the environment.
+
+> **Pro Tip:** If you want the best of both worlds, use **Option 2** but provide a **default** in the constructor that pulls from the environment. This keeps the interface explicit but the usage convenient.
+
+Would you like me to help you draft a specific interface or "contract" for how the Actor should communicate its requirements to the `Ma` instance?
+#+end_example
+
+*** DONE iteration(28)
+SCHEDULED: <2026-02-06 Fri>
+:PROPERTIES:
+:TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
+:END:
+:LOGBOOK:
+CLOCK: [2026-02-06 Fri 20:00]--[2026-02-06 Fri 20:25] =>  0:25
+:END:
+
+**** Objective
+
+- Fix abstract margins.
+- Init new article
+
+*** DONE iteration(27)
 SCHEDULED: <2026-02-06 Fri>
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
@@ -81,11 +186,11 @@ SCHEDULED: <2026-02-06 Fri>
 CLOCK: [2026-02-06 Fri 15:10]--[2026-02-06 Fri 15:40] =>  0:30
 :END:
 
-*** Objective
+**** Objective
 
 Display the last edit date in HTML and augment Publication with it.
 
-** DONE 26
+*** DONE iteration(26)
 SCHEDULED: <2026-02-06 Fri>
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
@@ -94,11 +199,11 @@ SCHEDULED: <2026-02-06 Fri>
 CLOCK: [2026-02-06 Fri 13:06]--[2026-02-06 Fri 15:10] =>  2:04
 :END:
 
-*** Objective
+**** Objective
 
 Fix the layout on mobile.
 
-*** Result
+**** Result
 
 - master.css organized in "layers".
 - media.css deleted in favor of a "Responsive" layer.
@@ -106,7 +211,7 @@ Fix the layout on mobile.
 - Landing page layout fixed (image included in the first paragraph with text).
 - A publication may not have a title like the one for the landing page → it is fine, do not raise an error.
 
-** DONE 25
+*** DONE iteration(25)
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -114,11 +219,11 @@ Fix the layout on mobile.
 CLOCK: [2026-02-06 Fri 10:00]--[2026-02-06 Fri 10:20] =>  0:20
 :END:
 
-*** Objective
+**** Objective
 
 Spelling of publications fixed
 
-** DONE 24
+*** DONE iteration(24)
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -126,16 +231,16 @@ Spelling of publications fixed
 CLOCK: [2026-02-06 Fri 00:30]--[2026-02-06 Fri 02:00] =>  1:30
 :END:
 
-*** Objective
+**** Objective
 
 - Improved legibility
 
-*** Result
+**** Result
 
 - Improved legibility.
 - Abstracts fixed.
 
-** DONE 23
+*** DONE iteration(23)
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -143,13 +248,13 @@ CLOCK: [2026-02-06 Fri 00:30]--[2026-02-06 Fri 02:00] =>  1:30
 CLOCK: [2026-02-05 Thu 23:30]--[2026-02-06 Fri 00:30] =>  1:00
 :END:
 
-*** Objective
+**** Objective
 
 - Title are fixed.
 - 404 are fixed.
 - Fonts fixed.
 
-** DONE 22
+*** DONE iteration(22)
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -157,17 +262,17 @@ CLOCK: [2026-02-05 Thu 23:30]--[2026-02-06 Fri 00:30] =>  1:00
 CLOCK: [2026-02-05 Thu 18:26]--[2026-02-05 Thu 20:05] =>  1:39
 :END:
 
-*** Objective
+**** Objective
 
 - Self host fonts.
 - Update publications
 
-*** Result
+**** Result
 
 - Self hosted fonts.
 - Publications updated.
 
-** DONE 21
+*** DONE iteration(21)
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -175,18 +280,18 @@ CLOCK: [2026-02-05 Thu 18:26]--[2026-02-05 Thu 20:05] =>  1:39
 CLOCK: [2026-02-05 Thu 16:50]--[2026-02-05 Thu 18:26] =>  1:36
 :END:
 
-*** Objective
+**** Objective
 
 Write an article to end this cycle, review, publish.
 
-*** Result
+**** Result
 
 - https://phfrohring.com/a94d4ca0-9656-4c8d-8bc2-f21a2e9c5d0e/html
   - Augmented bibliography
 - $ make live
   - Fixed dependencies (inotify-tools)
 
-** DONE 20
+*** DONE iteration(20)
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -195,15 +300,15 @@ CLOCK: [2026-02-05 Thu 09:45]--[2026-02-05 Thu 16:00] =>  6:15
 CLOCK: [2026-02-04 Wed 22:09]--[2026-02-05 Thu 01:30] =>  3:21
 :END:
 
-*** Objective
+**** Objective
 
 Simplify the JS by a better actor implementation.
 
-*** Result
+**** Result
 
 Refactored js.
 
-*** Log
+**** Log
 
 A type A is a representation of some intuition. For instance, Point (type) represents
 all points (intuition). An single point is represented by a pair of coordinates, x
@@ -267,7 +372,7 @@ represented as actors. For instance, the word =Point= is viewed as the address o
 actor that represents the Point type. =Point#mk(x y)= is viewed as sending the message
 =mk(x y)= to =Point=. =point#x= is viewed as sending the message =x= to =point=.
 
-** DONE 19
+*** DONE iteration(19)
 SCHEDULED: <2026-02-04 Wed>
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
@@ -277,11 +382,11 @@ CLOCK: [2026-02-04 Wed 13:30]--[2026-02-04 Wed 18:54] =>  5:24
 CLOCK: [2026-02-04 Wed 10:25]--[2026-02-04 Wed 10:45] =>  0:20
 :END:
 
-*** Objective
+**** Objective
 
 Documentation of the code is fine.
 
-** DONE 18
+*** DONE iteration(18)
 SCHEDULED: <2026-02-04 Wed>
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
@@ -290,18 +395,18 @@ SCHEDULED: <2026-02-04 Wed>
 CLOCK: [2026-02-04 Wed 07:18]--[2026-02-04 Wed 10:25] =>  3:07
 :END:
 
-*** Objective
+**** Objective
 
 Fix the remaining published content.
 
-*** Result
+**** Result
 
 - Publications creation has been parallelized.
 - Citation are taken into account (bibliography & pnas style).
 - Citation style is more legible.
 - Remaining published content have been migrated.
 
-** DONE 17
+*** DONE iteration(17)
 SCHEDULED: <2026-02-03 Tue>
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
@@ -313,7 +418,7 @@ CLOCK: [2026-02-03 Tue 16:04]--[2026-02-03 Tue 16:13] =>  0:09
 CLOCK: [2026-02-03 Tue 15:45]--[2026-02-03 Tue 15:50] =>  0:05
 :END:
 
-*** Objective
+**** Objective
 
 The following command:
 
@@ -323,7 +428,7 @@ make deploy
 
 After deploy, the website is live on some VPS.
 
-*** Specification
+**** Specification
 
 make deploy
 1. vps represents the VPS.
@@ -334,7 +439,7 @@ make deploy
    - execute command as user on the vps.
    - stdout should be "hello from user#name()"
 
-** DONE 16
+*** DONE iteration(16)
 SCHEDULED: <2026-02-03 Tue>
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
@@ -346,12 +451,12 @@ CLOCK: [2026-01-30 Fri 22:30]--[2026-01-30 Fri 22:50] =>  0:20
 CLOCK: [2026-01-30 Fri 20:52]--[2026-01-30 Fri 22:09] =>  1:17
 :END:
 
-*** Objective
+**** Objective
 
 =make install= installs a systemd service that starts the website and restarts it if it
 crashes.
 
-*** Specification
+**** Specification
 
 The objective is to expose a webserver behind a reverse proxy to the internet. An
 HTTP request goes to from the internet to the reverse proxy, is being forwarded to
@@ -360,19 +465,19 @@ processed replied to the client through This process may be understood as an Act
 /i.e./ it can send/receive messages, has processing capabilities, memory, and the
 capacity to start other processes.
 
-*** Execution
+**** Execution
 
 Assuming manifest.scm and guix, we can ship the dependencies, assuming very little of
 the box executing the archive.
 
-*** Result
+**** Result
 
 #+begin_src bash :eval no
 make prod PORT=3001
 make install
 #+end_src
 
-** DONE 15
+*** DONE iteration(15)
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -382,11 +487,11 @@ CLOCK: [2026-01-30 Fri 17:30]--[2026-01-30 Fri 19:04] =>  1:34
 CLOCK: [2026-01-30 Fri 10:30]--[2026-01-30 Fri 12:00] =>  1:30
 :END:
 
-*** Objective
+**** Objective
 
 Implement =make dist=.
 
-*** Specification
+**** Specification
 
 Implement a Bash script =build_dist= such that:
 
@@ -454,7 +559,7 @@ chmod +x prog
 
 Use the self-extracting archive examples as guideline to =build_dist=.
 
-** DONE 14
+*** DONE iteration(14)
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -463,12 +568,12 @@ CLOCK: [2026-01-28 Wed 10:08]--[2026-01-28 Wed 12:05] =>  1:57
 CLOCK: [2026-01-28 Wed 08:42]--[2026-01-28 Wed 10:08] =>  1:26
 :END:
 
-*** Objective
+**** Objective
 
 - Find a suitable way to document the code.
 - Simplify.
 
-** DONE 13
+*** DONE iteration(13)
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -477,7 +582,7 @@ CLOCK: [2026-01-27 Tue 21:20]--[2026-01-28 Wed 00:36] =>  3:16
 CLOCK: [2026-01-27 Tue 19:45]--[2026-01-27 Tue 19:51] =>  0:06
 :END:
 
-*** Objective
+**** Objective
 
 - We observe that Publication : Parser → Type.
 - More generally, we interpret types as actors, so we must generalyze :
@@ -485,7 +590,7 @@ CLOCK: [2026-01-27 Tue 19:45]--[2026-01-27 Tue 19:51] =>  0:06
   - Library : Publication(parser) → Type
   - …
 
-** DONE 13
+*** DONE iteration(13)
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -494,12 +599,12 @@ CLOCK: [2026-01-27 Tue 18:30]--[2026-01-27 Tue 19:45] =>  1:15
 CLOCK: [2026-01-27 Tue 12:27]--[2026-01-27 Tue 13:21] =>  0:54
 :END:
 
-*** Objective
+**** Objective
 
 - Generate the index.
 - Publication : Parser → Type
 
-** DONE 12
+*** DONE iteration(12)
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -507,12 +612,12 @@ CLOCK: [2026-01-27 Tue 12:27]--[2026-01-27 Tue 13:21] =>  0:54
 CLOCK: [2026-01-27 Tue 11:07]--[2026-01-27 Tue 12:23] =>  1:16
 :END:
 
-*** Objective
+**** Objective
 
 - redirect / to /00000000-0000-0000-0000-000000000000/html in scheme/server.scm
 - redirect /articles to /00000000-0000-0000-0000-000000000001/html in scheme/server.scm
 
-** DONE 11
+*** DONE iteration(11)
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -521,12 +626,12 @@ CLOCK: [2026-01-27 Tue 10:40]--[2026-01-27 Tue 11:05] =>  0:25
 CLOCK: [2026-01-27 Tue 10:16]--[2026-01-27 Tue 10:40] =>  0:24
 :END:
 
-*** Objective
+**** Objective
 
 - Reconcile specification notation and implementation notations. For instance =Parser#mk= ↦ =Parser#mk=.
 - test/server.scm is up to date.
 
-** DONE 10
+*** DONE iteration(10)
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -534,10 +639,10 @@ CLOCK: [2026-01-27 Tue 10:16]--[2026-01-27 Tue 10:40] =>  0:24
 CLOCK: [2026-01-27 Tue 08:45]--[2026-01-27 Tue 10:15] =>  1:30
 :END:
 
-*** Objective
+**** Objective
 Reconcile the specification and the implementation.
 
-** DONE 9
+*** DONE iteration(9)
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -546,11 +651,11 @@ CLOCK: [2026-01-26 Mon 20:56]--[2026-01-26 Mon 22:26] =>  1:30
 CLOCK: [2026-01-26 Mon 18:01]--[2026-01-26 Mon 20:38] =>  2:37
 :END:
 
-*** Objective
+**** Objective
 
 Publications should allow to re-use global CSS/JS/HTML.
 
-** DONE 8
+*** DONE iteration(8)
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -559,17 +664,17 @@ CLOCK: [2026-01-26 Mon 16:40]--[2026-01-26 Mon 17:57] =>  1:17
 CLOCK: [2026-01-26 Mon 16:25]--[2026-01-26 Mon 16:39] =>  0:14
 :END:
 
-*** Objective
+**** Objective
 
 A publication should includes CSS/JS in addition to HTML.
 
-*** Specification
+**** Specification
 
 Given a publication directory, there is a article.org file. Then, an article.html
 file is build from article.org file using Emacs. Then, Publication#mk adds the css
 and the js to the html using <script> and <style>.
 
-** DONE 7
+*** DONE iteration(7)
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -577,10 +682,10 @@ and the js to the html using <script> and <style>.
 CLOCK: [2026-01-26 Mon 10:37]--[2026-01-26 Mon 12:37] =>  2:03
 :END:
 
-*** Objective
+**** Objective
 Take into consideration data/* in publications.
 
-** DONE 6
+*** DONE iteration(6)
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -588,10 +693,10 @@ Take into consideration data/* in publications.
 CLOCK: [2026-01-24 Sat 17:07]--[2026-01-24 Sat 20:37]
 :END:
 
-*** Objective
+**** Objective
 Define a type of actor that serves the requested content.
 
-** DONE 5
+*** DONE iteration(5)
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -599,12 +704,12 @@ Define a type of actor that serves the requested content.
 CLOCK: [2026-01-24 Sat 11:41]--[2026-01-24 Sat 14:00] =>  2:19
 :END:
 
-*** Objective
+**** Objective
 - Implement the specification.
 - For each created/updated file, write the complete file in a code block so that I can copy/paste it.
 - Highlight changes using comments starting with ";; CLAUDE:".
 
-** DONE 4
+*** DONE iteration(4)
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -612,13 +717,13 @@ CLOCK: [2026-01-24 Sat 11:41]--[2026-01-24 Sat 14:00] =>  2:19
 CLOCK: [2026-01-24 Sat 10:30]--[2026-01-24 Sat 11:26] =>  0:56
 :END:
 
-*** Objective
+**** Objective
 - =make dist= builds an archive =_dist/website.tar.zst=.
 - Given =./website.tar.zst=, then after decompression, we have =./website/*=.
 - =cd website/; make; make install= installs the website and enable/start a systemd
   service that keep the website working.
 
-** DONE 3
+*** DONE iteration(3)
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -626,13 +731,13 @@ CLOCK: [2026-01-24 Sat 10:30]--[2026-01-24 Sat 11:26] =>  0:56
 CLOCK: [2026-01-23 Fri 22:37]--[2026-01-23 Fri 23:00] =>  0:23
 :END:
 
-*** Objective
+**** Objective
 - Add automated tests.
 
-*** Specification
+**** Specification
 =make test= excecutes automated tests that verify that the [[ref:d499ed57-889d-45bb-b6f0-9e0497d188c1][HTTP protocol]] is satisfied.
 
-** DONE 2
+*** DONE iteration(2)
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -640,10 +745,10 @@ CLOCK: [2026-01-23 Fri 22:37]--[2026-01-23 Fri 23:00] =>  0:23
 CLOCK: [2026-01-23 Fri 21:23]--[2026-01-23 Fri 22:37] =>  1:14
 :END:
 
-*** Objective
+**** Objective
 Model the program using actors.
 
-** DONE 1
+*** DONE iteration(1)
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -651,104 +756,13 @@ Model the program using actors.
 CLOCK: [2026-01-23 Fri 20:43]--[2026-01-23 Fri 21:23] =>  0:40
 :END:
 
-*** Objective
+**** Objective
 After website#start(port), a website is listening on localhost:port.
 
-*** Specification
+**** Specification
 website is a linux executable. Its syntax on the Bash CLI is, for instance: =$
 ./website :start 3000=. The website should just return "hello world!". =./website=
 should be implemented in [[https://www.gnu.org/software/guile/manual/guile.html][Guile Scheme]].
-
-* Backlog
-** VM
-:PROPERTIES:
-:TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
-:END:
-:LOGBOOK:
-CLOCK: [2026-01-24 Sat 11:30]--[2026-01-24 Sat 11:36] =>  0:06
-:END:
-
-*** Objective
-=make vm= builds a qcow2 image of a Guix system optimized to execute the website. This
-qcow2 image is intented to be deployed to some VPS.
-
-*** Log
-#+begin_src bash
-sudo apt update && sudo apt install qemu-utils
-#+end_src
-
-** Ma
-
-actors should ask surrounding context — /i.e./ a Ma instance — for functionalities. For
-instance, =ma#parse-binary(str)=. If parser ∈ ma, then ma#parse-binary(str) =
-parser#parse-binary(str). In other words, an actor may ask its surrounding
-environment for help. The question is when should an actor internalize a
-functionality — /e.g./ parser — and when to ask its context for it — /e.g./
-ma#binary-type(str) ? In other words, if an actor needs to be updated so that it can
-use #binary-type(str) then should the actor:
-1. Build its own internal parser ?
-   - ⇒ no interface changes
-2. Ask at build time for a parser ?
-   - actor#mk() ↦ actor#mk(parser)
-3. Ask its surrounding environment for #binary-type(str) ?
-   - ma#binary-type(str) (ultra late biding)
-
-*** Response
-#+begin_example
-This is a classic architectural trade-off involving **coupling, cohesion, and lifecycle management**. Choosing between internalizing a capability or externalizing it to the environment depends on how "essential" that functionality is to the actor's identity.
-
-Here is a breakdown of how to choose between your three strategies:
-
----
-
-### Comparison of Strategies
-
-| Strategy | Coupling | Flexibility | Maintenance Overhead | Best For... |
-| --- | --- | --- | --- | --- |
-| **1. Internalization** | None (Self-contained) | Low (Hard-coded) | High (Duplication risk) | Core, unique logic. |
-| **2. Build-time Injection** | Explicit | High (Swappable) | Medium (Interface changes) | Specific collaborators. |
-| **3. Context Lookup** | Implicit (Magic) | Ultra-high | Low (Global updates) | Cross-cutting utilities. |
-
----
-
-### When to use each approach
-
-#### 1. Internalize (The "Loner" Actor)
-
-Choose this if the functionality is **intrinsically tied** to the actor’s state or is a private implementation detail that no one else should care about.
-
-,* **Logic:** If the parser logic is unique to *only* this actor and changing it elsewhere would break this actor, keep it inside.
-,* **Math Logic:** .
-
-#### 2. Build-time Injection (The "Contractor" Actor)
-
-Choose this when the actor needs a specific tool to do its job, but you want the ability to swap that tool out (e.g., for testing or different binary formats).
-
-,* **The Trade-off:** You mentioned "interface changes." While `actor#mk() \mapsto actor#mk(parser)` is a breaking change, it makes the dependency **explicit**. You avoid "magic" behavior where an actor fails at runtime because the environment is missing a piece.
-,* **Use case:** When different actors need different *versions* of a parser.
-
-#### 3. Context Lookup (The "Socialite" Actor)
-
-This "Ultra-late binding" is powerful but risky. It treats the `Ma` instance as a **Service Locator**.
-
-,* **Logic:** Use this for **cross-cutting concerns**—functionalities that are ubiquitous, stable, and used by almost every actor (like logging, time, or standard type-checking).
-,* **The "Ma" Rule:** If  is a platform standard, the actor shouldn't have to carry the weight of that logic.
-,* **Danger:** If the environment changes, the actor might break silently. It is harder to unit-test an actor if it requires a full `Ma` instance to function.
-
----
-
-### The Decision Matrix
-
-To decide which path to take, ask yourself these three questions:
-
-1. **Is the parser a "Standard Utility"?** * *Yes:* Use **Option 3** (Context). Let the environment handle the heavy lifting.
-2. **Does the actor's behavior change based on the parser type?** * *Yes:* Use **Option 2** (Injection). This ensures the actor is configured correctly at birth.
-3. **Is the parser logic "Top Secret" or highly specialized?** * *Yes:* Use **Option 1** (Internal). Don't leak private logic into the environment.
-
-> **Pro Tip:** If you want the best of both worlds, use **Option 2** but provide a **default** in the constructor that pulls from the environment. This keeps the interface explicit but the usage convenient.
-
-Would you like me to help you draft a specific interface or "contract" for how the Actor should communicate its requirements to the `Ma` instance?
-#+end_example
 
 * Local Variables                                                  :noexport:
 Local Variables:
