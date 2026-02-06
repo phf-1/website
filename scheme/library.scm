@@ -22,7 +22,9 @@
 (define index-uuid "00000000-0000-0000-0000-000000000001")
 
 (define (publication->href pub)
-  (string-append "- [[href:/" (pub #:uuid) "/html][" (pub #:name) "]]"))
+  (match (pub #:name)
+    (#f #f)
+    (name (string-append "- [[href:/" (pub #:uuid) "/html][" name "]]"))))
 
 (define (generate-index-text publications)
   "Generate org-mode text for the index publication listing all publications"
@@ -32,7 +34,7 @@
    "\n"
    "* List\n"
    "\n"
-   (string-join (map publication->href publications) "\n")
+   (string-join (delq #f (map publication->href publications)) "\n")
    "\n"))
 
 (define home-uuid "00000000-0000-0000-0000-000000000000")

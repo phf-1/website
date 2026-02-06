@@ -1,12 +1,9 @@
 #+ID: 00000000-0000-0000-0000-000000000000
 #+DATE: 2025-10-20
 
-* Introduction
-
-@@html:<img src="portrait.jpeg" alt="Portrait" class="portrait">@@
-
-Hello, I'm Pierre-Henry — a software engineer with experience as a developer,
-manager, and co-founder.
+@@html:<img src="portrait.jpeg" alt="Portrait" class="portrait">@@ Hello, I'm
+Pierre-Henry — a software engineer with experience as a developer, manager, and
+co-founder.
 
 I’ve led projects such as modeling a [[href:/e4771178-cf50-4957-8763-2ac5faf36f49/html][nuclear reactor’s electrical network]], which led
 to the creation of /Deeplinks/, a subsidiary of an industrial group. More recently, I

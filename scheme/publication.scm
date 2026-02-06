@@ -91,17 +91,19 @@
   (let* ((lines (string-split text #\newline))
          (id-line (let loop ((ls lines))
                     (if (null? ls)
-                        (error (format #f "No #+TITLE: line found in Org files in"))
+                        #f
                         (let* ((line (car ls))
                                (trimmed-left (string-trim line))
                                (upper (string-upcase trimmed-left)))
                           (if (string-prefix? "#+TITLE:" upper)
                               trimmed-left
                               (loop (cdr ls))))))))
-    (let* ((colon-pos (string-index id-line #\:))
-           (raw-value (substring id-line (+ colon-pos 1)))
-           (value (string-trim-both raw-value)))
-      value)))
+    (if id-line
+        (let* ((colon-pos (string-index id-line #\:))
+               (raw-value (substring id-line (+ colon-pos 1)))
+               (value (string-trim-both raw-value)))
+          value)
+        #f)))
 
 (define (extract-uuid-from-text text)
   (let* ((lines (string-split text #\newline))
@@ -181,7 +183,7 @@
 
                       (lambda (msg)
                         (match msg
-                          (#:name name)
+                          (#:name name) ; : String | #f
                           (#:text text)
                           (#:css css)
                           (#:js js)

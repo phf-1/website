@@ -72,6 +72,27 @@ f90b80b2-ff5e-4ee5-bcf8-cb8d775e99bd      # mandatory
 #+end_example
 
 * Iterations
+** DONE 26
+SCHEDULED: <2026-02-06 Fri>
+:PROPERTIES:
+:TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
+:END:
+:LOGBOOK:
+CLOCK: [2026-02-06 Fri 13:06]--[2026-02-06 Fri 15:10] =>  2:04
+:END:
+
+*** Objective
+
+Fix the layout on mobile.
+
+*** Result
+
+- master.css organized in "layers".
+- media.css deleted in favor of a "Responsive" layer.
+- Responsive layer fixed for mobile.
+- Landing page layout fixed (image included in the first paragraph with text).
+- A publication may not have a title like the one for the landing page → it is fine, do not raise an error.
+
 ** DONE 25
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
