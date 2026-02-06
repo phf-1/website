@@ -72,6 +72,19 @@ f90b80b2-ff5e-4ee5-bcf8-cb8d775e99bd      # mandatory
 #+end_example
 
 * Iterations
+** DONE 27
+SCHEDULED: <2026-02-06 Fri>
+:PROPERTIES:
+:TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
+:END:
+:LOGBOOK:
+CLOCK: [2026-02-06 Fri 15:10]--[2026-02-06 Fri 15:40] =>  0:30
+:END:
+
+*** Objective
+
+Display the last edit date in HTML and augment Publication with it.
+
 ** DONE 26
 SCHEDULED: <2026-02-06 Fri>
 :PROPERTIES:

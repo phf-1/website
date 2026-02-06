@@ -3,17 +3,9 @@
 ;; file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 
-;;;;;;;;;;;;;;;;;;;
-;; Specification ;;
-;;;;;;;;;;;;;;;;;;;
-;;
 ;; [[id:bb17a03b-7429-477b-b304-e509cbb44485]]
 ;;
 ;; Response is a procedure that constructs HTTP responses for the web server.
-
-;;;;;;;;;;;;;;;;;;;;
-;; Implementation ;;
-;;;;;;;;;;;;;;;;;;;;
 
 (define-module (response)
   #:use-module (web response)

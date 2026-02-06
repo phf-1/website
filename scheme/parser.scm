@@ -2,23 +2,13 @@
 ;; License, v. 2.0. If a copy of the MPL was not distributed with this
 ;; file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-
-;;;;;;;;;;;;;;;;;;;
-;; Specification ;;
-;;;;;;;;;;;;;;;;;;;
-;;
+;; [[ref:e6d438cd-85c0-40d1-a2db-3101fdbe2c12][start-el]]
 ;; [[id:c4fa289d-1eed-4bd3-b61a-78159eb36aab]]
 ;;
-;; Given start-el, then parser :≡ Parser#mk(start-el) is an actor such that it
-;; maps strings or list of strings into various internal structures. For instance,
-;; it maps CLI arguments into messages, Org formatted strings into HTML body
-;; content, ….
-;;
-;; [[ref:e6d438cd-85c0-40d1-a2db-3101fdbe2c12][start-el]]
-
-;;;;;;;;;;;;;;;;;;;;
-;; Implementation ;;
-;;;;;;;;;;;;;;;;;;;;
+;;   Given start-el, then parser :≡ Parser#mk(start-el) is an actor such that it maps
+;;   strings or list of strings into various internal structures. For instance, it
+;;   maps CLI arguments into messages, Org formatted strings into HTML body content,
+;;   ….
 
 (define-module (parser)
   #:use-module (web uri)

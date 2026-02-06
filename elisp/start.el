@@ -33,6 +33,11 @@
 
 (setq org-cite-export-processors '((t csl)))
 
+(defun org-get-date ()
+  (let ((date-entry (assoc "DATE" (org-collect-keywords '("DATE")))))
+    (when date-entry
+      (car (cdr date-entry)))))
+
 (defun start ()
   (with-temp-buffer
     (let ((stdin-content ""))
@@ -42,11 +47,15 @@
         (error nil))
       (insert stdin-content))
     (org-mode)
-    (let ((title (org-get-title)))
+    (let ((title (org-get-title))
+          (date (org-get-date)))
       (org-html-export-as-html nil nil nil t)
       (when title
         (goto-char (point-min))
         (insert (format "<h1>%s</h1>" title)))
+      (when date
+        (goto-char (point-min))
+        (insert (format "<span id=\"last-edit\">Last edit: %s</span>" date)))
       (princ (buffer-string)))))
 
 

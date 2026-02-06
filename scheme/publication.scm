@@ -87,15 +87,16 @@
         (call-with-input-file path get-string-all)
         (error (format #f "Missing mandatory ~a in ~a" filename dir)))))
 
-(define (extract-name-from-text text)
-  (let* ((lines (string-split text #\newline))
+(define (extract-org-keyword-value text prefix)
+  (let* ((upper-prefix prefix)  ; prefix is already uppercase, as in originals
+         (lines (string-split text #\newline))
          (id-line (let loop ((ls lines))
                     (if (null? ls)
                         #f
                         (let* ((line (car ls))
                                (trimmed-left (string-trim line))
                                (upper (string-upcase trimmed-left)))
-                          (if (string-prefix? "#+TITLE:" upper)
+                          (if (string-prefix? upper-prefix upper)
                               trimmed-left
                               (loop (cdr ls))))))))
     (if id-line
@@ -104,6 +105,12 @@
                (value (string-trim-both raw-value)))
           value)
         #f)))
+
+(define (extract-date-from-text text)
+  (extract-org-keyword-value text "#+DATE:"))
+
+(define (extract-name-from-text text)
+  (extract-org-keyword-value text "#+TITLE:"))
 
 (define (extract-uuid-from-text text)
   (let* ((lines (string-split text #\newline))
@@ -178,12 +185,14 @@
                    (`(#:mk ,text ,css ,js ,layout ,data)
                     (let* ((uuid (extract-uuid-from-text text))
                            (name (extract-name-from-text text))
+                           (date (extract-date-from-text text))
                            (body (parser `(#:body ,text)))
                            (html (compose-html layout body css js)))
 
                       (lambda (msg)
                         (match msg
                           (#:name name) ; : String | #f
+                          (#:date date) ; : String | #f
                           (#:text text)
                           (#:css css)
                           (#:js js)
