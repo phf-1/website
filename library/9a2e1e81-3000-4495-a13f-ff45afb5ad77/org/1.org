@@ -71,7 +71,7 @@ A valid patch is a patch such that it:
   - An assertion as the first line.
   - A blank line.
   - An explanation of why the patch makes that assertion true.
-- Updates the relevant documentations.
+- Updates the relevant documentation.
 - Does not break the master branch when merged.
 
 [fn:393a]: https://rfc.zeromq.org/spec/44/#26-evolution-of-public-contracts

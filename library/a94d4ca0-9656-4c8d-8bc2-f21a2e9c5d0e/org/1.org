@@ -5,13 +5,13 @@
 #+STATUS: draft
 
 #+begin_abstract
-A approximaition of the actor model implementated in JavaScript is introduced despite
-the language’s single-threaded event loop. It preserves core actor principles —
-private state, asynchronous message passing, and immutability — while ensuring strong
-local reasoning through runtime invariant checks, and typed immutable
-messages. Actors processes messages sequentially, supports fire-and-forget pub/sub
-signals, without shared mutable state. The actor system powering this page serves as
-a live demonstration.
+An approximation of the actor model implemented in JavaScript is introduced, despite
+the language’s single-threaded event loop. It preserves core actor principles—
+private state, asynchronous message passing, and immutability—while ensuring strong
+local reasoning through runtime invariant checks and typed immutable messages.
+Actors process messages sequentially and support fire-and-forget pub/sub signals,
+without shared mutable state. The actor system powering this page serves as a live
+demonstration.
 #+end_abstract
 
 * Introduction

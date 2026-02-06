@@ -24,10 +24,11 @@
 
 ** Objective
 
-Help me fix the error
+For each of the org file in Library, correct the spelling and the grammar, write the
+corrected content in a code block, preserve the Org Mode markup.
 
 ** Context
-*** Error
+*** Error                                                          :noexport:
 
 #+begin_example
 GET http://localhost:3000/00000000-0000-0000-0000-000000000000/data/source-sans-3-regular.woff2 net::ERR_ABORTED 404 (Not Found)Understand this error
@@ -45,16 +46,27 @@ git diff plan.org
 
 #+INCLUDE: "./plan.org::#spec" :only-contents t
 
-*** File tree
+*** File tree                                                      :noexport:
 
 #+begin_src bash
 tree --gitignore
 #+end_src
 
-*** File content
+*** File content                                                   :noexport:
 
 #+begin_src bash
 for file in $(fd -t f -E "*.png" -E "*.jpg" -E "*.jpeg" -E "*.pdf" -E "*.woff2" -E "*.bib" -E "*.csl" -E "*.org" -E "LICENSE" . ./); do
+  echo "<content file=$file>"
+  cat "$file"
+  echo "</content>"
+  echo ""
+done
+#+end_src
+
+*** Library
+
+#+begin_src bash
+for file in $(fd -t f -g '*.org' ./library); do
   echo "<content file=$file>"
   cat "$file"
   echo "</content>"

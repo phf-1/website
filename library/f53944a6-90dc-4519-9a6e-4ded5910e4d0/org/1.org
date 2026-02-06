@@ -30,9 +30,9 @@ The implementation is available at: https://github.com/phf-1/website/tree/master
 Website content consists of publications, each identified by a UUID. A publication
 comprises Org Mode source files, a layout template, optional custom CSS and
 JavaScript, and associated resources (images, fonts, PDFs, etc.). To create a
-publication, just copy/paste and existing publication and update its identifier. Most
-of the content creation happens in the org file /i.e./ it is like writting an
-email. For completeness, here is a publication structure:
+publication, just copy/paste an existing publication and update its identifier. Most
+of the content creation happens in the org file /i.e./ it is like writing an email.
+For completeness, here is a publication structure:
 
 #+begin_src text
 library/<uuid>/

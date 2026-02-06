@@ -72,6 +72,18 @@ f90b80b2-ff5e-4ee5-bcf8-cb8d775e99bd      # mandatory
 #+end_example
 
 * Iterations
+** DONE 25
+:PROPERTIES:
+:TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
+:END:
+:LOGBOOK:
+CLOCK: [2026-02-06 Fri 10:00]--[2026-02-06 Fri 10:20] =>  0:20
+:END:
+
+*** Objective
+
+Spelling of publications fixed
+
 ** DONE 24
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration

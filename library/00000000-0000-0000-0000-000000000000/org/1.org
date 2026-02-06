@@ -1,5 +1,4 @@
 #+ID: 00000000-0000-0000-0000-000000000000
-#+TITLE: About
 #+DATE: 2025-10-20
 
 * Introduction
@@ -10,12 +9,12 @@ Hello, I'm Pierre-Henry — a software engineer with experience as a developer,
 manager, and co-founder.
 
 I’ve led projects such as modeling a [[href:/e4771178-cf50-4957-8763-2ac5faf36f49/html][nuclear reactor’s electrical network]], which led
-to the creation of /Deeplinks/, a subsidiary of an industrial group.  More recently, I
+to the creation of /Deeplinks/, a subsidiary of an industrial group. More recently, I
 carried out a feasibility study on [[href:/ca648df2-f226-4920-9c48-bbb1d879f7cb/html][automating legal procedures]] using AI (Google
 Gemini) and the Actor Model (Elixir/Erlang VM).
 
 I hold an MS in Applied Mathematics from [[https://ensimag.grenoble-inp.fr/en][Ensimag]] and an MS in Physics
-(Telecommunications, Radar) from the [[https://www.polito.it/en][Politecnico di Torino]].  The [[href:/00000000-0000-0000-0000-000000000001/html][Articles]] section of
+(Telecommunications, Radar) from the [[https://www.polito.it/en][Politecnico di Torino]]. The [[href:/00000000-0000-0000-0000-000000000001/html][Articles]] section of
 this website highlights other experiences and projects.
 
 If you'd like to connect, feel free to reach me at contact@phfrohring.com.
