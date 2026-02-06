@@ -4,6 +4,12 @@
 #+CITE_EXPORT: csl
 #+STATUS: draft
 
+#+begin_abstract
+ExoCode is a simplified software development process, inspired by the Collective Code
+Construction Contract (C4.1). It is targeted at small teams (around a dozen
+contributors) or even single developers and is learnable in under an hour.
+#+end_abstract
+
 * Introduction
 
 By analogy with an exothermic physical process, an /exovaloric/ social process is one

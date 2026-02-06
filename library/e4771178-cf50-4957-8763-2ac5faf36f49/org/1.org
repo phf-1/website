@@ -2,8 +2,7 @@
 #+TITLE: Routing Cables in a Nuclear Reactor
 #+DATE: 2025-10-26
 
-* Abstract
-
+#+begin_abstract
 This article recounts a real-world project to optimize cable routing in the Jules
 Horowitz Reactor, a nuclear research facility. Faced with fragmented data, manual
 errors, and computational bottlenecks, traditional modeling approaches led to
@@ -11,6 +10,7 @@ significant delays. By leveraging a graph database solution, our small team
 transformed the process, enabling on-demand route computations that *reduced
 turnaround from weeks to minutes*. We detail the key challenges and the strategies
 that ensured success.
+#+end_abstract
 
 * Introduction
 
@@ -22,7 +22,7 @@ challenge: how to optimize the routing of cables within the [[https://fr.wikiped
 #+ATTR_HTML: :width 75%
 [[file:rjh.jpeg]]
 
-* Problem
+* Objective
 
 Modeling teams were tasked with determining the paths for cables within the
 reactor. The result was a 3D model that generated outputs such as the following:

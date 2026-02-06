@@ -1,27 +1,18 @@
 #+ID: a94d4ca0-9656-4c8d-8bc2-f21a2e9c5d0e
-#+TITLE: Toward a JavaScript actor implementation 
+#+TITLE: Toward a JavaScript actor implementation
 #+DATE: 2026-02-05
 #+CITE_EXPORT: csl
 #+STATUS: draft
 
-* Abstract
-
-This article presents a lightweight implementation of the actor model in JavaScript,
-designed for client-side web applications despite the language’s single-threaded
-event loop. The implementation emphasizes the core actor principles—private state,
-asynchronous message passing, and immutability—while providing strong local reasoning
-guarantees through runtime invariant checks, explicitly typed immutable messages, and
-a simple Maybe type for safe optional values.
-
-The core Actor class processes messages sequentially, supports fire-and-forget signal
-broadcasting via a built-in pub/sub mechanism, and enables encapsulated DOM
-manipulation without shared mutable state. Concrete examples include a global logger,
-table-of-contents integration, and dynamic page assembly. The actor system running
-this very page serves as a live demonstration.
-
-The design shows that the intellectual benefits of the actor model—modularity,
-composability, and reasoning about concurrency—are readily achievable in everyday
-JavaScript development, even without true parallelism or distributed workers.
+#+begin_abstract
+A approximaition of the actor model implementated in JavaScript is introduced despite
+the language’s single-threaded event loop. It preserves core actor principles —
+private state, asynchronous message passing, and immutability — while ensuring strong
+local reasoning through runtime invariant checks, and typed immutable
+messages. Actors processes messages sequentially, supports fire-and-forget pub/sub
+signals, without shared mutable state. The actor system powering this page serves as
+a live demonstration.
+#+end_abstract
 
 * Introduction
 
@@ -140,7 +131,7 @@ immutability (no setters).
 
 * Optional Values with Maybe
 
-To avoid ~null~/~undefined~ pitfalls, I use a simple ~Maybe~ type:
+To avoid ~null/undefined~ pitfalls, I use a simple ~Maybe~ type:
 
 #+begin_src typescript
 class Just { /* ... */ }

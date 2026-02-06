@@ -72,6 +72,23 @@ f90b80b2-ff5e-4ee5-bcf8-cb8d775e99bd      # mandatory
 #+end_example
 
 * Iterations
+** DONE 24
+:PROPERTIES:
+:TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
+:END:
+:LOGBOOK:
+CLOCK: [2026-02-06 Fri 00:30]--[2026-02-06 Fri 02:00] =>  1:30
+:END:
+
+*** Objective
+
+- Improved legibility
+
+*** Result
+
+- Improved legibility.
+- Abstracts fixed.
+
 ** DONE 23
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration

@@ -21,7 +21,7 @@ The software is considered successful if:
 - Content is legible on desktop and mobile.
 - The software is flexible[cite:@sussman_flexible].
 
-* Result
+* Software
 
 The implementation is available at: https://github.com/phf-1/website/tree/master
 

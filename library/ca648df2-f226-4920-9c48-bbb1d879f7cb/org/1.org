@@ -2,18 +2,16 @@
 #+TITLE: Automating legal procedures
 #+DATE: 2025-10-27
 
-* Abstract
-
-This work explores the feasibility of automating parts of judicial debt recovery
-procedures using modern AI and distributed systems. Millions of uncollected contracts
-remain unresolved each year because legal enforcement costs exceed potential
-recoveries. This feasibility study focuses on identifying the main technical
-challenges of automating such procedures. Two demonstrators were developed: one for
-automated data extraction using Google Gemini, achieving over 95% accuracy, and
-another as a web application for simulating recovery procedures built on the Erlang
-Virtual Machine. Results show that current AI and distributed architectures enable
-building large-scale, low-cost systems capable of processing millions of legal cases
-efficiently, which is worth investigating.
+#+begin_abstract
+Millions of uncollected contracts remain unresolved each year because legal
+enforcement costs exceed potential recoveries. We study the feasibility of automating
+parts of judicial debt recovery procedures using AI and distributed systems. Two
+demonstrators were developed: one for automated data extraction using Google Gemini,
+achieving over 95% accuracy, and another as a web application for simulating recovery
+procedures built on the Erlang Virtual Machine. Results show that current AI and
+distributed architectures enable building large-scale, low-cost systems capable of
+processing millions of legal cases efficiently, which is worth investigating.
+#+end_abstract
 
 * Introduction
 
@@ -32,7 +30,7 @@ around half a million dollars annually for infrastructure and logistics—such a
 document processing facilities in North Africa. On top of that, companies still pay
 taxes on these unfulfilled contracts.
 
-* Problem
+* Objective
 
 The main issue is that enforcing these contracts through legal procedures is more
 expensive than ignoring them. In North Africa, for example, the cost of pursuing
@@ -52,7 +50,7 @@ into three parts:
 - *Scale*: Ensure both prediction and operation systems can process millions of cases
   simultaneously.
 
-* Feasibility study
+* Challenges
 
 Since this is an exploratory study, the goal was to identify the key technical
 challenges a viable solution must address.
@@ -80,7 +78,7 @@ At this stage, the goal was to show that building a program with these propertie
 realistic. Demonstrators were developed to support the argument that such automation
 is feasible.
 
-* Solution
+* Software
 
 After obtaining a test dataset of contracts, two programs were developed.
 

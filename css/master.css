@@ -175,12 +175,6 @@
 }
 
 html {
-    font-size: 16px;
-    line-height: 1.30;
-    color: var(--article-text-color);
-    text-rendering: optimizeLegibility;
-    font-family: 'Serif', serif;
-    letter-spacing: 0.01em;
     height: 100%;
 }
 
@@ -190,6 +184,46 @@ html {
  */
 html.loading {
     opacity: 0;
+}
+
+/* Legibility */
+html {
+    color: var(--text-color);
+    text-rendering: optimizeLegibility;
+    font-variant-numeric: oldstyle-nums;
+    hanging-punctuation: first last;
+    font-family: 'Serif', serif;
+    letter-spacing: 0.01em;
+    line-height: 1.7;
+    font-size: clamp(17px, 1.1vw, 20px);
+    hyphens: auto;
+    -webkit-hyphens: auto;
+    -ms-hyphens: auto;
+    text-wrap: pretty;
+    word-spacing: 0.05em;
+}
+h1, h2, h3, h4, h5 { text-decoration: none; padding-bottom: 0.2em; }
+h2, h3, h4, h5 { border-bottom: 2px solid var(--border-color); }
+h2 { margin-top: 2.5em; margin-bottom: 0.75em; }
+h3 { margin-top: 2em; margin-bottom: 0.5em; }
+h4 { margin-top: 1.5em; margin-bottom: 0.5em; }
+pre.src, code {
+    font-size: 0.9em;
+}
+p {
+    display: block;
+    margin-block-start: 1.25em;
+    margin-block-end: 1.25em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    unicode-bidi: isolate;
+}
+a {
+    outline-color: transparent;
+    text-decoration: underline;
+    color: var(--link-color);
+    text-decoration-thickness: 0.08em;
+    text-underline-offset: 0.15em;
 }
 
 body {
@@ -213,6 +247,7 @@ body {
         opacity: 1;
     }
 }
+
 
 .top-nav {
     background-color: var(--topnav-bg-color);
@@ -289,7 +324,6 @@ h1, h2, h3, h4, h5 {
     font-weight: normal;
     unicode-bidi: isolate;
     margin-top: 4ch;
-    text-decoration: underline;
 }
 
 code.privacy {
@@ -317,21 +351,12 @@ h2 {
     font-size: 1.5em;
 }
 
-p {
-    display: block;
-    margin-block-start: 1em;
-    margin-block-end: 1em;
-    margin-inline-start: 0px;
-    margin-inline-end: 0px;
-    unicode-bidi: isolate;
-}
-
 figure {
     text-align: center;
     margin: 2rem 0;
 
     img {
-        border: 1px solid var(--article-text-color);
+        border: 1px solid var(--text-color);
         border-radius: 2px
     }
 
@@ -351,7 +376,6 @@ pre {
 pre.src, code {
     font-family: 'Mono', monospace;
     color: var(--src-text-color);
-    font-size: 0.8em;
 }
 
 pre.src {
@@ -390,12 +414,6 @@ code {
         background-color: var(--kw-done-bg-color);
     }
 
-}
-
-a {
-    outline-color: transparent;
-    text-decoration: underline;
-    color: var(--link-color);
 }
 
 table {
@@ -454,57 +472,29 @@ nav#table-of-contents {
 
 
 blockquote {
-    background-color: var(--color-blue-grey-50);
-    border-left: 4px solid var(--color-blue-grey-900);
+    background-color: var(--src-bg-color);
+    border-left: 4px solid var(--src-border-color);
     margin: 2rem 0;
     padding: 1rem 1.5rem;
     font-style: italic;
-    color: var(--color-blue-grey-900);
     border-radius: 2px;
 }
 
+/* Colors */
 :root {
-    --color-beige: #fbf7f0;
-    --color-black: #000000;
-
-    --color-blue-warmer: #3546c2;
-
-    --color-white: #FFFFFF;
-    --color-blue-900: #0D47A1;
-    --color-blue-grey-100: #CFD8DC;
-    --color-blue-grey-50: #ECEFF1;
-    --color-blue-grey-900: #263238;
-    --color-green-900: #1B5E20;
-    --color-green-300: #81C784;
-    --color-indigo-50: #E8EAF6;
-    --color-indigo-900: #1A237E;
-    --color-orange-50: #FFF3E0;
-    --color-orange-900: #E65100;
-    --color-red-50: #FFEBEE;
-    --color-red-300: #E57373;
-    --color-red-900: #B71C1C;
-}
-
-:root {
-    --article-bg-color: var(--color-beige);
-    --article-text-color: var(--color-black);
-
-    --link-color: var(--color-blue-warmer);
-
-    --src-bg-color: var(--color-orange-50);
-    --src-border-color: var(--color-orange-900);
-    --src-text-color: var(--article-text-color);
-
+    --article-bg-color: #fbf7f0;
+    --text-color: var(--color-blue-grey-900);
+    --link-color: var(--color-blue-900);
+    --src-bg-color: var(--color-blue-grey-50);
+    --src-border-color: var(--color-blue-grey-900);
+    --src-text-color: var(--text-color);
     --kw-todo-bg-color: var(--color-red-900);
     --kw-doing-bg-color: var(--color-orange-900);
     --kw-done-bg-color: var(--color-green-900);
     --kw-text-color: var(--article-white);
-
     --table-th-bg-color: var(--color-blue-grey-100);
     --table-border-color: var(--color-blue-grey-900);
-
     --border-color: var(--color-blue-grey-900);
-
     --topnav-bg-color: var(--article-white);
 }
 
@@ -536,74 +526,50 @@ form.discussion {
     }
 }
 
-/************/
+
 /* Citation */
-/************/
-
-/* AI: Enhanced bibliography styling for improved legibility */
-
-/* AI: Container spacing - ensure bibliography section has adequate breathing room */
 .csl-bib-body {
-    margin-top: 2rem;              /* AI: Increased from 1.5rem for better section separation */
+    margin-top: 2rem;
     margin-bottom: 3rem;
-    padding-top: 1rem;             /* AI: Added padding for visual containment */
+    padding-top: 1rem;
 }
 
-/* AI: Individual entry styling - the core of legibility improvements */
 .csl-entry {
-    /* AI: Hanging indent - helps readers track which line belongs to which entry */
-    text-indent:    -2.5em;        /* AI: Slightly increased from -2em for better visual alignment */
-    margin-left:     2.5em;        /* AI: Matched with text-indent */
-
-    /* AI: Vertical rhythm - crucial for distinguishing separate entries */
-    margin-bottom:   1.5em;        /* AI: Increased from 1.2em - more white space = easier scanning */
-
-    /* AI: Line height - balance between compactness and readability */
-    line-height:     1.5;          /* AI: Increased from 1.45 for better vertical breathing */
-
-    /* AI: Subtle padding prevents text from feeling cramped */
-    padding-left:    0.5em;        /* AI: Increased from 0.4em */
-    padding-right:   0.5em;        /* AI: Added for symmetry and edge comfort */
-
+    text-indent:    -2.5em;
+    margin-left:     2.5em;
+    margin-bottom:   1.5em;
+    padding-left:    0.5em;
+    padding-right:   0.5em;
     position:        relative;
 }
 
-/* AI: Visual separators - helps readers maintain position when scanning long lists */
 .csl-entry:not(:last-child) {
-    border-bottom: 1px solid var(--color-blue-grey-100);
-    padding-bottom: 1.3em;         /* AI: Increased from 1.1em to balance with margin-bottom */
-    margin-bottom: 1.5em;          /* AI: Explicit repetition for clarity */
-}
-
-/* AI: Link styling - bibliography links need special treatment for long URLs */
-.csl-entry a {
-    text-decoration:        underline;
-    text-decoration-style:  solid;           /* AI: Explicit style for consistency */
-    text-underline-offset:  0.2em;           /* AI: Increased from 0.15em for better separation */
-    text-decoration-color:  var(--link-color);  /* AI: Ensures underline matches link color */
-    color:                  var(--link-color);
-
-    /* AI: URL wrapping - prevents layout breaks from long URLs */
-    word-break:             break-word;      /* AI: Changed from break-all - more natural breaks */
-    overflow-wrap:          break-word;      /* AI: Added for better browser support */
-
-    /* AI: Hover state for better interactivity */
-    transition: opacity 0.2s ease;
+    padding-bottom: 1.3em;
+    margin-bottom: 1.5em;
 }
 
 .csl-entry a:hover {
-    opacity: 0.7;                            /* AI: Subtle feedback on hover */
+    opacity: 0.7;
 }
 
-/* AI: Typography refinements for better reading flow */
 .csl-entry {
-    hyphens:           auto;                 /* AI: Enables hyphenation for justified text */
-    text-wrap:         pretty;               /* AI: Modern CSS - prevents orphans and improves flow */
-    word-spacing:      0.05em;               /* AI: Subtle increase in word spacing for clarity */
+    font-feature-settings: "liga" 1;
 }
 
+/* Abstract */
+.abstract {
+    max-width: 80ch;
+    margin: 3em auto;
+    padding: 1em;
+    background-color: var(--src-bg-color);
+    border: 1px solid var(--src-border-color);
+    border-radius: 2px;
+}
 
-/* AI: Special handling for em-dashes (used in repeated author citations like "———") */
-.csl-entry {
-    font-feature-settings: "liga" 1;         /* AI: Enables ligatures for better em-dash rendering */
+.abstract *:first-child {
+    margin-top: 0;
+}
+
+.abstract *:last-child {
+    margin-bottom: 0;
 }
