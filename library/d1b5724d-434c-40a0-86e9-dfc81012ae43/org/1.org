@@ -1,6 +1,6 @@
 #+ID: d1b5724d-434c-40a0-86e9-dfc81012ae43
 #+TITLE: A simple actor definition
-#+DATE: 2026-02-06
+#+DATE: 2026-02-07
 #+CITE_EXPORT: csl
 #+LICENSE: https://creativecommons.org/licenses/by-nc-sa/4.0 CC-BY-NC-SA-4.0
 #+STATUS: Draft
@@ -9,7 +9,14 @@
 TODO
 #+end_abstract
 
-* TODO Introduction
+* Introduction
+
+In 1986, Gul Agha wrote: /It is generally believed that the next generation of
+computers will involve massively parallel architectures [cite:@agha1986actors]./
+Today, in 2026, 40 years later, it is the case. The central abstraction to deal with
+this fact is the idea of an /Actor/. We go through available published work and attempt
+to provide a simple definition to this idea, then a few examples and finally use
+cases.
 
 * Objective
 
@@ -17,7 +24,266 @@ TODO
 - Provide an illustrative example.
 - Provide a use case.
 
-* TODO Definition
+* Gul A. Agha 1986
+:PROPERTIES:
+:ID:       2135593c-cfaa-4c41-8c41-6966295cf3aa
+:END:
+
+/Actors: A Model of Concurrent Computation in Distributed Systems/
+[cite:@agha1986actors], seems to be the main book about actors. Unfortunately, I find
+it hard to understand.
+
+* Hewitt 2010
+:PROPERTIES:
+:ID:       451cdbd4-55e6-4787-8b35-56c0d7d6c561
+:END:
+
+Time may have sorted out a clearer exposition in /Actor Model of Computation: Scalable
+Robust Information Systems/ [cite:@hewitt2010actormodel].
+
+#+begin_quote
+Message passing using types is the foundation of system communication:
+- Messages are the unit of communication1
+- Types enable secure communication with any Actor
+#+end_quote
+
+What is the definition of a Message? What is the definition of an Actor?
+
+#+begin_quote
+When an Actor receives a message, it can concurrently:
+- send messages to (unforgeable) addresses of Actors that it has;
+- create new Actors;
+- designate how to handle the next message it receives.
+#+end_quote
+
+What is an address?
+
+#+begin_quote
+It is a consequence of the Actor Model that there are some computations that cannot
+be implemented in the lambda calculus.
+#+end_quote
+
+Proof?
+
+#+begin_quote
+The Actor Model is a mathematical theory of computation that treats “Actors” as the
+universal primitives of concurrent digital computation [Hewitt, Bishop, and Steiger
+1973; Hewitt 1977]
+#+end_quote
+
+So, this is where we should look for the definition of an Actor.
+
+#+begin_quote
+The advent of massive concurrency through client-cloud computing and many-core
+computer architectures has galvanized interest in the Actor Model [Hewitt 2009b].
+#+end_quote
+
+It took a few decades, but time seems to favor the actor model. /Hewitt 2009b/ should
+explain why.
+
+#+begin_quote
+An Actor can only communicate with another Actor to which it has an address.
+Addresses can be implemented in a variety of ways:
+- direct physical attachment
+- memory or disk addresses
+- network addresses
+- email addresses
+#+end_quote
+
+But why not just give definitions like mathematicians do? Just a sequence of
+consistent definitions and propositions, maybe with proofs.
+
+#+begin_quote
+The Actor Model is characterized by inherent concurrency of computation within and
+among Actors, dynamic creation of Actors, inclusion of Actor addresses in messages,
+and interaction only through direct asynchronous message passing with no restriction
+on message reception order.
+#+end_quote
+
+/direct asynchronous message passing/?
+
+#+begin_quote
+The Actor Model differs from its predecessors and most current models of
+computation in that the Actor Model assumes the following:
+- Concurrent execution in processing a message.
+- The following are not required by an Actor: a thread, a mailbox, a
+message queue, its own operating system process, etc.
+- Message passing has the same overhead as looping and procedure
+calling.
+- Primitive Actors can be implemented in hardware.
+#+end_quote
+
+Ok.
+
+#+begin_quote
+The Actor Model is based on one-way asynchronous communication. Once a message has
+been sent, it is the responsibility of the receiver. Messages in the Actor Model are
+decoupled from the sender and are delivered by the system on a best efforts
+basis. […] message passing is taken as fundamental in the Actor Model. […] laws for
+Actors [Baker and Hewitt 1977]
+#+end_quote
+
+Fine.
+
+#+begin_quote
+The Actor Model supports indeterminacy because the reception order of messages can
+affect future behavior.  Operations are said to be quasi-commutative to the extent
+that it doesn’t matter in which order they occur. To the extent possible,
+quasi-commutativity is used to reduce indeterminacy.
+#+end_quote
+
+Does this have any relationship with eventual consistency?
+
+#+begin_quote
+Locality and security mean that in processing a message: an Actor can send
+messages only to addresses for which it has information by the following
+means:
+1. that it receives in the message
+2. that it already had before it received the message
+3. that it creates while processing the message.
+#+end_quote
+
+/One of the things that every sorcerer will tell you is that if you have the name of
+the spirit, you have power over it./ [cite:@sussman1986lecture1b].
+
+#+begin_quote
+In the Actor Model, there is no hypothesis of simultaneous change in multiple
+locations. In this way it differs from some other models of concurrency.
+#+end_quote
+
+non-local effects are rejected. /I cannot seriously believe in it [quantum mechanics]
+because the theory is incompatible with the principle that physics should represent a
+reality in time and space, free from spooky actions at a distance./
+[cite:@einstein1947letter].
+
+#+begin_quote
+The security of Actors can be protected in the following ways:
+- hardwiring in which Actors are physically connected
+- every-word-tagged memory.
+- virtual machines as in Java virtual machine, Common Language
+Runtime, etc.
+- signing and/or encryption of Actors and their addresses
+A delicate point in the Actor Model is the ability to synthesize the address of
+an Actor. In some cases security can be used to prevent the synthesis of
+addresses in practice using the following:
+- every-word-tagged memory
+- signing and encryption of messages
+#+end_quote
+
+Interesting.
+
+#+begin_quote
+Runtime failures are always a possibility in Actor systems and are dealt with by
+runtime infrastructures. Message acknowledgement, reception, and response cannot be
+guaranteed although best efforts are made. Consequences are cleaned up on a
+best-effort basis.  Robustness is based on the following principle: If an Actor is
+sent a request, then the continuation will be one of the following two mutually
+exclusive possibilities:
+1. to respond with the response received from the Actor sent the request
+2. to throw a Messaging exception
+
+A response is either a returned value or a thrown exception. A Messaging exception
+can have information concerning the lack of response. even though the Actor may have
+received the request and sent a response that has not yet been received. Requestors
+need to be able to interact with infrastructures concerning policies to be applied
+concerning when to generate Unresponsive exceptions.
+#+end_quote
+
+Ok, so we know what to expect when "speaking" with an actor.
+
+#+begin_quote
+The Computational Representation Theorem [Clinger 1981; Hewitt 2006]11 characterizes
+computation for systems which are closed in the sense that they do not receive
+communications from outside. […] The upshot is that concurrent systems can be
+axiomatized using mathematical logiciv but in general cannot be implemented. Thus,
+the following practical problem arose:
+
+"How can practical programming languages be rigorously defined since the proposal by
+Scott and Strachey [1971] to define them in terms lambda calculus failed because the
+lambda calculus cannot implement concurrency?"
+#+end_quote
+
+Does it have any implication in practice? See Plotkin "or" and the fact that lambda
+calculous it can simulate some parallelism (via Church-Rosser allowing independent
+reductions), but not true non-deterministic or fair concurrency where independent
+subcomputations can converge independently without full
+evaluation. [cite:@plotkin1977lcf]
+
+#+begin_quote
+Programming languages like ActorScript [Hewitt 2010] take the approach of extending
+behavior in contrast to the approach of specializing behavior:
+
+- Type specialization: If type t1 is a subtype of type t2, then instances of t1 have
+  all of the properties that are provable from the definition of type t2 [Liskov
+  1987, Liskov and Wing 2001].
+
+- Type extension: A type can be extended to have additional (perhaps incompatible)
+  properties from the type that it extends. An extension type can make use of the
+  implementation of the type that it extends.  Type extension is commonly used to
+  extend operating system software as well as applications.
+
+The term “inheritance” in programming has been used (sometimes ambiguously) to mean
+both specialization and extension.
+#+end_quote
+
+Interesting distinction: Specializing and Extension.
+
+#+begin_quote
+Reasoning about Actor Systems
+The principle of Actor induction is:
+1. Suppose that an Actor x has property P when it is created
+2. Further suppose that if x has property P when it receives a message,
+then it has property P when it receives the next message.
+3. Then x always has the property P.
+In his doctoral dissertation, Aki Yonezawa developed further techniques for
+proving properties of Actor systems including those that make use of migration.
+Russ Atkinson developed techniques for proving properties of Actors that are
+guardians of shared resources. Gerry Barber's 1981 doctoral dissertation
+concerned reasoning about change in knowledgeable office systems.
+#+end_quote
+
+So reasoning, /i.e./ deriving conclusions from premises, is possible.
+
+#+begin_quote
+- Swiss cheese [Hewitt and Atkinson 1977, 1979; Atkinson 1980].
+- Futures [Baker and Hewitt 1977].
+#+end_quote
+
+Time is scarce, let us focus and skip things.
+
+* TODO Hewitt & Baker 1977
+
+[cite:@hewitt1977lawsA]
+
+* TODO Hewitt 1977
+
+[cite:@hewitt1977viewing]
+
+* Message definition
+
+#+ID: 6dc94cfa-c366-4082-898b-208923ac958b
+#+begin_definition
+A message is an immutable parcel of data sent to an actor’s address. It contains at
+minimum the recipient address and whatever information the sender chooses to
+communicate.
+#+end_definition
+
+* Actor definition
+
+#+ID: c5b69743-a729-45ec-a95f-f91aeae0d0a5
+#+begin_definition
+An /actor/ is an independent computational entity with three essential properties:
+
+1. It has /addresses/.
+2. It has private internal state.
+3. When it receives a /message/ at its address, it may do the following concurrently:
+   - send messages to addresses it knows,
+   - create new actors,
+   - change how it will react to the next message.
+
+Messages are one-way and asynchronous: once sent, the sender cannot wait for or
+assume delivery.
+#+end_definition
 
 * TODO Example
 

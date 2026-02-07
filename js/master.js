@@ -63,7 +63,7 @@ class Error2 extends Error {
     Check.String(msg)
     Check.Any(value)
     super(msg);
-    if (Error.captureStackTrace) { Error.captureStackTrace(this, Err); }
+    if (Error.captureStackTrace) { Error.captureStackTrace(this, Error2); }
     this.#code = code;
     this.#msg = msg;
     this.#value = value;
