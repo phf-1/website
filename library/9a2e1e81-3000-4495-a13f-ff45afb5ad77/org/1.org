@@ -2,7 +2,8 @@
 #+TITLE: ExoCode
 #+DATE: 2025-10-30
 #+CITE_EXPORT: csl
-#+STATUS: draft
+#+STATUS: Draft
+#+LICENSE: https://creativecommons.org/licenses/by-nc-sa/4.0 CC-BY-NC-SA-4.0
 
 #+begin_abstract
 ExoCode is a simplified software development process, inspired by the Collective Code

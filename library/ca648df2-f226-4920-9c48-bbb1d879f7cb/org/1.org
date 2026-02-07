@@ -1,6 +1,8 @@
 #+ID: ca648df2-f226-4920-9c48-bbb1d879f7cb
 #+TITLE: Automating legal procedures
 #+DATE: 2025-10-27
+#+LICENSE: https://creativecommons.org/licenses/by-nc-sa/4.0 CC-BY-NC-SA-4.0
+#+STATUS: Stable
 
 #+begin_abstract
 Millions of uncollected contracts remain unresolved each year because legal

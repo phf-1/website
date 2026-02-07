@@ -12,26 +12,87 @@
 (require 'org)
 (require 'ox)
 (require 'oc)
-(setq org-export-with-title t)
-(setq org-html-doctype "html5")
-(setq org-html-html5-fancy t)
-(setq org-export-with-section-numbers nil)
-(setq org-todo-keywords '((sequence "TODO(t)" "WAITING(w)" "DOING(o)" "|" "DONE(d)" "FAILED(f)" "CANCELED(c)")))
 
+;; For some reason, this has to be defined or there is an error.
 (defun citeproc-style-cite-superscript-p (x) t)
 
-(org-add-link-type "href" :export
-                   (lambda (path desc backend)
-                     (when (eq backend 'html)
-                       (format "<a href=\"%s\">%s</a>" path (or desc path)))))
+(defun start--insert-date (date)
+  (save-excursion
+    (goto-char (point-min))
+    (insert (format "<span id=\"last-edit\">Last edit: %s</span>" date))))
 
-(setq org-html-head-include-default-style nil)
-(setq org-html-head-include-scripts nil)
-(setq org-html-head "@CSS@")
-(setq org-html-postamble "@JS@")
-(setq org-export-show-temporary-export-buffer t)
+(defun start--insert-status (status)
+  (save-excursion
+    (goto-char (point-min))
+    (insert (format "<span id=\"status\">Status: %s</span>" status))))
 
-(setq org-cite-export-processors '((t csl)))
+(defun start--insert-license (url name)
+  (save-excursion
+    (goto-char (point-min))
+    (insert (format "<span id=\"license\">License: <a href=\"%s\">%s</a></span>" url name))))
+
+(defun start--insert-title (title)
+  (save-excursion
+    (goto-char (point-min))
+    (insert (format "<h1>%s</h1>" title))))
+
+(defun start--insert-metadata (metadata)
+  (pcase-dolist (`(,key . ,value) metadata)
+    (pcase key
+      ("DATE"
+       (pcase value
+         (`(,date)
+          (start--insert-date date))
+         (_
+          (error "ERROR | Unexpected value associated with the %s keyword. value = %s" key value ))))
+
+      ("STATUS"
+       (pcase value
+         (`(,status)
+          (start--insert-status status))
+         (_
+          (error "ERROR | Unexpected value associated with the %s keyword. value = %s" key value ))))
+
+      ("LICENSE"
+       (pcase (string-split (car value) " ")
+         (`(,url ,name)
+          (start--insert-license url name))
+         (_
+          (error "ERROR | Unexpected value associated with the %s keyword. value = %s. file = %s" key value (org-get-title)))))
+
+      ("TITLE"
+       (pcase value
+         (`(,title)
+          (start--insert-title title))
+         (_
+          (error "ERROR | Unexpected value associated with the %s keyword. value = %s" key value))))
+
+      (_
+       (message "WARNING | Unexpected keyword. keyword = %s" key)))))
+
+;; Export the current buffer to HTML and switch to the buffer that contains the HTML.
+(defun start--export ()
+  (let ((org-export-show-temporary-export-buffer t)
+        (org-export-with-title t)
+        (org-html-doctype "html5")
+        (org-html-html5-fancy t)
+        (org-export-with-section-numbers nil)
+        (org-todo-keywords '((sequence "TODO(t)" "WAITING(w)" "DOING(o)" "|" "DONE(d)" "FAILED(f)" "CANCELED(c)")))
+        (org-html-head-include-default-style nil)
+        (org-html-head-include-scripts nil)
+        (org-html-head "@CSS@")
+        (org-html-postamble "@JS@")
+        (org-cite-export-processors '((t csl)))
+        (metadata (org-collect-keywords '("DATE" "LICENSE" "TITLE" "STATUS"))))
+
+    (org-add-link-type "href"
+                       :export
+                       (lambda (path desc backend)
+                         (when (eq backend 'html)
+                           (format "<a href=\"%s\">%s</a>" path (or desc path)))))
+
+    (org-html-export-as-html nil nil nil t)
+    (start--insert-metadata metadata)))
 
 (defun org-get-date ()
   (let ((date-entry (assoc "DATE" (org-collect-keywords '("DATE")))))
@@ -47,16 +108,8 @@
         (error nil))
       (insert stdin-content))
     (org-mode)
-    (let ((title (org-get-title))
-          (date (org-get-date)))
-      (org-html-export-as-html nil nil nil t)
-      (when title
-        (goto-char (point-min))
-        (insert (format "<h1>%s</h1>" title)))
-      (when date
-        (goto-char (point-min))
-        (insert (format "<span id=\"last-edit\">Last edit: %s</span>" date)))
-      (princ (buffer-string)))))
+    (start--export)
+    (princ (buffer-string))))
 
 
 ;; TODO: print

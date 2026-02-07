@@ -41,7 +41,7 @@ test:
 
 
 # [[id:3c446152-6565-44b6-ab73-7faf6c7273b1]]
-# archive is a rule that builds an archive containing the project files.
+#   archive is a rule that builds an archive containing the project files.
 .PHONY: archive
 ARCHIVE_DIR := ${PWD}/_archive
 ARCHIVE := ${ARCHIVE_DIR}/archive.tar.zst

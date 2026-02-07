@@ -4,185 +4,264 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+
+
 /**
- * Structure of this file
+ * Structure
  *
- * This file is structured in sections: Font, Geometry, Typography, Color, Responsive, Other.
- * Each section applies a set of constraints to the HTML elements in order to
- * maximize legibility.
+ * This file is structured in sections: Color, Font, Geometry, Typography,
+ * Responsive, Other.  Each section applies a set of constraints to the HTML elements
+ * in order to maximize legibility. This list is partially ordered: given i < j,
+ * section(j) may rely on observed effects of section(i). For instance, Geometry
+ * depends on Font as well as Typography.
  */
 
+
+
 /**
-* Font
-*
-* Font defines the set of available fonts: Serif, Sans and Mono.
-*/
+ * Color
+ *
+ * This section defines the set of available colors and applies them to various HTML
+ * elements.
+ */
+
+:root {
+    --article-bg-color: #fbf7f0;
+    --text-color: var(--color-blue-grey-900);
+    --link-color: var(--color-blue-900);
+    --src-bg-color: var(--color-blue-grey-50);
+    --src-border-color: var(--color-blue-grey-900);
+    --src-text-color: var(--text-color);
+    --kw-todo-bg-color: var(--color-red-900);
+    --kw-doing-bg-color: var(--color-orange-900);
+    --kw-done-bg-color: var(--color-green-900);
+    --kw-text-color: var(--article-white);
+    --table-th-bg-color: var(--color-blue-grey-100);
+    --table-border-color: var(--color-blue-grey-900);
+    --border-color: var(--color-blue-grey-900);
+    --topnav-bg-color: var(--article-white);
+}
+
+html { color: var(--text-color); }
+
+article, .reviewer {
+    background-color: var(--article-bg-color);
+    border-color: var(--border-color);
+}
+
+h2, h3, h4, h5 { border-color: var(--border-color); }
+
+a {
+    color: var(--link-color);
+    outline-color: transparent;
+}
+
+figure {
+    img {
+        border-color: var(--text-color);
+    }
+}
+
+pre, pre.src, code {
+    border-color: var(--src-border-color);
+    background-color: var(--src-bg-color);
+}
+
+.todo, .done {
+    color: var(--article-bg-color);
+    &.TODO { background-color: var(--kw-todo-bg-color); }
+    &.DOING { background-color: var(--kw-doing-bg-color); }
+    &.DONE { background-color: var(--kw-done-bg-color); }
+}
+
+th, td { border-color: var(--table-border-color); }
+
+th { background-color: var(--table-th-bg-color); }
+
+blockquote {
+    background-color: var(--src-bg-color);
+    border-color: var(--src-border-color);
+}
+
+.abstract {
+    background-color: var(--src-bg-color);
+    border-color: var(--src-border-color);
+}
+
+
+/**
+ * Font
+ *
+ * This section defines the set of available fonts: Serif, Sans and Mono.
+ */
+
 @font-face {
-  font-family: 'Sans';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('/00000000-0000-0000-0000-000000000000/source-sans-3-regular.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
+    font-family: 'Sans';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('/00000000-0000-0000-0000-000000000000/source-sans-3-regular.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
 }
 
 @font-face {
-  font-family: 'Sans';
-  font-style: italic;
-  font-weight: 400;
-  font-display: swap;
-  src: url('/00000000-0000-0000-0000-000000000000/source-sans-3-italic.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
+    font-family: 'Sans';
+    font-style: italic;
+    font-weight: 400;
+    font-display: swap;
+    src: url('/00000000-0000-0000-0000-000000000000/source-sans-3-italic.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
 }
 
 @font-face {
-  font-family: 'Sans';
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url('/00000000-0000-0000-0000-000000000000/source-sans-3-600.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
+    font-family: 'Sans';
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url('/00000000-0000-0000-0000-000000000000/source-sans-3-600.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
 }
 
 @font-face {
-  font-family: 'Sans';
-  font-style: italic;
-  font-weight: 600;
-  font-display: swap;
-  src: url('/00000000-0000-0000-0000-000000000000/source-sans-3-600italic.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
+    font-family: 'Sans';
+    font-style: italic;
+    font-weight: 600;
+    font-display: swap;
+    src: url('/00000000-0000-0000-0000-000000000000/source-sans-3-600italic.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
 }
 
 @font-face {
-  font-family: 'Sans';
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url('/00000000-0000-0000-0000-000000000000/source-sans-3-700.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
+    font-family: 'Sans';
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url('/00000000-0000-0000-0000-000000000000/source-sans-3-700.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
 }
 
 @font-face {
-  font-family: 'Sans';
-  font-style: italic;
-  font-weight: 700;
-  font-display: swap;
-  src: url('/00000000-0000-0000-0000-000000000000/source-sans-3-700italic.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
+    font-family: 'Sans';
+    font-style: italic;
+    font-weight: 700;
+    font-display: swap;
+    src: url('/00000000-0000-0000-0000-000000000000/source-sans-3-700italic.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
 }
 
 @font-face {
-  font-family: 'Serif';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('/00000000-0000-0000-0000-000000000000/source-serif-4-regular.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
+    font-family: 'Serif';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('/00000000-0000-0000-0000-000000000000/source-serif-4-regular.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
 }
 
 @font-face {
-  font-family: 'Serif';
-  font-style: italic;
-  font-weight: 400;
-  font-display: swap;
-  src: url('/00000000-0000-0000-0000-000000000000/source-serif-4-italic.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
+    font-family: 'Serif';
+    font-style: italic;
+    font-weight: 400;
+    font-display: swap;
+    src: url('/00000000-0000-0000-0000-000000000000/source-serif-4-italic.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
 }
 
 @font-face {
-  font-family: 'Serif';
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url('/00000000-0000-0000-0000-000000000000/source-serif-4-600.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
+    font-family: 'Serif';
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url('/00000000-0000-0000-0000-000000000000/source-serif-4-600.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
 }
 
 @font-face {
-  font-family: 'Serif';
-  font-style: italic;
-  font-weight: 600;
-  font-display: swap;
-  src: url('/00000000-0000-0000-0000-000000000000/source-serif-4-600italic.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
+    font-family: 'Serif';
+    font-style: italic;
+    font-weight: 600;
+    font-display: swap;
+    src: url('/00000000-0000-0000-0000-000000000000/source-serif-4-600italic.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
 }
 
 @font-face {
-  font-family: 'Serif';
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url('/00000000-0000-0000-0000-000000000000/source-serif-4-700.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
+    font-family: 'Serif';
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url('/00000000-0000-0000-0000-000000000000/source-serif-4-700.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
 }
 
 @font-face {
-  font-family: 'Serif';
-  font-style: italic;
-  font-weight: 700;
-  font-display: swap;
-  src: url('/00000000-0000-0000-0000-000000000000/source-serif-4-700italic.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
+    font-family: 'Serif';
+    font-style: italic;
+    font-weight: 700;
+    font-display: swap;
+    src: url('/00000000-0000-0000-0000-000000000000/source-serif-4-700italic.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
 }
 
 @font-face {
-  font-family: 'Mono';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('/00000000-0000-0000-0000-000000000000/jetbrains-mono-regular.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
+    font-family: 'Mono';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('/00000000-0000-0000-0000-000000000000/jetbrains-mono-regular.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
 }
 
 @font-face {
-  font-family: 'Mono';
-  font-style: italic;
-  font-weight: 400;
-  font-display: swap;
-  src: url('/00000000-0000-0000-0000-000000000000/jetbrains-mono-italic.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
+    font-family: 'Mono';
+    font-style: italic;
+    font-weight: 400;
+    font-display: swap;
+    src: url('/00000000-0000-0000-0000-000000000000/jetbrains-mono-italic.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
 }
 
 @font-face {
-  font-family: 'Mono';
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url('/00000000-0000-0000-0000-000000000000/jetbrains-mono-600.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
+    font-family: 'Mono';
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url('/00000000-0000-0000-0000-000000000000/jetbrains-mono-600.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
 }
 
 @font-face {
-  font-family: 'Mono';
-  font-style: italic;
-  font-weight: 600;
-  font-display: swap;
-  src: url('/00000000-0000-0000-0000-000000000000/jetbrains-mono-600italic.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
+    font-family: 'Mono';
+    font-style: italic;
+    font-weight: 600;
+    font-display: swap;
+    src: url('/00000000-0000-0000-0000-000000000000/jetbrains-mono-600italic.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
 }
 
 @font-face {
-  font-family: 'Mono';
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url('/00000000-0000-0000-0000-000000000000/jetbrains-mono-700.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
+    font-family: 'Mono';
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url('/00000000-0000-0000-0000-000000000000/jetbrains-mono-700.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
 }
 
 @font-face {
-  font-family: 'Mono';
-  font-style: italic;
-  font-weight: 700;
-  font-display: swap;
-  src: url('/00000000-0000-0000-0000-000000000000/jetbrains-mono-700italic.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
+    font-family: 'Mono';
+    font-style: italic;
+    font-weight: 700;
+    font-display: swap;
+    src: url('/00000000-0000-0000-0000-000000000000/jetbrains-mono-700italic.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
 }
+
 
 /**
  * Geometry
  *
- * Geometry defines various distances and constraints to be applied to the boxes
+ * This section defines various distances and constraints to be applied to the boxes
  * (see: CSS Box Model).
  */
 
@@ -284,8 +363,8 @@ h1, h2, h3, h4, h5 {
 }
 
 h1 {
-  line-height: 1.1;
-  margin: 0 0 var(--distance-h1-abstract) 0;
+    line-height: 1.1;
+    margin: 0 0 var(--distance-h1-abstract) 0;
 }
 
 p {
@@ -301,7 +380,7 @@ figure {
     img { border-radius: 2px; }
 }
 
-pre.src {
+pre, pre.src {
     border: 1px solid;
     border-radius: 2px;
     padding: 0.5em;
@@ -360,6 +439,10 @@ blockquote {
     border-radius: 2px;
 }
 
+blockquote *:last-child {
+    margin-bottom: 0;
+}
+
 .c23 {
     display: flex;
     flex-direction: column;
@@ -409,12 +492,14 @@ blockquote {
     margin-bottom: 0;
 }
 
+
 /**
  * Typography
  *
- * Typography defines various constraints to be applied to the content, text and
+ * This section defines various constraints to be applied to the content, text and
  * images, in order to maximize legibility.
  */
+
 html {
     font-family: 'Serif', serif;
     line-height: 1.7;
@@ -439,7 +524,7 @@ h1 {
 
 h2, h3, h4, h5 { border-bottom: 2px solid; }
 
-pre.src, code { font-size: 0.9em; }
+pre, pre.src, code { font-size: 0.9em; }
 
 p { unicode-bidi: isolate; }
 
@@ -458,7 +543,7 @@ strong { font-weight: bold; }
 
 pre { font-family: 'Mono', monospace; }
 
-pre.src, code { font-family: 'Mono', monospace; }
+pre, pre.src, code { font-family: 'Mono', monospace; }
 
 code { padding: 0 0.25em; }
 
@@ -479,75 +564,12 @@ blockquote { font-style: italic; }
 
 .csl-entry a:hover { opacity: 0.7; }
 
-/* Color */
-:root {
-    --article-bg-color: #fbf7f0;
-    --text-color: var(--color-blue-grey-900);
-    --link-color: var(--color-blue-900);
-    --src-bg-color: var(--color-blue-grey-50);
-    --src-border-color: var(--color-blue-grey-900);
-    --src-text-color: var(--text-color);
-    --kw-todo-bg-color: var(--color-red-900);
-    --kw-doing-bg-color: var(--color-orange-900);
-    --kw-done-bg-color: var(--color-green-900);
-    --kw-text-color: var(--article-white);
-    --table-th-bg-color: var(--color-blue-grey-100);
-    --table-border-color: var(--color-blue-grey-900);
-    --border-color: var(--color-blue-grey-900);
-    --topnav-bg-color: var(--article-white);
-}
-
-html { color: var(--text-color); }
-
-article, .reviewer {
-    background-color: var(--article-bg-color);
-    border-color: var(--border-color);
-}
-
-h2, h3, h4, h5 { border-color: var(--border-color); }
-
-a {
-    color: var(--link-color);
-    outline-color: transparent;
-}
-
-figure {
-    img {
-        border-color: var(--text-color);
-    }
-}
-
-pre.src, code {
-    border-color: var(--src-border-color);
-    background-color: var(--src-bg-color);
-}
-
-.todo, .done {
-    color: var(--article-bg-color);
-    &.TODO { background-color: var(--kw-todo-bg-color); }
-    &.DOING { background-color: var(--kw-doing-bg-color); }
-    &.DONE { background-color: var(--kw-done-bg-color); }
-}
-
-th, td { border-color: var(--table-border-color); }
-
-th { background-color: var(--table-th-bg-color); }
-
-blockquote {
-    background-color: var(--src-bg-color);
-    border-color: var(--src-border-color);
-}
-
-.abstract {
-    background-color: var(--src-bg-color);
-    border-color: var(--src-border-color);
-}
 
 /**
  * Responsive
  *
- * This is a collection of media queries that allows the website to adapt its layout
- * depending on screen sizes: mobile, tablet, desktop.
+ * This section defines how the layout of the website should be adapted depending on
+ * the size of the screen it is viewed on.
  */
 
 /**
@@ -615,10 +637,11 @@ blockquote {
     nav#table-of-contents { font-size: 1rem; }
 }
 
+
 /**
  * Other
  *
- * Everything else.
+ * This section defines uncategorized code.
  */
 
 /**

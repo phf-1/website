@@ -1,7 +1,9 @@
 #+ID: d1b5724d-434c-40a0-86e9-dfc81012ae43
-#+TITLE: Actor (DRAFT)
+#+TITLE: A simple actor definition
 #+DATE: 2026-02-06
 #+CITE_EXPORT: csl
+#+LICENSE: https://creativecommons.org/licenses/by-nc-sa/4.0 CC-BY-NC-SA-4.0
+#+STATUS: Draft
 
 #+begin_abstract
 TODO

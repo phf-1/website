@@ -2,7 +2,8 @@
 #+TITLE: Toward a JavaScript actor implementation
 #+DATE: 2026-02-05
 #+CITE_EXPORT: csl
-#+STATUS: draft
+#+STATUS: Draft
+#+LICENSE: https://creativecommons.org/licenses/by-nc-sa/4.0 CC-BY-NC-SA-4.0
 
 #+begin_abstract
 An approximation of the actor model implemented in JavaScript is introduced, despite

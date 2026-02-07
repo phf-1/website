@@ -1,0 +1,86 @@
+#+ID: 96aaee72-3711-43de-890b-6ae3cfcc6db0
+#+TITLE: Managing AI generated code
+#+DATE: 2026-02-06
+#+LICENSE: https://creativecommons.org/licenses/by-nc-sa/4.0 CC-BY-NC-SA-4.0
+#+STATUS: Draft
+#+CITE_EXPORT: csl
+
+#+begin_abstract
+TODO
+#+end_abstract
+
+* TODO Introduction
+
+* Objective
+
+The objective is to answer the following questions. Given a code repository written
+by an AI like Lovable that has a bug /i.e./ that violates some invariant ; then should
+one try to fix the bug through Lovable or should one try to fix the code manually?
+Then, how to ensure non-regression?
+
+* TODO Lovable
+** Documentation
+
+From [[https://lovable.dev/pricing][lovable.dev/pricing]] :
+
+#+begin_quote
+> What tech stacks does Lovable know?
+
+Lovable builds front-end using React, Tailwind & Vite, and can connect to OpenAPI
+backends. Support for data persistence and authentication is in alpha, using
+Supabase.
+#+end_quote
+
+From [[https://docs.lovable.dev/introduction/welcome#product-capabilities][docs.lovable.dev/introduction/welcome]] :
+
+#+begin_quote
+Lovable supports the full lifecycle of modern product development, from early
+exploration and prototyping to deployment and ongoing operation.
+
+Each project represents a single application and produces a codebase that can be
+synced to GitHub and integrated into existing engineering workflows.
+#+end_quote
+
+#+begin_quote
+Lovable is designed to complement existing tools and processes:
+- Describe what you want to build
+- Review and iterate on the generated application
+- Sync code to GitHub
+- Deploy, operate, and govern according to your standards
+#+end_quote
+
+** Getting started
+
+From [[https://docs.lovable.dev/introduction/getting-started][docs.lovable.dev/introduction/getting-started]] :
+
+#+begin_quote
+Simply enter an initial prompt to kick things off, and Lovable will do the rest! This
+is the starting block for any project in Lovable, where you can bring your ideas to
+life instantly.
+#+end_quote
+
+Prompt :
+
+#+begin_example
+Create a TODO application.
+#+end_example
+
+** Github transfer
+
+After the transfer, here is the github repo :
+
+https://github.com/phf-1/my-lovely-tasks
+
+** Repository structure
+
+
+* TODO Experiment
+* TODO Result
+
+* TODO Discussion
+
+* TODO Conclusion
+
+* TODO Bibliography
+
+#+print_bibliography:

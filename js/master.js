@@ -133,7 +133,7 @@ class Message {
 
 Check.Message = Check.mk((x) => x instanceof Message, 'Not a Message')
 
-const define_message_class = (name, valueChecker = null) => {
+const define_message = (name, valueChecker = null) => {
   const code = Symbol(name);
 
   class M extends Message {
@@ -155,17 +155,17 @@ const define_message_class = (name, valueChecker = null) => {
   return M;
 };
 
-const Ping = define_message_class('Ping');
-const Pong = define_message_class('Pong');
-const Html = define_message_class('Html');
-const Show = define_message_class('Show');
-const Subscribe = define_message_class('Subscribe', Check.Actor);
-const Unsubscribe = define_message_class('Unsubscribe', Check.Actor);
-const Adopt = define_message_class('Adopt', Check.HTMLElement);
-const Warning = define_message_class('Warning', Check.String);
-const Info = define_message_class('Info', Check.String);
-const Debug = define_message_class('Debug', Check.String);
-const ErrorMessage = define_message_class('ErrorMessage', Check.String);
+const Ping = define_message('Ping');
+const Pong = define_message('Pong');
+const Html = define_message('Html');
+const Show = define_message('Show');
+const Subscribe = define_message('Subscribe', Check.Actor);
+const Unsubscribe = define_message('Unsubscribe', Check.Actor);
+const Adopt = define_message('Adopt', Check.HTMLElement);
+const Warning = define_message('Warning', Check.String);
+const Info = define_message('Info', Check.String);
+const Debug = define_message('Debug', Check.String);
+const ErrorMessage = define_message('ErrorMessage', Check.String);
 
 
 /**
@@ -373,6 +373,33 @@ class Toc extends Actor {
 }
 
 
+const define_metadata = (name, id) => {
+  class Metadata extends Actor {
+    static mk() { return new Metadata(); }
+
+    constructor() {
+      const nothing = Nothing.mk();
+      const html = find_by_id(id)
+      Check.HTMLElement(html)
+      const tx = async (state, msg) => {
+        const { html } = state
+        let reply = this;
+        if (msg instanceof Html) { reply = html; }
+        else { Check.Unexpected(msg); }
+        return [reply, state, nothing];
+      }
+      super({ html }, tx);
+    }
+
+    html() { return this.rcv(Html.mk()); }
+  }
+
+  Check[name] = Check.mk(x => x instanceof Metadata, `Not a ${name}`);
+
+  return Metadata;
+};
+
+
 /**
  * A LastEdit actor manages the last-edit HTMLElement (if present) and provides access to it.
  *
@@ -380,25 +407,7 @@ class Toc extends Actor {
  *
  * [[id:2ef2a775-eb16-4b6a-a997-dc54453c4f16]]
  */
-class LastEdit extends Actor {
-  static mk() { return new LastEdit(); }
-
-  constructor() {
-    const nothing = Nothing.mk();
-    const result = find_by_id('last-edit')
-    Check.HTMLElement(result)
-    const tx = async (state, msg) => {
-      const { html } = state
-      let reply = this;
-      if (msg instanceof Html) { reply = html; }
-      else { Check.Unexpected(msg); }
-      return [reply, state, nothing];
-    }
-    super({ html: result }, tx);
-  }
-
-  html() { return this.rcv(Html.mk()); }
-}
+const LastEdit = define_metadata("LastEdit", "last-edit")
 
 
 /**
@@ -408,25 +417,17 @@ class LastEdit extends Actor {
  *
  * [[id:60b273dc-fe99-4e8b-a6d9-04a85cb771ae]]
  */
-class Status extends Actor {
-  static mk() { return new Status(); }
+const Status = define_metadata("Status", "status")
 
-  constructor() {
-    const nothing = Nothing.mk();
-    const result = find_by_id('status')
-    Check.HTMLElement(result)
-    const tx = async (state, msg) => {
-      const { html } = state
-      let reply = this;
-      if (msg instanceof Html) { reply = html; }
-      else { Check.Unexpected(msg); }
-      return [reply, state, nothing];
-    }
-    super({ html: result }, tx);
-  }
 
-  html() { return this.rcv(Html.mk()); }
-}
+/**
+ * A License actor manages the license HTMLElement (if present) and provides access to it.
+ *
+ * For instance, License.mk().html() returns the element with id 'license'.
+ *
+ * [[id:60b273dc-fe99-4e8b-a6d9-04a85cb771ae]]
+ */
+const License = define_metadata("License", "license")
 
 
 /**
@@ -498,20 +499,19 @@ class Article extends Actor {
     const c23 = C23.mk()
     c21.adopt(await toc.html())
 
-    try {
-      const last_edit = LastEdit.mk()
-      c23.adopt(await last_edit.html())
-    }
-    catch(_err) {
-      // ignore
-    }
+    const metadata_list = [
+      LastEdit,
+      Status,
+      License
+    ]
 
-    try {
-      const status = Status.mk()
-      c23.adopt(await status.html())
-    }
-    catch(_err) {
-      // ignore
+    for (const metadata of metadata_list) {
+      try {
+        const instance = metadata.mk()
+        c23.adopt(await instance.html())
+      } catch(_err) {
+        continue;
+      }
     }
 
     return new Article();

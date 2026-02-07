@@ -2,6 +2,8 @@
 #+TITLE: Designing This Website
 #+DATE: 2026-02-05
 #+CITE_EXPORT: csl
+#+STATUS: Draft
+#+LICENSE: https://creativecommons.org/licenses/by-nc-sa/4.0 CC-BY-NC-SA-4.0
 
 * Introduction
 

@@ -1,6 +1,8 @@
 #+ID: e4771178-cf50-4957-8763-2ac5faf36f49
 #+TITLE: Routing Cables in a Nuclear Reactor
 #+DATE: 2025-10-26
+#+STATUS: Stable
+#+LICENSE: https://creativecommons.org/licenses/by-nc-sa/4.0 CC-BY-NC-SA-4.0
 
 #+begin_abstract
 This article recounts a real-world project to optimize cable routing in the Jules

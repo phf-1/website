@@ -73,6 +73,22 @@ f90b80b2-ff5e-4ee5-bcf8-cb8d775e99bd      # mandatory
 #+end_example
 
 ** Message
+*** TODO iteration(🞎)
+SCHEDULED: <2026-02-07 Sat>
+:PROPERTIES:
+:TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
+:END:
+
+**** Objective
+
+- Try to manage Lovable code. What happens if a bug is discovered? Should it be fixed
+  from Lovable or should it be fixed by manually editing the code? How to ensure non
+  regressions?
+
+**** Result
+
+- Article + repo
+
 *** TODO VM
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
@@ -162,6 +178,19 @@ To decide which path to take, ask yourself these three questions:
 
 Would you like me to help you draft a specific interface or "contract" for how the Actor should communicate its requirements to the `Ma` instance?
 #+end_example
+
+*** DONE iteration(29)
+SCHEDULED: <2026-02-07 Sat>
+:PROPERTIES:
+:TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
+:END:
+:LOGBOOK:
+CLOCK: [2026-02-07 Sat 09:30]--[2026-02-07 Sat 10:30] =>  1:00
+:END:
+
+**** Objective
+
+- Each publication has its own status, license, last edit date, title.
 
 *** DONE iteration(28)
 SCHEDULED: <2026-02-06 Fri>
