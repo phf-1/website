@@ -24,6 +24,105 @@ cases.
 - Provide an illustrative example.
 - Provide a use case.
 
+* Type Theory
+** :≡
+
+#+ID: 9bfb7073-0f1f-4d3d-a6f2-3fb591502de6
+#+begin_definition
+*:≡* :≡ 🞎
+#+end_definition
+
+** Type
+
+#+ID: 020fad82-9d00-4543-926d-832c91442f99
+#+begin_definition
+*Type* :≡ 🞎
+#+end_definition
+
+** X → Y
+
+#+ID: 2cd5a5e7-8e7f-4bd3-8883-ea557bff0fd7
+#+begin_definition
+*X → Y* :≡ 🞎
+#+end_definition
+
+** X × Y
+
+#+ID: 6e00b58e-0ffb-4e6a-af80-26ce98049025
+#+begin_definition
+*X × Y* :≡ 🞎
+#+end_definition
+
+** X | Y
+
+#+ID: 2904f563-4b22-46ca-b294-90df524f7163
+#+begin_definition
+*X | Y* :≡ 🞎
+#+end_definition
+
+** Nat
+
+#+ID: 6e6069cd-adf1-4f69-a95d-abfed657fd3d
+#+begin_definition
+*Nat* :≡ 🞎
+#+end_definition
+
+** String
+
+#+ID: 5702b0b7-a4bd-4933-bc07-0f30b0f85899
+#+begin_definition
+*String* :≡ List(Nat)
+#+end_definition
+
+** List
+
+#+ID: 688dbc9a-9f1f-471f-b362-5703765684c5
+#+begin_definition
+*List* :≡ 🞎
+#+end_definition
+
+** Just
+
+#+ID: a6d97a04-6512-4c0b-b4ee-011afac18074
+#+begin_definition
+- X : Type
+- *Just(X)* :≡ 🞎
+#+end_definition
+
+** Nothing
+
+#+ID: 4a47e9a0-8d54-456f-9863-ceecde5b36a8
+#+begin_definition
+*Nothing* :≡ 🞎
+#+end_definition
+
+** Maybe
+
+#+ID: a489781c-9a92-4c11-9698-81750460e9cf
+#+begin_definition
+- X : Type
+- *Maybe(X)* :≡ Nothing | Just(X)
+#+end_definition
+
+** StrictPartialOrder
+
+#+ID: 6086ccfe-0154-4590-b38d-fb994fa0a137
+#+begin_definition
+*StrictPartialOrder(X)* :≡ 🞎
+#+end_definition
+
+** Set
+
+#+ID: 6c127151-52d8-4f16-9f8e-9ce43f34b353
+#+begin_definition
+- X : Type
+- = : X X → Boolean
+- = is an equality
+- *Set(X =)* :≡
+  - list : List(X)
+  - e(i) ∈ list, e(j) ∈ list, i ≠ j, e(i) ≠ e(j)
+#+end_definition
+
 * Gul A. Agha 1986
 :PROPERTIES:
 :ID:       2135593c-cfaa-4c41-8c41-6966295cf3aa
@@ -254,6 +353,225 @@ Time is scarce, let us focus and skip things.
 * TODO Hewitt & Baker 1977
 
 [cite:@hewitt1977lawsA]
+
+** Bit
+
+#+ID: 24c3453b-bb18-4847-b842-ddaaeb979fb7
+#+begin_definition
+*Bit* :≡ 0 | 1
+#+end_definition
+
+** Data
+
+#+ID: bff3df2b-ce8e-44c1-a64e-526e2080a483
+#+begin_definition
+*Data* :≡ List(Bit)
+#+end_definition
+
+** State
+
+#+ID: a165ae1c-d951-4022-a3bf-c34949ffd78a
+#+begin_definition
+*State* :≡ Data
+#+end_definition
+
+** Address
+
+#+ID: 51467de6-4263-4e6a-bda1-c87576cf3dff
+#+begin_definition
+*Address#mk()* : Address :≡ Data such that it cannot be arbitrarily created,
+fabricated, guessed, or forged by any actor in the system.
+#+end_definition
+
+** Message
+
+#+ID: b9348b43-b317-4313-830f-6d218274c3e7
+#+begin_definition
+*Message* :≡ Data
+#+end_definition
+
+** Script
+
+#+ID: 77527c87-3faa-43f5-8cd4-0d49729d19c7
+#+begin_definition
+*Script* :≡ Given /state : State/ and /script : Script/, then /script(state)/ is a program
+starting from /state/ executing what is prescribed by /script/ with the only restriction
+that its I/O is done by sending and receiving messages.
+
+The precise meanings of /sending/ and /receiving/ are left to interpretation as well as
+the precise instructions set executed by the program or how they are prescribed by
+/script/.
+#+end_definition
+
+** ■
+
+#+ID: 05a52904-d4ef-4887-b41e-6c4097145021
+#+begin_definition
+*■* :≡ Withing a script, ■ means that the current script stops equivalent to ~return~ in
+ C.
+#+end_definition
+
+** receive
+
+#+ID: c20369ab-2da7-453a-8b62-f9956c8bdf21
+#+begin_definition
+*receive([timeout : Nat])* :≡ whenever a message /msg/ has been received by a program I/O
+subsystem, then /receive([timeout])/ is to be replaced by /msg/. This instruction blocks
+until then. If /timeout/ is specified, and no message is received before the timeout is
+exhausted, then /receive(timeout)/ is to be replaced by an instance of Timeout ; a kind
+of message.
+#+end_definition
+
+** emit
+
+#+ID: 061b53ce-b7a4-4b77-852b-b2bc601efc17
+#+begin_definition
+*emit(msg)* :≡ Within a script, given a message /msg/, /emit(msg)/ means that any actor
+ observing the current observer will receive /msg/.
+#+end_definition
+
+** self
+
+#+ID: de334c5b-21b8-45ec-88f4-1da5b467b001
+#+begin_definition
+*self* :≡ Within /script : Script/, then /self/ refers to the current actor actor.
+#+end_definition
+
+** ∥
+
+#+ID: 961861bf-bba5-4fc9-ac63-0812d15d38bd
+#+begin_definition
+*∥* :≡ Given /state : State/ and /script : Script/, then /∥(state script)/ means that
+resources are allocated (/e.g./ CPU, Memory, energy) so that a program executing /script/
+and starting from /state/ is created. /program :≡ ∥(state script)/ means that /program/
+references the created program. Does not block.
+#+end_definition
+
+** Actor
+
+#+ID: 64945c67-bdfa-41bb-bf1d-4608f0351a9a
+#+begin_definition
+- state : State
+- script : Script
+- *Actor#mk(state script)* : Actor :≡
+  - self :≡ Address#mk()
+  - program :≡ ∥(state script)
+  - Given /msg : Message/, then after /self#rcv(msg)/, /program/ has received /msg/.
+  - self
+#+end_definition
+
+** observe and ignore
+
+#+ID: ff689b57-13a2-43ac-bad4-132387c8eb1e
+#+begin_definition
+*observe(actor)* :≡ Given /actor : Actor/, then after executing /observe(actor)/,
+any message emitted on the I/O subsystem of the underlying actor is received by the
+current program. This instruction does not block.
+#+end_definition
+
+#+ID: 5f18fa31-a763-4049-bb70-5f0fd905811d
+#+begin_definition
+*ignore(actor)* :≡ Reciprocal of /observe(actor)/.
+#+end_definition
+
+** Clock
+
+Let's attempt to model a clock using Actor. We assume the existance of /crystal :
+Address/ such that the underlying actor emits instances of /Tick/ — a kind of Message —
+on its I/O subsystem.
+
+Note that the instructions executing order is not given by the script ; only some
+constraints are. For instance, ~a :≡ A#mk(…); b :≡ f(a)~ imposes and order, but ~a :≡
+A#mk(…); b :≡ B#mk(…)~ does not.
+
+Note that the following script must be understood as being executed by an actor.
+
+#+begin_example
+decode : Message → (String × Address) | String | Nothing
+
+script :≡
+  <n : Nat, crystal : Crystal> ↦
+    time :≡ n
+    observe(crystal)
+    while msg :≡ receive()
+      match decode(msg)
+        <"tick", crystal> ↦ time :≡ time + 1
+        <"read", to : Address> ↦ to#rcv(<time, self>)
+        "stop" ↦ ■
+
+state :≡ <0, crystal>
+
+clock :≡ Actor#mk(state script)
+
+clock#rcv(<"read", self>)
+
+while msg :≡ receive()
+  match msg
+    <time : Nat, clock> ↦
+      "The time is: ${time}"
+      ■
+    _ ↦ continue
+#+end_example
+
+** Events
+
+#+ID: 0a22ef9e-8412-4b40-8b0f-07cb8c36a041
+#+begin_definition
+*Events* :≡ Set(Event List=)
+#+end_definition
+
+** Discretness
+
+#+ID: 8cfe2ab7-813b-427b-b440-0b30c29e4a65
+#+begin_definition
+- E : Events
+- < : StrictPartialOrder(E)
+- *Discretness(E <)* :≡ 🞎
+#+end_definition
+
+** concurrent with
+
+#+ID: 8a583e0a-98d9-4492-bceb-a1bbbd670eee
+#+begin_definition
+- E : Events
+- e(i), e(j) ∈ E
+- < : StrictPartialOrder(E)
+- *e1 concurrent with e2* :≡ 🞎
+#+end_definition
+
+** precedes
+
+#+ID: 8a583e0a-98d9-4492-bceb-a1bbbd670eee
+#+begin_definition
+- E : Events
+- e(i), e(j) ∈ E
+- < : StrictPartialOrder(E)
+- *e1 precedes e2* :≡ 🞎
+#+end_definition
+
+** message
+
+#+ID: 282b8ce7-b630-4acd-a6e2-860c3a51f985
+#+begin_definition
+*message* : Event → Message
+#+end_definition
+
+** ActorComputation
+
+#+ID: fc87fe10-230f-43fc-97d4-0660a2f99207
+#+begin_definition
+- *ActorComputation* :≡
+  - E : Events
+  - < : StrictPartialOrder(E)
+  - Discretness(E <)
+#+end_definition
+
+** Event
+
+#+ID: c1eadb3d-a5e5-4e44-a80f-54f7b93db576
+#+begin_definition
+*Event* :≡ Data
+#+end_definition
 
 * TODO Hewitt 1977
 

@@ -31,6 +31,10 @@
     --link-color: var(--color-blue-900);
     --src-bg-color: var(--color-blue-grey-50);
     --src-border-color: var(--color-blue-grey-900);
+    --def-bg-color: var(--color-green-50);
+    --def-border-color: var(--color-green-900);
+    --ins-bg-color: var(--color-orange-50);
+    --ins-border-color: var(--color-orange-900);
     --src-text-color: var(--text-color);
     --kw-todo-bg-color: var(--color-red-900);
     --kw-doing-bg-color: var(--color-orange-900);
@@ -83,9 +87,19 @@ th { background-color: var(--table-th-bg-color); }
     border-color: var(--src-border-color);
 }
 
-.definition, blockquote {
+blockquote {
     background-color: var(--src-bg-color);
     border-color: var(--src-border-color);
+}
+
+.instance {
+    background-color: var(--ins-bg-color);
+    border-color: var(--ins-border-color);
+}
+
+.definition {
+    background-color: var(--def-bg-color);
+    border-color: var(--def-border-color);
 }
 
 /**
@@ -480,7 +494,7 @@ nav#table-of-contents {
     margin-bottom: 0;
 }
 
-.definition, blockquote {
+.instance, .definition, blockquote, .example {
     &::before {
         display: block;
         font-family: 'Sans', sans-serif;
@@ -502,7 +516,9 @@ nav#table-of-contents {
 }
 
 .definition { &::before { content: "Definition"; } }
+.instance { &::before { content: "Example"; } }
 blockquote { &::before { content: "Quote"; } }
+.example { &::before { content: "Verbatim"; } }
 
 
 /**
