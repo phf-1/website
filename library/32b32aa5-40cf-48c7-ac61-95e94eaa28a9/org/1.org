@@ -1,0 +1,763 @@
+#+ID: 32b32aa5-40cf-48c7-ac61-95e94eaa28a9
+#+TITLE: Type Theory
+#+DATE: 2026-02-12
+#+CITE_EXPORT: csl ieee.csl
+#+LICENSE: https://creativecommons.org/licenses/by-nc-sa/4.0 CC-BY-NC-SA-4.0
+#+STATUS: Draft
+
+#+begin_abstract
+TODO
+#+end_abstract
+
+* TODO Introduction
+
+* TODO Objective
+
+- Define a language precise enough to so that translating to a programming language
+  is feasable, but simple enough so that we understand each others.
+
+- If anything is ambiguous, please send a suggestion.
+
+* :≡
+
+#+ID: 9bfb7073-0f1f-4d3d-a6f2-3fb591502de6
+#+begin_definition
+/x :≡ y/ means that /x/ is a new name and that for now on, whenever one reads /x/, one
+may replace /x/ by /y/.
+#+end_definition
+
+#+ID: 86e106a5-122e-4d76-820a-915bc6759ef7
+#+begin_instance
+If x :≡ 1, then « x + x » may be read as « 1 + 1 ».
+
+If x :≡ azerty, then « x + x » may be read as « azerty + azerty ».
+
+If x :≡ '1', then « x + x » may be read as « '1' + '1' ».
+#+end_instance
+
+* ≡
+
+#+ID: 2f301d3a-85c4-4a5e-82f0-f6c4e70eaf49
+#+begin_definition
+/x ≡ y/ means that whenever one read /x/, one may replace /x/ by y as it was already
+introduced before using /:≡/.
+#+end_definition
+
+* X → Y
+
+#+ID: 2cd5a5e7-8e7f-4bd3-8883-ea557bff0fd7
+#+begin_definition
+*Motivation*
+
+We want to express the fact that there is a /way/ to /start from here/ and /get
+to there/.
+
+For instance, given a number, say /0/, there is a unique string representation "0". So,
+we say: /string(0) :≡ "0"/.
+
+More over, if we call our numbers ℕ, then for all n : ℕ, we have /string(n) : String/.
+
+We may see /string/ as the name of a path, /i.e./ a way, to get from ℕ to String.
+
+
+*Formation*
+
+- X, Y : Type
+- X → Y : Type
+
+
+*Introduction*
+
+- x : X, y is a formula such that y(x) : Y
+- λx.y : X → Y
+- x ↦ y :≡ λx.y
+
+
+*Elimination*
+
+- f : X → Y
+- x : X
+- f(x) : Y :≡ (λx.y)(x)
+#+end_definition
+
+* Π(x:X),Y(x)
+
+#+ID: 365c0a57-4438-4cca-926f-a65cd3b27b0f
+#+begin_definition
+*Motivation*
+
+We want to express the fact that there is a /way/ to /start from here/ and /get
+to there/ ; but the place we end up depends on where we start.
+
+For instance, we might want to start from ℕ and end up in String or ℕ depending on
+where we started from.
+
+For instance, if n is even, then f(n) :≡ n and if n is odd, then f(n) :≡ string(n).
+
+
+*Formation*
+
+- Y : X → Type
+- Π(x:X),Y(x) : Type
+
+
+*Introduction*
+
+- Y : X → Type
+- x : X
+- y formula such that y(x) : Y(x)
+- λx.y : Π(x:X),Y(x)
+
+
+*Elimination*
+
+- f : Π(x:X),Y(x)
+- x : X
+- f(x) : Y(x) :≡ (λx.y)(x)
+#+end_definition
+
+* X × Y
+
+#+ID: db863799-1f4f-47f0-af17-6580df6b1c9d
+#+begin_definition
+*Motivation*
+
+Given two types of instances X and Y, we might want to consider both instances at the
+same time.
+
+For instance, we might want to speak about the pair Capital and Country like Paris
+and France at the same time.
+
+
+*Formation*
+
+- X, Y : Type
+- X × Y : Type
+
+
+*Introduction*
+
+- < , > : X Y → X × Y
+
+
+*Elimination*
+
+- f : X → Y → Z
+- φ : X × Y → Z :≡ <x, y> ↦ f(x)(y)
+
+
+-----
+
+
+- C : X × Y → Type
+- f : Π(x:X,y:Y),C(<x,y>)
+- φ : Π(p:X×Y),C(p) :≡ <x, y> ↦ f(x)(y)
+#+end_definition
+
+* Σ(x:X),Y(x)
+
+#+ID: 7c6924f4-a505-4d57-a025-461c8f9bd5cc
+#+begin_definition
+*Motivation*
+
+We want instances of some type such that they represent a pair of instances where the
+second instance type depends on the first instance.
+
+For instance, we might want to speak about pairs such that the second components is a
+string if the firt component is an even number.
+
+
+*Formation*
+
+- X : Type
+- Y : X → Type
+- Σ(x:X),Y(x) : Type
+
+
+*Introduction*
+
+- < , > : x:X Y(x) → Σ(x:X),Y(x)
+
+
+*Elimination*
+
+- f : Π(x:X),Y(x) → Z
+- φ : Σ(x:X),Y(x) → Z :≡ <x, y> ↦ f(x)(y)
+
+
+-----
+
+
+- C : Π(x:X),Y(x) → Type
+- f : Π(x:X) Π(y:Y(x)) C(<x,y>)
+- φ : Π(p:Π(x:X),Y(x)),C(p) :≡ <x, y> ↦ f(x)(y)
+#+end_definition
+
+* Magma
+
+#+ID: 9557444e-c534-425c-aff4-bee8376aa957
+#+begin_definition
+Magma :≡ Σ(A:Type)(A → A → A)
+#+end_definition
+
+* PointedMagma
+
+#+ID: 658ca757-2a6b-49e0-935c-3d1dacf30799
+#+begin_definition
+PointedMagma :≡ Σ(A:Type)(A → A → A) × A
+#+end_definition
+
+* X + Y
+
+#+ID: 6e00b58e-0ffb-4e6a-af80-26ce98049025
+#+begin_definition
+*Motivation*
+
+Given two types X and Y, we might want to consider an instance that may be of one type or the
+other.
+
+For instance, we might want to speak about a Capital or a Country like Paris
+or France.
+
+
+*Formation*
+
+- X, Y : Type
+- X + Y : Type
+
+
+*Introduction*
+
+- left : X → X + Y
+- right : Y → X + Y
+
+
+*Elimination*
+
+- elim : (f : X → Z) (g : Y → Z) → X + Y → Z :≡
+  - left(x) ↦ f(x)
+  - right(y) ↦ g(y)
+
+
+-----
+
+
+- Target :≡ X + Y → Type
+- Left : Target → Type :≡ C ↦ Π(x:X),C((left(x)))
+- Right : Target → Type :≡ C ↦ Π(y:Y),C((right(y)))
+- ind : C:Target Left(C) Right(C) → Π(p:X+Y),C(p) :≡
+  - left(x) ↦ f(x)
+  - right(y) ↦ g(y)
+#+end_definition
+
+* ℕ
+
+#+ID: 6e6069cd-adf1-4f69-a95d-abfed657fd3d
+#+begin_definition
+*Motivation*
+
+We want to be able to count things.
+
+
+*Formation*
+
+- ℕ : Type
+
+
+*Introduction*
+
+- 0 : ℕ
+- succ : ℕ → ℕ
+- n+1 :≡ succ(n)
+
+
+*Elimination*
+
+- T  : Type
+- elim : t:T → (next : ℕ T → T) → ℕ → T :≡
+  - 0 ↦ t
+  - n+1 ↦ next n f(n)
+
+
+-----
+
+
+- P : ℕ → Type
+- Init :≡ P(0)
+- Step :≡ ℕ P(n) → P(n+1)
+- ind : (t0 : Init) (step : Step) → Π(n:ℕ),P(n) :≡
+  - 0 ↦ t0
+  - n+1 ↦ step n f(n)
+#+end_definition
+
+* 𝟙
+
+#+ID: c7aa7121-4c0b-45df-b4b4-f54ae7e25302
+#+begin_definition
+*Motivation*
+
+We need to have a type that has one element, to represent True.
+
+
+*Formation*
+
+- 𝟙 : Type
+
+
+*Introduction*
+
+- x : 𝟙
+
+
+*Elimination*
+
+- C : Type
+- elim : (c:C) 𝟙 → C :≡ x ↦ c
+
+
+-----
+
+
+- ind : (C : 𝟙 → Type) (c : C(x)) → Π(x:𝟙), C(x) :≡ x ↦ c
+#+end_definition
+
+* 𝟘
+
+#+ID: cce4d081-7347-492e-abc8-4035ede3b6d3
+#+begin_definition
+*Motivation*
+
+We need to have a type that has no element, which is used to represent falsity.
+
+
+*Formation*
+
+- 𝟘 : Type
+
+
+*Introduction*
+
+
+*Elimination*
+
+- C : Type
+- f : 𝟘 → C
+
+-----
+
+
+- C : 𝟘 → Type
+- f : Π(x:𝟘), C(x)
+#+end_definition
+
+* Boolean
+
+#+ID: e1c1c6ae-32b7-40aa-a917-88b75502120a
+#+begin_definition
+*Motivation*
+
+We need to represents booleans /i.e./ a type with two elements, true or false.
+
+
+*Formation*
+
+- Boolean : Type
+
+
+*Introduction*
+
+- 0 : Boolean
+- 1 : Boolean
+
+
+*Elimination*
+
+- C : Type
+- elim : (c0:C) (c1:C) → Boolean → C :≡
+  - 0 ↦ c0
+  - 1 ↦ c1
+
+-----
+
+
+- C : Boolean → Type
+- ind : (c0:C(0)) (c1:C(1)) → Π(x:Boolean), C(x) :≡
+  - 0 ↦ c0
+  - 1 ↦ c1
+#+end_definition
+
+* Type
+
+Following the preceding examples of types, we provide the following template to
+define new types:
+
+#+ID: 38160003-3d0b-4923-ab0e-d225e3e33658
+#+begin_definition
+*Motivation*
+
+Why do we need to introduce this new type?
+
+
+*Formation*
+
+What is the name of that type?
+
+
+*Introduction*
+
+How to build instances of that type?
+
+
+*Elimination*
+
+How to use instances of that type?
+#+end_definition
+
+* Propositions as types
+
+#+begin_quote
+However, the type-theoretic perspective on proofs is nevertheless different in
+important ways.  The basic principle of the logic of type theory is that a
+proposition is not merely true or false, but rather can be seen as the collection of
+all possible witnesses of its truth.
+
+[…]
+
+propositions are nothing but special types — namely, types whose elements are proofs.
+
+[cite:@HoTT2013]
+#+end_quote
+
+#+begin_quote
+|-----------------------------------+-------------------|
+| English                           | Type Theory       |
+|-----------------------------------+-------------------|
+| True                              | 1                 |
+| False                             | 0                 |
+| A and B                           | A × B             |
+| A or B                            | A + B             |
+| If A then B                       | A → B             |
+| A if and only if B                | (A → B) × (B → A) |
+| Not A                             | A → 0             |
+| For all x : A, P(x) holds         | ∏(x : A),P(x)     |
+| There exists x : A such that P(x) | ∑(x : A),P(x)     |
+|-----------------------------------+-------------------|
+
+[cite:@HoTT2013]
+#+end_quote
+
+* Identity type
+
+#+ID: 24e2fc8c-85be-44ca-b7fc-8b434858f7bd
+#+begin_definition
+*Motivation*
+
+The identity type internalizes the notion of equality (or identification)
+within the type theory. Given two terms a and b of the same type A, the
+identity type a = b is the type of evidences that a and b are equal.
+
+*Formation*
+
+- A : Type
+- a, b : A
+- IdA(a, b) : U
+- a = b :≡ IdA(a, b)
+
+
+*Introduction*
+
+- refl : Π(a:A), a = a
+
+
+*Elimination*
+
+- C : A → U
+- f : ∏(x,y:A)∏(p:x=y),C(x) → C(y)
+- f(x,x,refl(x)) :≡ id(C(x))
+
+
+-----
+
+
+- C : ∏(x,y:A),x=y → U
+- c : ∏(x:A),C(x,x,refl(x))
+- f : ∏(x,y:A), ∏(p:x=y), C(x,y,p)
+- f(x,x,refl(x)) :≡ c(x)
+#+end_definition
+
+* List(X)
+
+#+ID: 688dbc9a-9f1f-471f-b362-5703765684c5
+#+begin_definition
+*Motivation*
+
+Lists of things are a common data structures, we need a way to represent them.
+
+
+*Formation*
+
+- X : Type
+- List(X) : Type
+
+
+*Introduction*
+
+- [] : List(X)
+- cons : X List(X) → List(X)
+
+
+*Elimination*
+
+- C : Type
+- elim : (c0 : C) (g : X → C → C) → List(X) → C :≡
+  - f [] :≡ c0
+  - f cons(x lst) :≡ g x f(lst)
+
+
+-----
+
+
+- C : List(X) → Type
+- c0 : C([])
+- g : Π(x:X)Π(lst:List(X)), C(lst) → C(cons(x lst))
+- f : Π(lst:List(X)), C(lst) :≡
+  - [] ↦ c0
+  - cons x lst ↦ g x lst f(lst)
+#+end_definition
+
+* Bit
+
+#+ID: 98143a43-8b8b-4712-9630-68885a278503
+#+begin_definition
+*Motivation*
+
+Computers manipulates bits, let's represent them.
+
+
+*Formation*
+
+- Bit : Type
+
+
+*Introduction*
+
+- 0 : Bit
+- 1 : Bit
+
+
+*Elimination*
+
+- C : Type
+- c0, c1 : C
+- f : Bit → C :≡
+  - 0 ↦ c0
+  - 1 ↦ c1
+
+
+-----
+
+
+- C : Bit → Type
+- c0 : C(0)
+- c1 : C(1)
+- f : Π(x:Bit), C(x) :≡
+  - 0 ↦ c0
+  - 1 ↦ c1
+#+end_definition
+
+* Data
+
+#+ID: f5fda64f-c973-4c7f-a36d-296beb470938
+#+begin_definition
+*Motivation*
+
+Computers manipulate /data/ which are just lists of bits.
+
+
+*Formation*
+
+Data :≡ List(Bit)
+#+end_definition
+
+* Undefined
+
+#+ID: e228fa8f-91d2-4751-8933-5ce1475e1ad0
+#+begin_definition
+*Motivation*
+
+Programmning languages have a tendency to represent undefined object, which is to say
+to there is something but we have no idea what that is beyond that point.
+
+
+*Formation*
+
+- Undefined : Type
+
+
+*Introduction*
+
+- undefined : Undefined
+
+
+*Elimination*
+#+end_definition
+
+* Nothing
+
+#+ID: e9f2605e-c196-4689-8dd6-b6515a7ca84a
+#+begin_definition
+*Motivation*
+
+How to represent the absence of a value? By using the unique instance of the Nothing
+type, isomorphic to 𝟙.
+
+
+*Formation*
+
+- Nothing : Type
+
+
+*Introduction*
+
+- nothing : Nothing
+
+
+*Elimination*
+#+end_definition
+
+* Maybe
+
+#+ID: a489781c-9a92-4c11-9698-81750460e9cf
+#+begin_definition
+*Motivation*
+
+Assume that a computers tries to map some data received from the network to some type
+using a given program. Assume an injective mapping, then the algorithm might
+fail. So, given a piece of data, the algorithm is expected to either provide an
+instance of some type or nothing. Let's represent that.
+
+
+*Formation*
+
+- X : Type
+- Maybe(X) :≡ Nothing + X
+
+
+*Construction*
+
+- none :≡ left(nothing)
+- just(x) :≡ right(x)
+#+end_definition
+
+* TODO Vector(X n)
+
+#+ID: f9b8b08e-9b5c-4497-850e-8e8cc0b36aa8
+#+begin_definition
+*Motivation*
+
+Finite lists of things that have a known length are common in programming languages,
+let's defined them.
+
+
+*Formation*
+
+- X : Type
+- n : ℕ
+- Vector(X n) : Type
+
+
+*Introduction*
+
+- nil : Vector(X zero)
+- cons(x lst) : X Vector(X n) → Vector(X n+1)
+
+
+*Elimination*
+
+🞎
+#+end_definition
+
+* TODO index : List(X n) Nat → X | Undefined
+
+#+ID: 64e31ad5-c5f5-4d4c-ad2a-adb8bd9f5474
+#+begin_definition
+*index(lst n)* represents the nth element of lst if any, else undefined.
+
+- index : List(X 0) Nat → X | Undefined
+- index([] n) :≡ undefined
+
+
+- index : List(X 1) Nat → X | Undefined
+- index([x] 0) :≡ undefined
+- index([x] 1) :≡ x
+- Given k > 1, then index([x] k) :≡ undefined.
+
+
+Given index : List(X n) Nat → X | Undefined, lst+x : List(X n+1), and k : Nat, then:
+- if k < n+1, then index(lst k) :≡ index(lst k)
+- if k = n+1, then index(lst n+1) :≡ x
+- if k > n+1, then index(lst k) :≡ undefined
+#+end_definition
+
+* TODO String
+
+#+ID: 5702b0b7-a4bd-4933-bc07-0f30b0f85899
+#+begin_definition
+*String* :≡ List(Nat)
+#+end_definition
+
+* TODO Just
+
+#+ID: a6d97a04-6512-4c0b-b4ee-011afac18074
+#+begin_definition
+- X : Type
+- *Just(X)* :≡ 🞎
+#+end_definition
+
+* TODO StrictPartialOrder
+
+#+ID: 6086ccfe-0154-4590-b38d-fb994fa0a137
+#+begin_definition
+*StrictPartialOrder(X)* :≡ 🞎
+#+end_definition
+
+* TODO Set
+
+#+ID: 6c127151-52d8-4f16-9f8e-9ce43f34b353
+#+begin_definition
+- X : Type
+- = : X X → Boolean
+- = is an equality
+- *Set(X =)* :≡
+  - list : List(X)
+  - e(i) ∈ list, e(j) ∈ list, i ≠ j, e(i) ≠ e(j)
+#+end_definition
+
+* Language
+** match
+
+To express the fact that some piece of data /x/ may be of some form or another, or more
+generally matches a predicate, and that if it does then we executed an associated
+list of instructions, we use the following syntacting form:
+
+#+ID: 1bc43afe-625d-4ca2-a6fa-913e0a328546
+#+begin_definition
+- match x
+  - predicate ↦ instructions
+  - …
+#+end_definition
+
+If /x/ does not match any predicate, then it is an error of the author. For instance:
+
+#+begin_example
+match maybe
+  Nothing ↦ "nothing"
+  just(x) ↦ x
+#+end_example
+
+The meaning should be obvious: if maybe : Maybe(X) ≡ none, then replce the whole
+expression by "nothing". If maybe ≡ just(x), then replace the whole expression by x.
+
+* Bibliography
+
+#+print_bibliography:

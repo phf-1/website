@@ -1,618 +1,377 @@
 #+ID: d1b5724d-434c-40a0-86e9-dfc81012ae43
 #+TITLE: A simple actor definition
-#+DATE: 2026-02-07
-#+CITE_EXPORT: csl
+#+DATE: 2026-02-16
+#+CITE_EXPORT: csl ieee.csl
 #+LICENSE: https://creativecommons.org/licenses/by-nc-sa/4.0 CC-BY-NC-SA-4.0
 #+STATUS: Draft
 
 #+begin_abstract
-TODO
+This article offers a definition and construction methodology for the Actor Model to
+provide a simple common vocabulary useful for software specification and
+implementation.  Defining an actor implies defining a protocol (/what/ it does) and an
+implementation (/how/ it does it). A stopwatch actor is provided as an illustrative
+example.
 #+end_abstract
 
 * Introduction
 
-In 1986, Gul Agha wrote: /It is generally believed that the next generation of
-computers will involve massively parallel architectures [cite:@agha1986actors]./
-Today, in 2026, 40 years later, it is the case. The central abstraction to deal with
-this fact is the idea of an /Actor/. We go through available published work and attempt
-to provide a simple definition to this idea, then a few examples and finally use
-cases.
+Building correct software requires two distinct steps: writing a specification that
+defines /what/ the system must do, and providing an implementation that tells the
+computer /how/ to do it [cite:@lamport2002specifying]. An implementation ultimately
+consists of instructions executable by a specific machine — the /kernel language/
+[cite:@vanroy2004concepts].
+
+Bridging this gap involves human programming, compilation, and increasingly, AI
+assistance. Yet the industry lacks consensus on how to specify and program computers,
+with little agreement even on notation [cite:@steele2017newold].
+
+This fragmentation stems partly from evolving software requirements, especially the
+need for coordination in massively concurrent systems. The Actor Model addresses this
+by aligning with modern hardware properties while remaining expressive enough for
+high-level specification [cite:@hewitt2010actormodel].
+
+This work attempts to capture the essence of the Actor Model and provide a framework
+for modeling software.
 
 * Objective
 
-- Define what an /actor/ is.
+- Provide a definition for an actor.
 - Provide an illustrative example.
-- Provide a use case.
+- Provide a method to build new actors.
 
-* Type Theory
-** :≡
+* Context
 
-#+ID: 9bfb7073-0f1f-4d3d-a6f2-3fb591502de6
+The following resources were used:
+- [[href:/4bdfa923-20d0-47bc-8d1e-d39d66d7c5e0/html][Writing by progressive refinements]]
+- [[href:/32b32aa5-40cf-48c7-ac61-95e94eaa28a9/html][Type Theory]]
+- Laws for communicating parallel processes [cite:@hewitt1977lawsA]
+- Actor model of computation: Scalable robust information systems [cite:@hewitt2010actormodel]
+
+* Machines
+
+#+ID: 11a7296d-bf67-4894-94c9-66690c2fdf80
 #+begin_definition
-*:≡* :≡ 🞎
+Computing today relies on a *network of heterogeneous machines*. Each of these machines
+has its own memory, computation and communication capabilities. Some of them are
+linked in some ways, /e.g./, TCP/IP or Email.
 #+end_definition
 
-** Type
+* Actor system
 
-#+ID: 020fad82-9d00-4543-926d-832c91442f99
+#+ID: 889e352a-3ea6-4be5-bcf2-f6943ee37d16
 #+begin_definition
-*Type* :≡ 🞎
+An *actor system* is an abstraction used to model computing carried out by a network of
+machines.
 #+end_definition
 
-** X → Y
+Each actor is an abstraction representing some aspects of a machine. Communication
+between machines is abstracted by giving actors the capability to send and receive
+messages.
 
-#+ID: 2cd5a5e7-8e7f-4bd3-8883-ea557bff0fd7
+A message is the analogue of a letter: it has the address of an actor and an arbitrary
+payload. After being sent, a message may or may not be received. Nothing guarantees
+that a message will reach the designated actor. Even if it does, the actor may crash
+before being able to send a reply, if any.
+
+* Actor
+
+#+ID: aae19666-8753-4527-8f7f-70d68533c58c
 #+begin_definition
-*X → Y* :≡ 🞎
+An actor is an abstract representation of a machine. It has a canonical address, a
+state and a script:
+
+#+begin_example
+Actor :≡ Address × State × Script
+#+end_example
 #+end_definition
 
-** X × Y
+To build an actor, it is enough to provide an initial state, a script and have the
+guarantee that there is a machine it is the abstraction of. Only the canonical
+address is returned by the constructor as the only way to interact with an actor is
+to send/receive messages to/from it. In other words:
 
-#+ID: 6e00b58e-0ffb-4e6a-af80-26ce98049025
+#+ID: 6a19df71-959a-4387-9949-f2f26df9f075
 #+begin_definition
-*X × Y* :≡ 🞎
+#+begin_example
+Actor#mk : Script State ⇝ Actor :≡
+ script state ↦
+  address :≡ Address#mk()
+  actor :≡ <address, state, script>
+  script is executing on some machine starting from state.
+  For all messages of the form <address, _>,
+    send(m) works as expected.
+  address
+#+end_example
 #+end_definition
 
-** X | Y
+* Address
 
-#+ID: 2904f563-4b22-46ca-b294-90df524f7163
+An actor has a canonical *address*.
+
+#+ID: e74b3833-8f59-426a-a26f-1ad0b80d5650
 #+begin_definition
-*X | Y* :≡ 🞎
+An address is an abstract representation of whatever address the associated machine
+may have, for instance an IP address or an email address in the sense that it can be
+used to send data to the actor. In addition, an address cannot be arbitrarily
+created, fabricated, guessed, or forged. The expression ~Address#mk()~ is the address
+constructor.
 #+end_definition
 
-** Nat
+* State
 
-#+ID: 6e6069cd-adf1-4f69-a95d-abfed657fd3d
+An actor has a *state*.
+
+#+ID: 5d74d0a1-2d29-4254-95d1-f961c1951ac2
 #+begin_definition
-*Nat* :≡ 🞎
+A *state* is an instance of some type that acts as an abstract representation of the
+associated machine's memory.
 #+end_definition
 
-** String
+* Script
 
-#+ID: 5702b0b7-a4bd-4933-bc07-0f30b0f85899
+An actor has a *script*.
+
+#+ID: c796968d-171e-4393-a0af-2d22b0657f80
 #+begin_definition
-*String* :≡ List(Nat)
+A *script* is an abstract representation of whatever programming language is used to
+define the behaviour of its associated machine. It may use the following instructions:
+
+- ■
+- self
+- send(m)
+- receive()
+- become(script [state])
+
+In addition to the usual instruction set.
 #+end_definition
 
-** List
-
-#+ID: 688dbc9a-9f1f-471f-b362-5703765684c5
-#+begin_definition
-*List* :≡ 🞎
-#+end_definition
-
-** Just
-
-#+ID: a6d97a04-6512-4c0b-b4ee-011afac18074
-#+begin_definition
-- X : Type
-- *Just(X)* :≡ 🞎
-#+end_definition
-
-** Nothing
-
-#+ID: 4a47e9a0-8d54-456f-9863-ceecde5b36a8
-#+begin_definition
-*Nothing* :≡ 🞎
-#+end_definition
-
-** Maybe
-
-#+ID: a489781c-9a92-4c11-9698-81750460e9cf
-#+begin_definition
-- X : Type
-- *Maybe(X)* :≡ Nothing | Just(X)
-#+end_definition
-
-** StrictPartialOrder
-
-#+ID: 6086ccfe-0154-4590-b38d-fb994fa0a137
-#+begin_definition
-*StrictPartialOrder(X)* :≡ 🞎
-#+end_definition
-
-** Set
-
-#+ID: 6c127151-52d8-4f16-9f8e-9ce43f34b353
-#+begin_definition
-- X : Type
-- = : X X → Boolean
-- = is an equality
-- *Set(X =)* :≡
-  - list : List(X)
-  - e(i) ∈ list, e(j) ∈ list, i ≠ j, e(i) ≠ e(j)
-#+end_definition
-
-* Gul A. Agha 1986
-:PROPERTIES:
-:ID:       2135593c-cfaa-4c41-8c41-6966295cf3aa
-:END:
-
-/Actors: A Model of Concurrent Computation in Distributed Systems/
-[cite:@agha1986actors], seems to be the main book about actors. Unfortunately, I find
-it hard to understand.
-
-* Hewitt 2010
-:PROPERTIES:
-:ID:       451cdbd4-55e6-4787-8b35-56c0d7d6c561
-:END:
-
-Time may have sorted out a clearer exposition in /Actor Model of Computation: Scalable
-Robust Information Systems/ [cite:@hewitt2010actormodel].
-
-#+begin_quote
-Message passing using types is the foundation of system communication:
-- Messages are the unit of communication1
-- Types enable secure communication with any Actor
-#+end_quote
-
-What is the definition of a Message? What is the definition of an Actor?
-
-#+begin_quote
-When an Actor receives a message, it can concurrently:
-- send messages to (unforgeable) addresses of Actors that it has;
-- create new Actors;
-- designate how to handle the next message it receives.
-#+end_quote
-
-What is an address?
-
-#+begin_quote
-It is a consequence of the Actor Model that there are some computations that cannot
-be implemented in the lambda calculus.
-#+end_quote
-
-Proof?
-
-#+begin_quote
-The Actor Model is a mathematical theory of computation that treats “Actors” as the
-universal primitives of concurrent digital computation [Hewitt, Bishop, and Steiger
-1973; Hewitt 1977]
-#+end_quote
-
-So, this is where we should look for the definition of an Actor.
-
-#+begin_quote
-The advent of massive concurrency through client-cloud computing and many-core
-computer architectures has galvanized interest in the Actor Model [Hewitt 2009b].
-#+end_quote
-
-It took a few decades, but time seems to favor the actor model. /Hewitt 2009b/ should
-explain why.
-
-#+begin_quote
-An Actor can only communicate with another Actor to which it has an address.
-Addresses can be implemented in a variety of ways:
-- direct physical attachment
-- memory or disk addresses
-- network addresses
-- email addresses
-#+end_quote
-
-But why not just give definitions like mathematicians do? Just a sequence of
-consistent definitions and propositions, maybe with proofs.
-
-#+begin_quote
-The Actor Model is characterized by inherent concurrency of computation within and
-among Actors, dynamic creation of Actors, inclusion of Actor addresses in messages,
-and interaction only through direct asynchronous message passing with no restriction
-on message reception order.
-#+end_quote
-
-/direct asynchronous message passing/?
-
-#+begin_quote
-The Actor Model differs from its predecessors and most current models of
-computation in that the Actor Model assumes the following:
-- Concurrent execution in processing a message.
-- The following are not required by an Actor: a thread, a mailbox, a
-message queue, its own operating system process, etc.
-- Message passing has the same overhead as looping and procedure
-calling.
-- Primitive Actors can be implemented in hardware.
-#+end_quote
-
-Ok.
-
-#+begin_quote
-The Actor Model is based on one-way asynchronous communication. Once a message has
-been sent, it is the responsibility of the receiver. Messages in the Actor Model are
-decoupled from the sender and are delivered by the system on a best efforts
-basis. […] message passing is taken as fundamental in the Actor Model. […] laws for
-Actors [Baker and Hewitt 1977]
-#+end_quote
-
-Fine.
-
-#+begin_quote
-The Actor Model supports indeterminacy because the reception order of messages can
-affect future behavior.  Operations are said to be quasi-commutative to the extent
-that it doesn’t matter in which order they occur. To the extent possible,
-quasi-commutativity is used to reduce indeterminacy.
-#+end_quote
-
-Does this have any relationship with eventual consistency?
-
-#+begin_quote
-Locality and security mean that in processing a message: an Actor can send
-messages only to addresses for which it has information by the following
-means:
-1. that it receives in the message
-2. that it already had before it received the message
-3. that it creates while processing the message.
-#+end_quote
-
-/One of the things that every sorcerer will tell you is that if you have the name of
-the spirit, you have power over it./ [cite:@sussman1986lecture1b].
-
-#+begin_quote
-In the Actor Model, there is no hypothesis of simultaneous change in multiple
-locations. In this way it differs from some other models of concurrency.
-#+end_quote
-
-non-local effects are rejected. /I cannot seriously believe in it [quantum mechanics]
-because the theory is incompatible with the principle that physics should represent a
-reality in time and space, free from spooky actions at a distance./
-[cite:@einstein1947letter].
-
-#+begin_quote
-The security of Actors can be protected in the following ways:
-- hardwiring in which Actors are physically connected
-- every-word-tagged memory.
-- virtual machines as in Java virtual machine, Common Language
-Runtime, etc.
-- signing and/or encryption of Actors and their addresses
-A delicate point in the Actor Model is the ability to synthesize the address of
-an Actor. In some cases security can be used to prevent the synthesis of
-addresses in practice using the following:
-- every-word-tagged memory
-- signing and encryption of messages
-#+end_quote
-
-Interesting.
-
-#+begin_quote
-Runtime failures are always a possibility in Actor systems and are dealt with by
-runtime infrastructures. Message acknowledgement, reception, and response cannot be
-guaranteed although best efforts are made. Consequences are cleaned up on a
-best-effort basis.  Robustness is based on the following principle: If an Actor is
-sent a request, then the continuation will be one of the following two mutually
-exclusive possibilities:
-1. to respond with the response received from the Actor sent the request
-2. to throw a Messaging exception
-
-A response is either a returned value or a thrown exception. A Messaging exception
-can have information concerning the lack of response. even though the Actor may have
-received the request and sent a response that has not yet been received. Requestors
-need to be able to interact with infrastructures concerning policies to be applied
-concerning when to generate Unresponsive exceptions.
-#+end_quote
-
-Ok, so we know what to expect when "speaking" with an actor.
-
-#+begin_quote
-The Computational Representation Theorem [Clinger 1981; Hewitt 2006]11 characterizes
-computation for systems which are closed in the sense that they do not receive
-communications from outside. […] The upshot is that concurrent systems can be
-axiomatized using mathematical logiciv but in general cannot be implemented. Thus,
-the following practical problem arose:
-
-"How can practical programming languages be rigorously defined since the proposal by
-Scott and Strachey [1971] to define them in terms lambda calculus failed because the
-lambda calculus cannot implement concurrency?"
-#+end_quote
-
-Does it have any implication in practice? See Plotkin "or" and the fact that lambda
-calculous it can simulate some parallelism (via Church-Rosser allowing independent
-reductions), but not true non-deterministic or fair concurrency where independent
-subcomputations can converge independently without full
-evaluation. [cite:@plotkin1977lcf]
-
-#+begin_quote
-Programming languages like ActorScript [Hewitt 2010] take the approach of extending
-behavior in contrast to the approach of specializing behavior:
-
-- Type specialization: If type t1 is a subtype of type t2, then instances of t1 have
-  all of the properties that are provable from the definition of type t2 [Liskov
-  1987, Liskov and Wing 2001].
-
-- Type extension: A type can be extended to have additional (perhaps incompatible)
-  properties from the type that it extends. An extension type can make use of the
-  implementation of the type that it extends.  Type extension is commonly used to
-  extend operating system software as well as applications.
-
-The term “inheritance” in programming has been used (sometimes ambiguously) to mean
-both specialization and extension.
-#+end_quote
-
-Interesting distinction: Specializing and Extension.
-
-#+begin_quote
-Reasoning about Actor Systems
-The principle of Actor induction is:
-1. Suppose that an Actor x has property P when it is created
-2. Further suppose that if x has property P when it receives a message,
-then it has property P when it receives the next message.
-3. Then x always has the property P.
-In his doctoral dissertation, Aki Yonezawa developed further techniques for
-proving properties of Actor systems including those that make use of migration.
-Russ Atkinson developed techniques for proving properties of Actors that are
-guardians of shared resources. Gerry Barber's 1981 doctoral dissertation
-concerned reasoning about change in knowledgeable office systems.
-#+end_quote
-
-So reasoning, /i.e./ deriving conclusions from premises, is possible.
-
-#+begin_quote
-- Swiss cheese [Hewitt and Atkinson 1977, 1979; Atkinson 1980].
-- Futures [Baker and Hewitt 1977].
-#+end_quote
-
-Time is scarce, let us focus and skip things.
-
-* TODO Hewitt & Baker 1977
-
-[cite:@hewitt1977lawsA]
-
-** Bit
-
-#+ID: 24c3453b-bb18-4847-b842-ddaaeb979fb7
-#+begin_definition
-*Bit* :≡ 0 | 1
-#+end_definition
-
-** Data
-
-#+ID: bff3df2b-ce8e-44c1-a64e-526e2080a483
-#+begin_definition
-*Data* :≡ List(Bit)
-#+end_definition
-
-** State
-
-#+ID: a165ae1c-d951-4022-a3bf-c34949ffd78a
-#+begin_definition
-*State* :≡ Data
-#+end_definition
-
-** Address
-
-#+ID: 51467de6-4263-4e6a-bda1-c87576cf3dff
-#+begin_definition
-*Address#mk()* : Address :≡ Data such that it cannot be arbitrarily created,
-fabricated, guessed, or forged by any actor in the system.
-#+end_definition
-
-** Message
-
-#+ID: b9348b43-b317-4313-830f-6d218274c3e7
-#+begin_definition
-*Message* :≡ Data
-#+end_definition
-
-** Script
-
-#+ID: 77527c87-3faa-43f5-8cd4-0d49729d19c7
-#+begin_definition
-*Script* :≡ Given /state : State/ and /script : Script/, then /script(state)/ is a program
-starting from /state/ executing what is prescribed by /script/ with the only restriction
-that its I/O is done by sending and receiving messages.
-
-The precise meanings of /sending/ and /receiving/ are left to interpretation as well as
-the precise instructions set executed by the program or how they are prescribed by
-/script/.
-#+end_definition
-
-** ■
+The exact *Script* language is not specified here. We attempt to make our intent clear
+using a pseudo-language even if formalisation attempts have been made, /e.g./, ActorScript
+[cite:@hewitt:hal-01147821].
+
+* ■
 
 #+ID: 05a52904-d4ef-4887-b41e-6c4097145021
 #+begin_definition
-*■* :≡ Withing a script, ■ means that the current script stops equivalent to ~return~ in
- C.
+■ means that the current script stops, "killing" the current machine, /i.e./, freeing
+all resources (/e.g./, CPU, Memory).
 #+end_definition
 
-** receive
-
-#+ID: c20369ab-2da7-453a-8b62-f9956c8bdf21
-#+begin_definition
-*receive([timeout : Nat])* :≡ whenever a message /msg/ has been received by a program I/O
-subsystem, then /receive([timeout])/ is to be replaced by /msg/. This instruction blocks
-until then. If /timeout/ is specified, and no message is received before the timeout is
-exhausted, then /receive(timeout)/ is to be replaced by an instance of Timeout ; a kind
-of message.
-#+end_definition
-
-** emit
-
-#+ID: 061b53ce-b7a4-4b77-852b-b2bc601efc17
-#+begin_definition
-*emit(msg)* :≡ Within a script, given a message /msg/, /emit(msg)/ means that any actor
- observing the current observer will receive /msg/.
-#+end_definition
-
-** self
+* self
 
 #+ID: de334c5b-21b8-45ec-88f4-1da5b467b001
 #+begin_definition
-*self* :≡ Within /script : Script/, then /self/ refers to the current actor actor.
+*self* refers to the current canonical actor address.
 #+end_definition
 
-** ∥
+* Message
 
-#+ID: 961861bf-bba5-4fc9-ac63-0812d15d38bd
+#+ID: 025ee834-c895-4aeb-92b8-3f8ff936b604
 #+begin_definition
-*∥* :≡ Given /state : State/ and /script : Script/, then /∥(state script)/ means that
-resources are allocated (/e.g./ CPU, Memory, energy) so that a program executing /script/
-and starting from /state/ is created. /program :≡ ∥(state script)/ means that /program/
-references the created program. Does not block.
-#+end_definition
-
-** Actor
-
-#+ID: 64945c67-bdfa-41bb-bf1d-4608f0351a9a
-#+begin_definition
-- state : State
-- script : Script
-- *Actor#mk(state script)* : Actor :≡
-  - self :≡ Address#mk()
-  - program :≡ ∥(state script)
-  - Given /msg : Message/, then after /self#rcv(msg)/, /program/ has received /msg/.
-  - self
-#+end_definition
-
-** observe and ignore
-
-#+ID: ff689b57-13a2-43ac-bad4-132387c8eb1e
-#+begin_definition
-*observe(actor)* :≡ Given /actor : Actor/, then after executing /observe(actor)/,
-any message emitted on the I/O subsystem of the underlying actor is received by the
-current program. This instruction does not block.
-#+end_definition
-
-#+ID: 5f18fa31-a763-4049-bb70-5f0fd905811d
-#+begin_definition
-*ignore(actor)* :≡ Reciprocal of /observe(actor)/.
-#+end_definition
-
-** Clock
-
-Let's attempt to model a clock using Actor. We assume the existance of /crystal :
-Address/ such that the underlying actor emits instances of /Tick/ — a kind of Message —
-on its I/O subsystem.
-
-Note that the instructions executing order is not given by the script ; only some
-constraints are. For instance, ~a :≡ A#mk(…); b :≡ f(a)~ imposes and order, but ~a :≡
-A#mk(…); b :≡ B#mk(…)~ does not.
-
-Note that the following script must be understood as being executed by an actor.
+A message is the analogue of an envelope: it is formed by an actor address and an
+arbitrary payload.
 
 #+begin_example
-decode : Message → (String × Address) | String | Nothing
+Payload : Type
+Message :≡ Address × Payload
+#+end_example
+#+end_definition
 
-script :≡
-  <n : Nat, crystal : Crystal> ↦
-    time :≡ n
-    observe(crystal)
-    while msg :≡ receive()
-      match decode(msg)
-        <"tick", crystal> ↦ time :≡ time + 1
-        <"read", to : Address> ↦ to#rcv(<time, self>)
-        "stop" ↦ ■
+* send
 
-state :≡ <0, crystal>
+#+ID: a8719a12-24f7-4153-83b8-301cf363621a
+#+begin_definition
+Given ~m : Message :≡ <address, payload>~, then send(m) means that the actor
+represented by /address/ MAY receive /payload/. In other words:
 
-clock :≡ Actor#mk(state script)
-
-clock#rcv(<"read", self>)
-
-while msg :≡ receive()
-  match msg
-    <time : Nat, clock> ↦
-      "The time is: ${time}"
-      ■
-    _ ↦ continue
+#+begin_example
+send(m) :≡
+ <address, payload> ≡ m
+ match actor(address)
+  nothing ↦ ■
+  just(actor) ↦ actor#rcv(payload)
 #+end_example
 
-** Events
-
-#+ID: 0a22ef9e-8412-4b40-8b0f-07cb8c36a041
-#+begin_definition
-*Events* :≡ Set(Event List=)
+#+begin_example
+send(address payload) :≡ send(<address, payload>)
+#+end_example
 #+end_definition
 
-** Discretness
+/actor(address) ≡ just(actor)/ is an abstract way to say that the message reached the
+actor associated with /address/ thanks to whatever underlying networking technology was
+used, /e.g./, TCP/IP.
 
-#+ID: 8cfe2ab7-813b-427b-b440-0b30c29e4a65
+/actor#rcv(payload)/ means that /payload/ has been written to the I/O subsystem of
+/machine(actor)/ so that when /actor/ executes /receive/, then it can pattern match against
+/payload/.
+
+/just(actor) ↦ actor#rcv(payload)/ means that if the message reaches /actor/, then the
+actor can pattern match against the payload. In other words, we abstract away what
+could prevent /actor/ from pattern matching against /payload/, /e.g./, size limits of the I/O
+subsystem.
+
+/send/ does not return anything, so we consider this instruction /asynchronous/, /i.e./, it
+does not block.
+
+* receive
+
+#+ID: 971a5148-6d66-4ef6-a980-f9486b62090f
 #+begin_definition
-- E : Events
-- < : StrictPartialOrder(E)
-- *Discretness(E <)* :≡ 🞎
+*receive* is a language construct that allows the current actor to pattern match against
+message payloads not already processed.
+
+If a payload ~p~ triggers the execution of one of the receive branches, /i.e./, ~<cond(p),
+script>~, then /script/ is executed; else /receive/ blocks until a new message is
+received. (TODO timeout).
 #+end_definition
 
-** concurrent with
+For instance:
 
-#+ID: 8a583e0a-98d9-4492-bceb-a1bbbd670eee
+#+ID: 61dfb1c8-2154-4dcf-a284-4f26dfa49606
+#+begin_example
+receive
+  <from, n> when n > 0 ↦ send(from "${n} > 0")
+  "stop" ↦ ■
+#+end_example
+
+means that if a message /m/ is of the form <from, n> where n > 0, then a string is
+replied to the sender. If ~"stop"~ is received, then the actor dies.
+
+* become
+
+#+ID: abfd4a0c-98c9-4248-9015-a50a48e8bc6e
 #+begin_definition
-- E : Events
-- e(i), e(j) ∈ E
-- < : StrictPartialOrder(E)
-- *e1 concurrent with e2* :≡ 🞎
+Given /script : Script/, then after *become(state script)*, the current actor executes /script/ from /state/.
 #+end_definition
 
-** precedes
+For instance:
 
-#+ID: 8a583e0a-98d9-4492-bceb-a1bbbd670eee
+#+ID: fa1f71b0-4e37-4aa3-ba29-df3dce387e34
+#+begin_example
+french :≡
+  receive
+    <from, "hello"> ↦ send(from "Bonjour")
+  become(french)
+
+italian :≡
+  receive
+    <from, "hello"> ↦ send(from "Buongiorno")
+  become(italian)
+
+receive
+  "french" ↦ become(french)
+  "italian" ↦ become(italian)
+#+end_example
+
+The previous example means that the current actor will reply "Bonjour" to "hello"
+after receiving "french" and "Buongiorno" after receiving "italian".
+
+* Example
+
+In order to use the previous definitions, let's define a stopwatch using the actor
+model.
+
+** Oscillator
+
+We model an [[https://en.wikipedia.org/wiki/Electronic_oscillator][oscillator]] by an actor built using the expression:
+~Oscillator#mk()~. We assume that the definition of this expression is given. It acts
+as a black box; we only know the protocol it is supposed to fulfil, namely:
+
+#+begin_quote
+~oscillator :≡ Oscillator#mk()~ is an oscillator that starts emitting ticks every
+second starting as soon as it is created.
+
+Given an actor ~α~, then ~oscillator#subscribe(α)~ will subscribe ~α~ to the ticks of
+~oscillator~. It means that ~α~ will receive a message ~<oscillator, "tick">~ after each
+emission.
+
+~oscillator#unsubscribe(α)~ is the reciprocal operation.
+#+end_quote
+
+** Stopwatch
+
+Since the definition of a stopwatch is not given, we provide it ourselves. First, we describe the protocol, in other words *what it does*:
+
+#+begin_quote
+A stopwatch is an actor that implements the following protocol: it starts counting
+elapsed seconds as soon as it is created. Then, it replies ~<stopwatch, seconds>~ to a
+message ~<actor, "read">~. ~seconds : ℕ~ and ~actor~ is an actor address.
+#+end_quote
+
+Now, we can define *how it does it* by defining a constructor. To build an actor, we
+need to define a state and a script. So, we define a constructor ~Stopwatch#mk()~ that builds
+an actor that implements the desired behaviour as follows:
+
+#+begin_example
+script :≡
+ n : Nat ↦
+  seconds :≡ n
+  oscillator :≡ Oscillator#mk()
+  oscillator#subscribe(self)
+  next :≡
+   seconds ↦
+    receive
+     <oscillator, "tick"> ↦
+      become(next seconds+1)
+
+     <actor, "read"> ↦
+      send(actor <self, seconds>)
+      become(next seconds)
+  next(seconds)
+
+Stopwatch#mk() :≡ Actor#mk(script 0)
+#+end_example
+
+** Usage
+
+So, an actor executing the following script:
+
+#+begin_example
+stopwatch :≡ Stopwatch#mk()
+send(stopwatch <self, "read">)
+receive
+  <stopwatch, sec> ↦ "#{sec} seconds elapsed."
+#+end_example
+
+would start a stopwatch then ask the stopwatch for the number of elapsed seconds.
+
+* Protocol
+
+#+ID: 9feaaec8-09ba-479d-abc0-b132a0a17a91
 #+begin_definition
-- E : Events
-- e(i), e(j) ∈ E
-- < : StrictPartialOrder(E)
-- *e1 precedes e2* :≡ 🞎
+A *protocol* describes message sequences and expected replies.
 #+end_definition
 
-** message
+TODO: look at session types.
 
-#+ID: 282b8ce7-b630-4acd-a6e2-860c3a51f985
-#+begin_definition
-*message* : Event → Message
-#+end_definition
+* Actor construction
 
-** ActorComputation
+As seen in the example, defining an actor starts with /what/ it should do. This
+definition takes the form of a protocol it must implement. Then, a constructor for
+that type of actor must be defined. It defines /how/ the actor implements its
+protocol. The /how/ is certainly better expressed using an executable programming
+language instead of a pseudo-language. A higher-level language seems to be necessary
+to express the /what/ in any meaningful manner.
 
-#+ID: fc87fe10-230f-43fc-97d4-0660a2f99207
-#+begin_definition
-- *ActorComputation* :≡
-  - E : Events
-  - < : StrictPartialOrder(E)
-  - Discretness(E <)
-#+end_definition
+* Result
 
-** Event
-
-#+ID: c1eadb3d-a5e5-4e44-a80f-54f7b93db576
-#+begin_definition
-*Event* :≡ Data
-#+end_definition
-
-* TODO Hewitt 1977
-
-[cite:@hewitt1977viewing]
-
-* Message definition
-
-#+ID: 6dc94cfa-c366-4082-898b-208923ac958b
-#+begin_definition
-A message is an immutable parcel of data sent to an actor’s address. It contains at
-minimum the recipient address and whatever information the sender chooses to
-communicate.
-#+end_definition
-
-* Actor definition
-
-#+ID: c5b69743-a729-45ec-a95f-f91aeae0d0a5
-#+begin_definition
-An /actor/ is an independent computational entity with three essential properties:
-
-1. It has /addresses/.
-2. It has private internal state.
-3. When it receives a /message/ at its address, it may do the following concurrently:
-   - send messages to addresses it knows,
-   - create new actors,
-   - change how it will react to the next message.
-
-Messages are one-way and asynchronous: once sent, the sender cannot wait for or
-assume delivery.
-#+end_definition
-
-* TODO Example
-
-* TODO Use case
-
-* TODO Result
+An actor definition has been provided together with a method to define different
+kinds of actors. An illustrative example has been provided in the form of a stopwatch
+actor.
 
 * TODO Discussion
 
 * TODO Conclusion
 
-* TODO Bibliography
+* Bibliography
 
 #+print_bibliography:
+
+* Local Variables                                                  :noexport:
+
+Local Variables:
+eval: (add-hook 'before-save-hook #'whitespace-cleanup nil t)
+eval: (add-hook 'after-save-hook #'user--org-export-current-buffer-to-utf8-buffer nil t)
+org-confirm-babel-evaluate: nil
+fill-column: 85
+End:

@@ -3,7 +3,7 @@
 #+DATE: 2026-02-06
 #+LICENSE: https://creativecommons.org/licenses/by-nc-sa/4.0 CC-BY-NC-SA-4.0
 #+STATUS: Draft
-#+CITE_EXPORT: csl
+#+CITE_EXPORT: csl ieee.csl
 
 #+begin_abstract
 TODO
@@ -81,6 +81,6 @@ https://github.com/phf-1/my-lovely-tasks
 
 * TODO Conclusion
 
-* TODO Bibliography
+* Bibliography
 
 #+print_bibliography:

@@ -1,7 +1,7 @@
 #+ID: a94d4ca0-9656-4c8d-8bc2-f21a2e9c5d0e
 #+TITLE: Toward a JavaScript actor implementation
 #+DATE: 2026-02-05
-#+CITE_EXPORT: csl
+#+CITE_EXPORT: csl ieee.csl
 #+STATUS: Draft
 #+LICENSE: https://creativecommons.org/licenses/by-nc-sa/4.0 CC-BY-NC-SA-4.0
 

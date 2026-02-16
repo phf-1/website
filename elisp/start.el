@@ -74,6 +74,7 @@
 (defun start--export ()
   (let ((org-export-show-temporary-export-buffer t)
         (org-export-with-title t)
+        (org-export-with-sub-superscripts nil)
         (org-html-doctype "html5")
         (org-html-html5-fancy t)
         (org-export-with-section-numbers nil)

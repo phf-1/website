@@ -1,7 +1,7 @@
 #+ID: f53944a6-90dc-4519-9a6e-4ded5910e4d0
 #+TITLE: Designing This Website
 #+DATE: 2026-02-05
-#+CITE_EXPORT: csl
+#+CITE_EXPORT: csl ieee.csl
 #+STATUS: Draft
 #+LICENSE: https://creativecommons.org/licenses/by-nc-sa/4.0 CC-BY-NC-SA-4.0
 

@@ -1,0 +1,83 @@
+#+ID: 4bdfa923-20d0-47bc-8d1e-d39d66d7c5e0
+#+TITLE: Writing by progressive refinements
+#+DATE: 2026-02-16
+#+CITE_EXPORT: csl ieee.csl
+#+LICENSE: https://creativecommons.org/licenses/by-nc-sa/4.0 CC-BY-NC-SA-4.0
+#+STATUS: Draft
+
+* Introduction
+
+Understanding requires definitions. We describe below an incremental way of writing
+definitions by successive refinements leading to the idea of definition extensions
+and integration.
+
+* Objective
+
+Guide the construction of an article attempting to capture an idea using
+appropriate definitions.
+
+* Context
+
+The following resources were used:
+- Peter Scholze on definitions [cite:@Avigad_2021]
+- The "rising sea" as described by A. Grothendieck [cite:@mclarty2003rising]
+- Leslie Lamport on definitions, lessons from the industry [cite:@batson2003high]
+- Conjectures and Refutations: The Growth of Scientific Knowledge [cite:@popper1963conjectures]
+
+* Definition
+
+A *definition* introduces a new name and its associated meaning. To make them easy
+to find, we introduce them using blocks that look as follows:
+
+#+ID: 57c6a5f3-8b0f-46cc-9fc6-44eb52177808
+#+begin_definition
+<description> *NewName* <description>.
+#+end_definition
+
+* Example
+
+A definition may be followed by an *example* introduced using a block as follows:
+
+#+ID: ac0c8e26-e9da-4181-9872-4534d1a929e7
+#+begin_instance
+Example of what we mean by NewName.
+#+end_instance
+
+* Extension
+
+Definitions are introduced in order. If a definition /D1/ is followed by a definition
+/D2/ that defines the same name, then it means that /D2/ replaces /D1/ from now on.
+
+This mechanism allows us to introduce definitions by successive refinements. Some
+properties of /D2/ may be inherited from /D1/ while others may contradict /D1/ in some
+aspects. In other words, /D2/ *extends* /D1/.
+
+* Integration
+
+A definition /DN/ is the accumulation of refinements from /D1/, /i.e./ its *integration*. To
+avoid having to rebuild /DN/ from /D1/, integrated definitions are given when
+necessary.
+
+* Result
+
+An article whose objective is to capture an ongoing understanding of a subject may
+proceed by adding sections, each one adding or extending a definition. Definition
+integration lowers the burden of rebuilding definitions from their successive
+refinements. Examples illustrate how the definitions /work/.
+
+* TODO Discussion
+
+* TODO Conclusion
+
+* Bibliography
+
+#+print_bibliography:
+
+* Local Variables :noexport:
+
+Local Variables:
+eval: (add-hook 'before-save-hook #'whitespace-cleanup nil t)
+eval: (add-hook 'after-save-hook #'user--org-export-current-buffer-to-utf8-buffer nil t)
+org-confirm-babel-evaluate: nil
+fill-column: 85
+End:
