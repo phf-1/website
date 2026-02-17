@@ -179,6 +179,25 @@ To decide which path to take, ask yourself these three questions:
 Would you like me to help you draft a specific interface or "contract" for how the Actor should communicate its requirements to the `Ma` instance?
 #+end_example
 
+*** DONE iteration(34)
+SCHEDULED: <2026-02-17 Tue>
+:PROPERTIES:
+:TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
+:END:
+:LOGBOOK:
+CLOCK: [2026-02-17 Tue 12:28]--[2026-02-17 Tue 13:00] =>  0:32
+:END:
+
+**** Objective
+
+Pseudo code should seamlessly integrate into blocks or normal flow: whitespace
+traitement and font is enoughto make the distinction clear, not need for an heavy
+markup, specially nested ones.
+
+**** Result
+
+- example blocks are "lighter".
+
 *** DONE iteration(33)
 SCHEDULED: <2026-02-17 Tue>
 :PROPERTIES:

@@ -31,13 +31,15 @@
     --link-color: var(--color-blue-900);
     --src-bg-color: var(--color-blue-grey-50);
     --src-border-color: var(--color-blue-grey-900);
+    --src-text-color: var(--text-color);
+    --quote-bg-color: var(--color-blue-grey-50);
+    --quote-border-color: var(--color-blue-grey-900);
     --def-bg-color: var(--color-green-50);
     --def-border-color: var(--color-green-900);
     --ref-bg-color: var(--color-red-50);
     --ref-border-color: var(--color-red-900);
-    --ins-bg-color: var(--color-orange-50);
-    --ins-border-color: var(--color-orange-900);
-    --src-text-color: var(--text-color);
+    --ins-bg-color: var(--color-blue-50);
+    --ins-border-color: var(--color-blue-900);
     --kw-todo-bg-color: var(--color-red-900);
     --kw-doing-bg-color: var(--color-orange-900);
     --kw-done-bg-color: var(--color-green-900);
@@ -68,7 +70,7 @@ figure {
     }
 }
 
-pre, pre.src, code {
+.src, code {
     border-color: var(--src-border-color);
     background-color: var(--src-bg-color);
 }
@@ -90,8 +92,8 @@ th { background-color: var(--table-th-bg-color); }
 }
 
 blockquote {
-    background-color: var(--src-bg-color);
-    border-color: var(--src-border-color);
+    background-color: var(--quote-bg-color);
+    border-color: var(--quote-border-color);
 }
 
 .instance {
@@ -387,7 +389,7 @@ h1 {
     margin: 0 0 var(--distance-h1-abstract) 0;
 }
 
-p {
+p, pre {
     display: block;
     margin-block-start: 0;
     margin-block-end: 1.5em;
@@ -400,12 +402,15 @@ figure {
     img { border-radius: 2px; }
 }
 
-pre, pre.src {
+pre, .src {
+    overflow-x: auto;
+}
+
+.src {
     border: 1px solid;
     border-radius: 2px;
     padding: 0.5em;
     margin: 2rem 0;
-    overflow-x: auto;
 }
 
 .todo, .done {
@@ -474,7 +479,7 @@ nav#table-of-contents {
     margin-bottom: 0;
 }
 
-.instance, .definition, blockquote, .example, .refutation {
+.instance, .definition, blockquote, .refutation {
     &::before {
         display: block;
         font-family: 'Sans', sans-serif;
@@ -499,7 +504,6 @@ nav#table-of-contents {
 .refutation { &::before { content: "Refutation"; } }
 .instance { &::before { content: "Example"; } }
 blockquote { &::before { content: "Quote"; } }
-.example { &::before { content: "Verbatim"; } }
 
 .csl-entry {
     margin: 1.5rem 0;
@@ -537,7 +541,7 @@ h1 {
 
 h2, h3, h4, h5 { border-bottom: 2px solid; }
 
-pre, pre.src, code { font-size: 0.9em; }
+pre, .src, code { font-size: 0.85em; }
 
 p { unicode-bidi: isolate; }
 
@@ -554,9 +558,7 @@ figure {
 
 strong { font-weight: bold; }
 
-pre { font-family: 'Mono', monospace; }
-
-pre, pre.src, code { font-family: 'Mono', monospace; }
+.src, code { font-family: 'Mono', monospace; }
 
 code { padding: 0 0.25em; }
 

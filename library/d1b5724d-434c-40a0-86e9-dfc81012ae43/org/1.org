@@ -1,6 +1,6 @@
 #+ID: d1b5724d-434c-40a0-86e9-dfc81012ae43
 #+TITLE: A simple actor definition
-#+DATE: 2026-02-16
+#+DATE: 2026-02-17
 #+CITE_EXPORT: csl ieee.csl
 #+LICENSE: https://creativecommons.org/licenses/by-nc-sa/4.0 CC-BY-NC-SA-4.0
 #+STATUS: Draft
@@ -136,11 +136,13 @@ An actor has a *script*.
 A *script* is an abstract representation of whatever programming language is used to
 define the behaviour of its associated machine. It may use the following instructions:
 
+#+begin_example
 - ■
 - self
 - send(m)
 - receive()
 - become(script [state])
+#+end_example
 
 In addition to the usual instruction set.
 #+end_definition
@@ -351,7 +353,17 @@ definition takes the form of a protocol it must implement. Then, a constructor f
 that type of actor must be defined. It defines /how/ the actor implements its
 protocol. The /how/ is certainly better expressed using an executable programming
 language instead of a pseudo-language. A higher-level language seems to be necessary
-to express the /what/ in any meaningful manner.
+to express the /what/ in any meaningful manner. In other words:
+
+#+ID: e813ef21-5758-493d-8d65-0f7188db94d0
+#+begin_definition
+#+begin_example
+ActorConstruction :≡
+  1. What: define the protocol.
+  2. How: define an implementation that satisfies the protocol.
+  3. Experiment: provide at least a few tests.
+#+end_example
+#+end_definition
 
 * Result
 
