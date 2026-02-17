@@ -1,19 +1,31 @@
 #+ID: 4bdfa923-20d0-47bc-8d1e-d39d66d7c5e0
-#+TITLE: Writing by progressive refinements
-#+DATE: 2026-02-16
+#+TITLE: Progressive Refinements
+#+DATE: 2026-02-17
 #+CITE_EXPORT: csl ieee.csl
 #+LICENSE: https://creativecommons.org/licenses/by-nc-sa/4.0 CC-BY-NC-SA-4.0
 #+STATUS: Draft
 
+#+begin_abstract
+Understanding is a dynamic process: definitions evolve as understanding deepens. To
+capture this idea, we embrace principled ambiguity: an article is viewed as an
+ordered sequence of definitions, examples, and refutations, all aimed at elucidating
+a phenomenon. Individual definitions may be ambiguous, but the final set—formed by
+the most recent version of each definition—contains no ambiguities, even as the
+article preserves the path that led to that set.
+#+end_abstract
+
 * Introduction
 
-Understanding requires definitions. We describe below an incremental way of writing
-definitions by successive refinements leading to the idea of definition extensions
-and integration.
+Understanding requires definitions. Below we describe an incremental approach to
+writing definitions through successive refinements. An article that aims to capture
+the essence of a phenomenon is viewed as an ordered sequence of definitions,
+refutations, extensions, and integrations. Each of these elements is marked by a
+dedicated block to facilitate scanning of the article and is assigned a unique
+identifier (UUID).
 
 * Objective
 
-Guide the construction of an article attempting to capture an idea using
+Guide the construction of an article that seeks to capture an idea using clear and
 appropriate definitions.
 
 * Context
@@ -21,13 +33,14 @@ appropriate definitions.
 The following resources were used:
 - Peter Scholze on definitions [cite:@Avigad_2021]
 - The "rising sea" as described by A. Grothendieck [cite:@mclarty2003rising]
-- Leslie Lamport on definitions, lessons from the industry [cite:@batson2003high]
-- Conjectures and Refutations: The Growth of Scientific Knowledge [cite:@popper1963conjectures]
+- Leslie Lamport on definitions: lessons from industry [cite:@batson2003high]
+- Conjectures and Refutations: The Growth of Scientific Knowledge
+  [cite:@popper1963conjectures]
 
 * Definition
 
-A *definition* introduces a new name and its associated meaning. To make them easy
-to find, we introduce them using blocks that look as follows:
+A *definition* introduces a new name together with its associated meaning. To make
+definitions easy to locate, we present them using blocks that look as follows:
 
 #+ID: 57c6a5f3-8b0f-46cc-9fc6-44eb52177808
 #+begin_definition
@@ -36,34 +49,51 @@ to find, we introduce them using blocks that look as follows:
 
 * Example
 
-A definition may be followed by an *example* introduced using a block as follows:
+A definition may be followed by an *example*, introduced using a block as follows:
 
 #+ID: ac0c8e26-e9da-4181-9872-4534d1a929e7
 #+begin_instance
 Example of what we mean by NewName.
 #+end_instance
 
+* Refutation
+
+A *refutation* demonstrates that, within a given context, the current definitions lead
+to undesired or problematic consequences. It can therefore justify updating or
+replacing those definitions. While a refutation itself may be lengthy, the block
+highlights its key finding (and sometimes contains the refutation in full).
+
+#+ID: b7faf72f-4a04-42b2-b71d-c9331a595e39
+#+begin_refutation
+<content>
+#+end_refutation
+
 * Extension
 
-Definitions are introduced in order. If a definition /D1/ is followed by a definition
-/D2/ that defines the same name, then it means that /D2/ replaces /D1/ from now on.
+Definitions are introduced sequentially. If a definition /D2/ defines the same name as
+a previous definition /D1/, then /D2/ replaces /D1/ from that point onward.
 
-This mechanism allows us to introduce definitions by successive refinements. Some
-properties of /D2/ may be inherited from /D1/ while others may contradict /D1/ in some
-aspects. In other words, /D2/ *extends* /D1/.
+This mechanism supports the introduction of definitions through successive
+refinements. Some properties of /D2/ may be inherited from /D1/, while others may
+contradict /D1/ in certain respects. In other words, /D2/ *extends* /D1/.
 
 * Integration
 
-A definition /DN/ is the accumulation of refinements from /D1/, /i.e./ its *integration*. To
-avoid having to rebuild /DN/ from /D1/, integrated definitions are given when
-necessary.
+A definition /DN/ represents the accumulation of all prior refinements from /D1/ onward —
+i.e., its *integration*. To avoid repeatedly reconstructing /DN/ from earlier
+definitions, integrated versions are explicitly stated when necessary.
 
 * Result
 
-An article whose objective is to capture an ongoing understanding of a subject may
-proceed by adding sections, each one adding or extending a definition. Definition
-integration lowers the burden of rebuilding definitions from their successive
-refinements. Examples illustrate how the definitions /work/.
+#+begin_example
+Article :≡ List(Definition + Example + Refutation + Extension)
+#+end_example
+
+An article whose goal is to capture an evolving understanding of a subject can
+proceed by adding sections that introduce, extend, or refine definitions. Definition
+integration reduces the cognitive burden of reconstructing definitions from their
+history of refinements. Examples illustrate how the definitions operate in practice.
+Refutations motivate the addition or extension of definitions.
 
 * TODO Discussion
 

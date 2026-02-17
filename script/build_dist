@@ -6,10 +6,6 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 
-#################
-# Specification #
-#################
-#
 # Given archive :≡ /path/to/archive.tar.zst and dist :≡ /path/to/dist, then build an
 # executable at dist such that:
 #   - Given port, then `$ ./dist start' starts a server serving HTTP protocol[2] with
@@ -21,9 +17,6 @@
 # [[ref:3c446152-6565-44b6-ab73-7faf6c7273b1][archive]]
 # [[ref:da7b66f8-4977-4d55-ab82-d0f2b5c072fb][dist]]
 
-##################
-# Implementation #
-##################
 
 set -euo pipefail
 IFS=$'\n\t'

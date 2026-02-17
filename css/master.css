@@ -33,6 +33,8 @@
     --src-border-color: var(--color-blue-grey-900);
     --def-bg-color: var(--color-green-50);
     --def-border-color: var(--color-green-900);
+    --ref-bg-color: var(--color-red-50);
+    --ref-border-color: var(--color-red-900);
     --ins-bg-color: var(--color-orange-50);
     --ins-border-color: var(--color-orange-900);
     --src-text-color: var(--text-color);
@@ -100,6 +102,11 @@ blockquote {
 .definition {
     background-color: var(--def-bg-color);
     border-color: var(--def-border-color);
+}
+
+.refutation {
+    background-color: var(--ref-bg-color);
+    border-color: var(--ref-border-color);
 }
 
 /**
@@ -467,7 +474,7 @@ nav#table-of-contents {
     margin-bottom: 0;
 }
 
-.instance, .definition, blockquote, .example {
+.instance, .definition, blockquote, .example, .refutation {
     &::before {
         display: block;
         font-family: 'Sans', sans-serif;
@@ -489,6 +496,7 @@ nav#table-of-contents {
 }
 
 .definition { &::before { content: "Definition"; } }
+.refutation { &::before { content: "Refutation"; } }
 .instance { &::before { content: "Example"; } }
 blockquote { &::before { content: "Quote"; } }
 .example { &::before { content: "Verbatim"; } }
