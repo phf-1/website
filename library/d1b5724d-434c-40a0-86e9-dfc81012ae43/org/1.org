@@ -8,7 +8,7 @@
 #+begin_abstract
 This article offers a definition and construction methodology for the Actor Model to
 provide a simple common vocabulary useful for software specification and
-implementation.  Defining an actor implies defining a protocol (/what/ it does) and an
+implementation. Defining an actor implies defining a protocol (/what/ it does) and an
 implementation (/how/ it does it). A stopwatch actor is provided as an illustrative
 example.
 #+end_abstract
@@ -183,37 +183,31 @@ Message :≡ Address × Payload
 
 #+ID: a8719a12-24f7-4153-83b8-301cf363621a
 #+begin_definition
-Given ~m : Message :≡ <address, payload>~, then send(m) means that the actor
-represented by /address/ MAY receive /payload/. In other words:
+Given ~m : Message :≡ <address, payload>~, then *send(m)* instructs the underlying
+infrastructure to transport /payload/ to /address/. This operation is /asynchronous/ and
+/non-blocking/.
 
 #+begin_example
 send(m) :≡
- <address, payload> ≡ m
- match actor(address)
-  nothing ↦ ■
-  just(actor) ↦ actor#rcv(payload)
-#+end_example
+ <address, payload> ≡ m
+ Network#dispatch(address, payload)
+ ∅
 
-#+begin_example
 send(address payload) :≡ send(<address, payload>)
 #+end_example
 #+end_definition
 
-/actor(address) ≡ just(actor)/ is an abstract way to say that the message reached the
-actor associated with /address/ thanks to whatever underlying networking technology was
-used, /e.g./, TCP/IP.
+/Network#dispatch/ abstracts the act of placing the message into the communication
+medium (e.g., the network stack). It returns immediately, allowing the sender to
+continue execution without waiting for acknowledgment or delivery.
 
-/actor#rcv(payload)/ means that /payload/ has been written to the I/O subsystem of
-/machine(actor)/ so that when /actor/ executes /receive/, then it can pattern match against
-/payload/.
+Crucially, ~send(m)~ provides *no guarantees* at the sender level:
+- It does not verify if /address/ exists.
+- It does not verify if /address/ is currently reachable.
+- It does not wait for the payload to be placed in the recipient's mailbox.
 
-/just(actor) ↦ actor#rcv(payload)/ means that if the message reaches /actor/, then the
-actor can pattern match against the payload. In other words, we abstract away what
-could prevent /actor/ from pattern matching against /payload/, /e.g./, size limits of the I/O
-subsystem.
-
-/send/ does not return anything, so we consider this instruction /asynchronous/, /i.e./, it
-does not block.
+If the recipient exists and the network succeeds, the payload is eventually written to
+the recipient's I/O subsystem, becoming available for a future ~receive~ operation.
 
 * receive
 

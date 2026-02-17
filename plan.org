@@ -179,6 +179,19 @@ To decide which path to take, ask yourself these three questions:
 Would you like me to help you draft a specific interface or "contract" for how the Actor should communicate its requirements to the `Ma` instance?
 #+end_example
 
+*** DONE iteration(35)
+SCHEDULED: <2026-02-17 Tue>
+:PROPERTIES:
+:TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
+:END:
+:LOGBOOK:
+CLOCK: [2026-02-17 Tue 13:50]--[2026-02-17 Tue 14:00] =>  0:10
+:END:
+
+**** Objective
+
+Clarify the send operation.
+
 *** DONE iteration(34)
 SCHEDULED: <2026-02-17 Tue>
 :PROPERTIES:
