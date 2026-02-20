@@ -1,0 +1,36 @@
+#+ID: 48e8264a-3609-4311-a61a-dcdcc7193419
+#+TITLE: A simple agent definition
+#+DATE: 2026-02-18
+#+CITE_EXPORT: csl ieee.csl
+#+LICENSE: https://creativecommons.org/licenses/by-nc-sa/4.0 CC-BY-NC-SA-4.0
+#+STATUS: Draft
+
+#+begin_abstract
+TODO
+#+end_abstract
+
+* TODO Introduction
+* Objective
+
+Define what an "agent" is.
+
+* TODO Context
+
+The following resources were used:
+- 🞎
+
+* TODO Result
+* TODO Discussion
+* TODO Conclusion
+* Bibliography
+
+#+print_bibliography:
+
+* Local Variables :noexport:
+
+Local Variables:
+eval: (add-hook 'before-save-hook #'whitespace-cleanup nil t)
+eval: (add-hook 'after-save-hook #'user--org-export-current-buffer-to-utf8-buffer nil t)
+org-confirm-babel-evaluate: nil
+fill-column: 85
+End:

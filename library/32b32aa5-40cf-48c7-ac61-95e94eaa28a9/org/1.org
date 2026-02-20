@@ -250,6 +250,15 @@ or France.
   - right(y) ↦ g(y)
 #+end_definition
 
+As long as there is no ambiguities, we will use the following for conciseness:
+
+#+begin_example
+a : A + B
+b : A + B
+c : A + B + C
+…
+#+end_example
+
 * ℕ
 
 #+ID: 6e6069cd-adf1-4f69-a95d-abfed657fd3d

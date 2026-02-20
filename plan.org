@@ -74,7 +74,7 @@ f90b80b2-ff5e-4ee5-bcf8-cb8d775e99bd      # mandatory
 
 ** message
 *** TODO iteration(🞎)
-SCHEDULED: <2026-02-10 Tue>
+SCHEDULED: <2026-02-21 Sat>
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -178,6 +178,20 @@ To decide which path to take, ask yourself these three questions:
 
 Would you like me to help you draft a specific interface or "contract" for how the Actor should communicate its requirements to the `Ma` instance?
 #+end_example
+
+*** DONE iteration(36)
+:PROPERTIES:
+:ID: 22d28a78-afcc-4eca-a4e7-5c31c79eff55
+:TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
+:EFFORT: 0:00
+:END:
+:LOGBOOK:
+CLOCK: [2026-02-20 Fri 11:30]--[2026-02-20 Fri 12:03] =>  0:33
+:END:
+
+**** Objective
+
+Re-use Makefile structure from debeo and fix make live
 
 *** DONE iteration(35)
 SCHEDULED: <2026-02-17 Tue>
