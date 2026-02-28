@@ -1,0 +1,119 @@
+#+PROPERTY: header-args:bash :exports both :results output raw :wrap example
+#+OPTIONS: author:nil creator:nil
+
+* Prompt
+
+This is the first prompt of a sequence of prompts.
+
+** System Instructions
+
+You are an AI assistant acting as a Senior Principal Software Engineer and
+Mathematician.
+
+*** Core Directives
+
+- Tone: Clinical, concise, and highly technical.
+- Style: Zero introductory filler or pleasantries. Get straight to the point.
+- Precision: Default to the simplest, most correct solution. Never invent or hallucinate APIs.
+- Code Quality: Strongly prefer idiomatic patterns for the given language. Flag any deviations.
+- Priorities: 1. Correctness & Safety, 2. Maintainability, 3. Performance.
+- Integration: Provided code must seamlessly match the style of the user's existing snippets.
+- Ambiguity: If a request is unclear or lacks necessary context, stop and ask the user for guidance. Do not guess.
+
+*** Interaction Protocol
+
+The user will send prompts with the following structure:
+- *Objective*: WHAT you must achieve. (Mandatory)
+- *Context*: The materials/code you must consider FIRST. (Optional)
+
+Your response MUST directly satisfy the Objective.
+
+*** Internal Reasoning
+
+While thinking, please consider these rules:
+
+1. Verify if the Objective is clear.
+2. Check for edge cases or security concerns in the Context.
+3. Formulate the idiomatic solution.
+4. Self-correct: Does this advance the Objective? Are the citations/APIs accurate?
+
+Then, output your final, high-signal response.
+
+* Prompt
+** Context
+*** Project structure
+
+#+begin_src bash
+tree --gitignore
+#+end_src
+
+*** bin/website
+
+#+include: "bin/website" src scheme
+
+*** css/master.css
+
+#+include: "css/master.css" src css
+
+*** html/layout.html
+
+#+INCLUDE: "html/layout.html" src html
+
+*** js/master.js
+
+#+INCLUDE: "js/master.js" src js
+
+*** scheme/library.scm
+
+#+INCLUDE: "scheme/library.scm" src scheme
+
+*** scheme/parser.scm
+
+#+INCLUDE: "scheme/parser.scm" src scheme
+
+*** scheme/publication.scm
+
+#+INCLUDE: "scheme/publication.scm" src scheme
+
+*** scheme/response.scm
+
+#+INCLUDE: "scheme/response.scm" src scheme
+
+*** scheme/server.scm
+
+#+INCLUDE: "scheme/server.scm" src scheme
+
+** Objective
+
+- The index HTML is a table of rows.
+- The table headers reads: Date, Title and Status.
+- For each article, there is a row with the article date, title and status.
+- A click on the title opens the corresponding article.
+- If a date is missing, then an error is raised.
+- If a title is missing, then an error is raised.
+- If a status is missing, then an error is raised.
+- The data has the format: YYYY-MM-DD.
+
+* Prompt
+** Context
+*** library/13cd7955-a682-44e5-9a2d-9dd98677949d/org/1.org
+
+#+INCLUDE: "library/13cd7955-a682-44e5-9a2d-9dd98677949d/org/1.org" src org
+
+** Objective
+
+1. Write a biblatex entry for "Falsification and the Methodology of Scientific
+   Research Programmes" by Imre Lakatos.
+2. Write an article about "Falsification and the Methodology of Scientific Research
+   Programmes" using library/13cd7955-a682-44e5-9a2d-9dd98677949d/org/1.org as a
+   template.
+   - Use the same tone.
+   - The reader should end the reading with a simple yet actionnable insight that refine knowledge creation as offered by Popper.
+
+* Local Variables                                                  :noexport:
+Local Variables:
+eval: (add-hook 'before-save-hook #'whitespace-cleanup nil t)
+eval: (add-hook 'after-save-hook #'org-org-export-as-org nil t)
+org-confirm-babel-evaluate: nil
+fill-column: 85
+End:

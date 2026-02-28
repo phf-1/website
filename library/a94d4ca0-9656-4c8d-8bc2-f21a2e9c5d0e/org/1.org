@@ -20,11 +20,11 @@ demonstration.
 An actor has an address and maintains private state through its behavior. In response
 to receiving a message, it can concurrently: create new actors (obtaining their
 addresses), send messages to addresses it knows, and designate a new behavior to
-handle the next message[cite:@hewitt1977lawsA; @hewitt1977laws]. An actor system is a
-collection of actors that interact exclusively through asynchronous message passing,
-without shared mutable state or explicit locks. Actor systems are computationally
-universal: they can perform any effective (Turing-computable) computation and, due to
-unbounded nondeterminism, express behaviors beyond Turing
+handle the next message[cite:@hewitt1977lawsA]. An actor system is a collection of
+actors that interact exclusively through asynchronous message passing, without shared
+mutable state or explicit locks. Actor systems are computationally universal: they
+can perform any effective (Turing-computable) computation and, due to unbounded
+nondeterminism, express behaviors beyond Turing
 machines[cite:@clinger1981foundations].
 
 This article presents a practical JavaScript implementation of the actor model,

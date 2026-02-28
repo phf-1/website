@@ -1,78 +1,12 @@
 #+OPTIONS: author:nil
 #+PROPERTY: header-args:bash :exports both :results output raw :wrap example
 
-* Website
+* planner
+:PROPERTIES:
+:ID:       af74b613-ff0c-4958-b709-10011fe89776
+:END:
+
 ** state
-*** Specification
-:PROPERTIES:
-:ID:       ea17f50d-7dd0-4bfb-a0f3-4a88747ef35d
-:CUSTOM_ID: spec
-:END:
-
-**** HTTP protocol
-:PROPERTIES:
-:ID:       da7b66f8-4977-4d55-ab82-d0f2b5c072fb
-:END:
-
-Given publications : Set([[ref:11262bd0-6696-4a20-9164-2191e53d4d2f][Publication]]), then a HTTP Protocol is described by:
-
-|--------+--------------------+--------------------------------------------------------------+------|
-| Method | Path               | Reply                                                        | Type |
-|--------+--------------------+--------------------------------------------------------------+------|
-| GET    | /health            | {"health": "ok"}                                             | JSON |
-|--------+--------------------+--------------------------------------------------------------+------|
-| GET    | /                  | 301 to /00000000-0000-0000-0000-000000000000/html            |      |
-|--------+--------------------+--------------------------------------------------------------+------|
-| GET    | /articles          | 301 to /00000000-0000-0000-0000-000000000001/html            |      |
-|--------+--------------------+--------------------------------------------------------------+------|
-| GET    | /<uuid>/html       | If ∃ publication with matching uuid,                         | HTML |
-|        |                    | then return its HTML representation, else 404.               |      |
-|--------+--------------------+--------------------------------------------------------------+------|
-| GET    | /<uuid>/org        | If ∃ publication with matching uuid,                         | Text |
-|        |                    | then return its Org representation, else 404.                |      |
-|--------+--------------------+--------------------------------------------------------------+------|
-| GET    | /<uuid>/<filename> | If ∃ publication with matching uuid and associated filename, | HTML |
-|        |                    | then return the data, else 404.                              |      |
-|--------+--------------------+--------------------------------------------------------------+------|
-| GET    | _                  | 404                                                          | HTML |
-|--------+--------------------+--------------------------------------------------------------+------|
-| _      | _                  | 400                                                          | HTML |
-|--------+--------------------+--------------------------------------------------------------+------|
-
-**** LibraryDir
-:PROPERTIES:
-:ID:       4ee84d7f-12d6-4bcf-a00f-a049631063f1
-:END:
-
-A LibraryDir is a path to a directory which contains a list of [[ref:da15973f-f7f9-449b-9afa-e4ea4fbece19][PublicationDir]].
-
-**** PublicationDir
-:PROPERTIES:
-:ID:       da15973f-f7f9-449b-9afa-e4ea4fbece19
-:END:
-
-A PublicationDir is a path to a directory that contains files that define a
-publication. Its structure is:
-
-#+begin_example
-f90b80b2-ff5e-4ee5-bcf8-cb8d775e99bd      # mandatory
-├── css                                   # optional
-│   ├── 1.css -> ../../../css/master.css
-│   ├── 2.css -> ../../../css/color.css
-│   ├── 3.css -> ../../../css/media.css
-│   └── 4.css
-├── data                                  # optional
-│   ├── english-cv.pdf
-│   ├── french-cv.pdf
-│   └── portrait.jpeg
-├── js                                    # optional
-│   └── 1.js -> ../../../js/master.js
-├── layout.html -> ../../html/layout.html # mandatory
-└── org                                   # mandatory
-    └── 1.org
-#+end_example
-
-** message
 *** TODO iteration(🞎)
 SCHEDULED: <2026-02-21 Sat>
 :PROPERTIES:
@@ -178,6 +112,28 @@ To decide which path to take, ask yourself these three questions:
 
 Would you like me to help you draft a specific interface or "contract" for how the Actor should communicate its requirements to the `Ma` instance?
 #+end_example
+
+*** DONE iteration(37)
+:PROPERTIES:
+:ID: c400bdca-652a-4185-8850-f73a665368f2
+:TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
+:EFFORT: 0:00
+:END:
+
+**** Objective
+
+- The index HTML is a table of rows.
+- The table headers reads: Date, Title and Status.
+- For each article, there is a row with the article date, title and status.
+- A click on the title opens the corresponding article.
+- If a date is missing, then an error is raised.
+- If a title is missing, then an error is raised.
+- If a status is missing, then an error is raised.
+- The data has the format: YYYY-MM-DD.
+
+**** Result
+
+The index is now a table.
 
 *** DONE iteration(36)
 :PROPERTIES:
@@ -904,6 +860,8 @@ After website#start(port), a website is listening on localhost:port.
 website is a linux executable. Its syntax on the Bash CLI is, for instance: =$
 ./website :start 3000=. The website should just return "hello world!". =./website=
 should be implemented in [[https://www.gnu.org/software/guile/manual/guile.html][Guile Scheme]].
+
+** message
 
 * Local Variables                                                  :noexport:
 Local Variables:

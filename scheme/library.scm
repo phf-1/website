@@ -21,21 +21,31 @@
 
 (define index-uuid "00000000-0000-0000-0000-000000000001")
 
-(define (publication->href pub)
-  (match (pub #:name)
-    (#f #f)
-    (name (string-append "- [[href:/" (pub #:uuid) "/html][" name "]]"))))
+(define (publication->table-row pub)
+  (let ((date   (pub #:date))
+        (name   (pub #:name))
+        (status (pub #:status))
+        (uuid   (pub #:uuid)))
+    (unless date   (error (format #f "Missing mandatory #+DATE: in publication ~a"   uuid)))
+    (unless name   (error (format #f "Missing mandatory #+TITLE: in publication ~a"  uuid)))
+    (unless status (error (format #f "Missing mandatory #+STATUS: in publication ~a" uuid)))
+    (format #f "| @@html:<span style=\"white-space:nowrap\">@@~a@@html:</span>@@ | [[href:/~a/html][~a]] | [[https://github.com/unprotocols/rfc/blob/master/2/README.md][~a]] |"
+            date uuid name status)))
 
 (define (generate-index-text publications)
-  "Generate org-mode text for the index publication listing all publications"
-  (string-append
-   "#+ID: " index-uuid "\n"
-   "#+TITLE: Articles\n"
-   "\n"
-   "* List\n"
-   "\n"
-   (string-join (delq #f (map publication->href publications)) "\n")
-   "\n"))
+  "Org-mode table. Headers exactly as required. Title is clickable link. Errors on missing metadata."
+  (let* ((articles (filter (lambda (p) (not (string=? (p #:uuid) home-uuid)))
+                           publications))
+         (sorted   (sort articles (lambda (a b) (string>? (a #:date) (b #:date))))) ; newest first
+         (sep      "|------------+--------------------------------+----------|")
+         (header   "| Date       | Title                          | Status   |")
+         (rows     (map publication->table-row sorted))
+         (table    (string-join `(,sep ,header ,sep ,@rows ,sep) "\n")))
+    (string-append
+     "#+ID: " index-uuid "\n"
+     "#+TITLE: Articles\n"
+     "#+OPTIONS: toc:nil\n\n"
+     table "\n\n")))
 
 (define home-uuid "00000000-0000-0000-0000-000000000000")
 

@@ -43,11 +43,39 @@ If x :≡ '1', then « x + x » may be read as « '1' + '1' ».
 introduced before using /:≡/.
 #+end_definition
 
+* 🞎
+
+#+ID: 610ac86b-3cd3-4c80-abcf-798e8d134b73
+#+begin_definition
+*🞎* is a "hole" to be completed.
+#+end_definition
+
+#+ID: 2472ec67-394e-4063-ae09-d4af457a4b1b
+#+begin_instance
+#+begin_example
+string : ℕ → String :≡ 🞎
+#+end_example
+#+end_instance
+
+* …
+
+#+ID: 275d431a-a4bd-4646-8c55-bb284e48a373
+#+begin_definition
+*…* means that something is implicit and correctly typed.
+#+end_definition
+
+#+ID: 88c9a416-332e-4f3d-b174-ba7041bbfb74
+#+begin_instance
+#+begin_example
+string : ℕ → String :≡ …
+#+end_example
+#+end_instance
+
 * X → Y
 
 #+ID: 2cd5a5e7-8e7f-4bd3-8883-ea557bff0fd7
 #+begin_definition
-*Motivation*
+*Why*
 
 We want to express the fact that there is a /way/ to /start from here/ and /get
 to there/.
@@ -62,29 +90,35 @@ We may see /string/ as the name of a path, /i.e./ a way, to get from ℕ to Stri
 
 *Formation*
 
-- X, Y : Type
-- X → Y : Type
+#+begin_example
+X, Y : Type
+X → Y : Type
+#+end_example
 
 
 *Introduction*
 
-- x : X, y is a formula such that y(x) : Y
-- λx.y : X → Y
-- x ↦ y :≡ λx.y
+#+begin_example
+x : X, y is a formula such that y(x) : Y
+λx.y : X → Y
+x ↦ y :≡ λx.y
+#+end_example
 
 
 *Elimination*
 
-- f : X → Y
-- x : X
-- f(x) : Y :≡ (λx.y)(x)
+#+begin_example
+f : X → Y
+x : X
+f(x) : Y :≡ (λx.y)(x)
+#+end_example
 #+end_definition
 
 * Π(x:X),Y(x)
 
 #+ID: 365c0a57-4438-4cca-926f-a65cd3b27b0f
 #+begin_definition
-*Motivation*
+*Why*
 
 We want to express the fact that there is a /way/ to /start from here/ and /get
 to there/ ; but the place we end up depends on where we start.
@@ -94,33 +128,71 @@ where we started from.
 
 For instance, if n is even, then f(n) :≡ n and if n is odd, then f(n) :≡ string(n).
 
-
 *Formation*
 
-- Y : X → Type
-- Π(x:X),Y(x) : Type
-
+#+begin_example
+Y : X → Type
+Π(x:X),Y(x) : Type
+#+end_example
 
 *Introduction*
 
-- Y : X → Type
-- x : X
-- y formula such that y(x) : Y(x)
-- λx.y : Π(x:X),Y(x)
+#+begin_example
+Y : X → Type
+x : X
+y formula such that y(x) : Y(x)
+λx.y : Π(x:X),Y(x)
+#+end_example
 
 
 *Elimination*
 
-- f : Π(x:X),Y(x)
-- x : X
-- f(x) : Y(x) :≡ (λx.y)(x)
+#+begin_example
+f : Π(x:X),Y(x)
+x : X
+f(x) : Y(x) :≡ (λx.y)(x)
+#+end_example
 #+end_definition
+
+* ∘
+
+#+ID: f920cd27-4343-4c81-99c7-8c7af1d235b3
+#+begin_definition
+Standard function composition.
+
+#+begin_example
+∘ : (A → B) (B → C) → A → C :≡ f g a ↦ g(f(a))
+#+end_example
+#+end_definition
+
+* ▸
+
+#+ID: 9070801a-3bad-4338-9f8e-c2e0a913a8b6
+#+begin_definition
+We want to define "pipelines" of transformations that can be read left to right.
+
+#+begin_example
+▸ : (A → B) (B → C) → A → C :≡ f g ↦ g ∘ f
+a ▸ f ▸ g :≡ ▸(f g)(a)
+#+end_example
+#+end_definition
+
+#+ID: 4e585c2f-19df-454d-b488-a6fe041680eb
+#+begin_instance
+#+begin_example
+2× : ℕ → ℕ :≡ n ↦ 2 × n
+string : ℕ → String :≡ …
+f :≡ 2× ▸ string
+f : ℕ → String
+f(1) = "2"
+#+end_example
+#+end_instance
 
 * X × Y
 
 #+ID: db863799-1f4f-47f0-af17-6580df6b1c9d
 #+begin_definition
-*Motivation*
+*Why*
 
 Given two types of instances X and Y, we might want to consider both instances at the
 same time.
@@ -131,34 +203,42 @@ and France at the same time.
 
 *Formation*
 
-- X, Y : Type
-- X × Y : Type
+#+begin_example
+X, Y : Type
+X × Y : Type
+#+end_example
 
 
 *Introduction*
 
-- < , > : X Y → X × Y
+#+begin_example
+< , > : X Y → X × Y
+#+end_example
 
 
 *Elimination*
 
-- f : X → Y → Z
-- φ : X × Y → Z :≡ <x, y> ↦ f(x)(y)
+#+begin_example
+f : X → Y → Z
+φ : X × Y → Z :≡ <x, y> ↦ f(x)(y)
+#+end_example
 
 
 -----
 
 
-- C : X × Y → Type
-- f : Π(x:X,y:Y),C(<x,y>)
-- φ : Π(p:X×Y),C(p) :≡ <x, y> ↦ f(x)(y)
+#+begin_example
+C : X × Y → Type
+f : Π(x:X,y:Y),C(<x,y>)
+φ : Π(p:X×Y),C(p) :≡ <x, y> ↦ f(x)(y)
+#+end_example
 #+end_definition
 
 * Σ(x:X),Y(x)
 
 #+ID: 7c6924f4-a505-4d57-a025-461c8f9bd5cc
 #+begin_definition
-*Motivation*
+*Why*
 
 We want instances of some type such that they represent a pair of instances where the
 second instance type depends on the first instance.
@@ -169,49 +249,61 @@ string if the firt component is an even number.
 
 *Formation*
 
-- X : Type
-- Y : X → Type
-- Σ(x:X),Y(x) : Type
+#+begin_example
+X : Type
+Y : X → Type
+Σ(x:X),Y(x) : Type
+#+end_example
 
 
 *Introduction*
 
-- < , > : x:X Y(x) → Σ(x:X),Y(x)
+#+begin_example
+< , > : x:X Y(x) → Σ(x:X),Y(x)
+#+end_example
 
 
 *Elimination*
 
-- f : Π(x:X),Y(x) → Z
-- φ : Σ(x:X),Y(x) → Z :≡ <x, y> ↦ f(x)(y)
+#+begin_example
+f : Π(x:X),Y(x) → Z
+φ : Σ(x:X),Y(x) → Z :≡ <x, y> ↦ f(x)(y)
+#+end_example
 
 
 -----
 
 
-- C : Π(x:X),Y(x) → Type
-- f : Π(x:X) Π(y:Y(x)) C(<x,y>)
-- φ : Π(p:Π(x:X),Y(x)),C(p) :≡ <x, y> ↦ f(x)(y)
+#+begin_example
+C : Π(x:X),Y(x) → Type
+f : Π(x:X) Π(y:Y(x)) C(<x,y>)
+φ : Π(p:Π(x:X),Y(x)),C(p) :≡ <x, y> ↦ f(x)(y)
+#+end_example
 #+end_definition
 
 * Magma
 
 #+ID: 9557444e-c534-425c-aff4-bee8376aa957
 #+begin_definition
+#+begin_example
 Magma :≡ Σ(A:Type)(A → A → A)
+#+end_example
 #+end_definition
 
 * PointedMagma
 
 #+ID: 658ca757-2a6b-49e0-935c-3d1dacf30799
 #+begin_definition
+#+begin_example
 PointedMagma :≡ Σ(A:Type)(A → A → A) × A
+#+end_example
 #+end_definition
 
 * X + Y
 
 #+ID: 6e00b58e-0ffb-4e6a-af80-26ce98049025
 #+begin_definition
-*Motivation*
+*Why*
 
 Given two types X and Y, we might want to consider an instance that may be of one type or the
 other.
@@ -222,35 +314,43 @@ or France.
 
 *Formation*
 
-- X, Y : Type
-- X + Y : Type
+#+begin_example
+X, Y : Type
+X + Y : Type
+#+end_example
 
 
 *Introduction*
 
-- left : X → X + Y
-- right : Y → X + Y
+#+begin_example
+left : X → X + Y
+right : Y → X + Y
+#+end_example
 
 
 *Elimination*
 
-- elim : (f : X → Z) (g : Y → Z) → X + Y → Z :≡
-  - left(x) ↦ f(x)
-  - right(y) ↦ g(y)
+#+begin_example
+elim : (f : X → Z) (g : Y → Z) → X + Y → Z :≡
+  left(x) ↦ f(x)
+  right(y) ↦ g(y)
+#+end_example
 
 
 -----
 
 
-- Target :≡ X + Y → Type
-- Left : Target → Type :≡ C ↦ Π(x:X),C((left(x)))
-- Right : Target → Type :≡ C ↦ Π(y:Y),C((right(y)))
-- ind : C:Target Left(C) Right(C) → Π(p:X+Y),C(p) :≡
-  - left(x) ↦ f(x)
-  - right(y) ↦ g(y)
+#+begin_example
+Target :≡ X + Y → Type
+Left : Target → Type :≡ C ↦ Π(x:X),C((left(x)))
+Right : Target → Type :≡ C ↦ Π(y:Y),C((right(y)))
+ind : C:Target Left(C) Right(C) → Π(p:X+Y),C(p) :≡
+  left(x) ↦ f(x)
+  right(y) ↦ g(y)
+#+end_example
 #+end_definition
 
-As long as there is no ambiguities, we will use the following for conciseness:
+As long as there are no ambiguities, we will use the following for conciseness:
 
 #+begin_example
 a : A + B
@@ -263,85 +363,103 @@ c : A + B + C
 
 #+ID: 6e6069cd-adf1-4f69-a95d-abfed657fd3d
 #+begin_definition
-*Motivation*
+*Why*
 
 We want to be able to count things.
 
 
 *Formation*
 
-- ℕ : Type
+#+begin_example
+ℕ : Type
+#+end_example
 
 
 *Introduction*
 
-- 0 : ℕ
-- succ : ℕ → ℕ
-- n+1 :≡ succ(n)
+#+begin_example
+0 : ℕ
+succ : ℕ → ℕ
+n+1 :≡ succ(n)
+#+end_example
 
 
 *Elimination*
 
-- T  : Type
-- elim : t:T → (next : ℕ T → T) → ℕ → T :≡
-  - 0 ↦ t
-  - n+1 ↦ next n f(n)
+#+begin_example
+T  : Type
+elim : t:T → (next : ℕ T → T) → ℕ → T :≡
+  0 ↦ t
+  n+1 ↦ next n f(n)
+#+end_example
 
 
 -----
 
 
-- P : ℕ → Type
-- Init :≡ P(0)
-- Step :≡ ℕ P(n) → P(n+1)
-- ind : (t0 : Init) (step : Step) → Π(n:ℕ),P(n) :≡
-  - 0 ↦ t0
-  - n+1 ↦ step n f(n)
+#+begin_example
+P : ℕ → Type
+Init :≡ P(0)
+Step :≡ ℕ P(n) → P(n+1)
+ind : (t0 : Init) (step : Step) → Π(n:ℕ),P(n) :≡
+  0 ↦ t0
+  n+1 ↦ step n f(n)
+#+end_example
 #+end_definition
 
 * 𝟙
 
 #+ID: c7aa7121-4c0b-45df-b4b4-f54ae7e25302
 #+begin_definition
-*Motivation*
+*Why*
 
 We need to have a type that has one element, to represent True.
 
 
 *Formation*
 
-- 𝟙 : Type
+#+begin_example
+𝟙 : Type
+#+end_example
 
 
 *Introduction*
 
-- x : 𝟙
+#+begin_example
+x : 𝟙
+#+end_example
 
 
 *Elimination*
 
-- C : Type
-- elim : (c:C) 𝟙 → C :≡ x ↦ c
+#+begin_example
+C : Type
+elim : (c:C) 𝟙 → C :≡ x ↦ c
+#+end_example
 
 
 -----
 
 
-- ind : (C : 𝟙 → Type) (c : C(x)) → Π(x:𝟙), C(x) :≡ x ↦ c
+#+begin_example
+ind : (C : 𝟙 → Type) (c : C(x)) → Π(x:𝟙), C(x) :≡ x ↦ c
+#+end_example
 #+end_definition
 
 * 𝟘
 
 #+ID: cce4d081-7347-492e-abc8-4035ede3b6d3
 #+begin_definition
-*Motivation*
+*Why*
 
 We need to have a type that has no element, which is used to represent falsity.
 
 
 *Formation*
 
-- 𝟘 : Type
+#+begin_example
+𝟘 : Type
+#+end_example
 
 
 *Introduction*
@@ -349,50 +467,91 @@ We need to have a type that has no element, which is used to represent falsity.
 
 *Elimination*
 
-- C : Type
-- f : 𝟘 → C
+#+begin_example
+C : Type
+f : 𝟘 → C
+#+end_example
 
 -----
 
 
-- C : 𝟘 → Type
-- f : Π(x:𝟘), C(x)
+#+begin_example
+C : 𝟘 → Type
+f : Π(x:𝟘), C(x)
+#+end_example
 #+end_definition
 
 * Boolean
 
 #+ID: e1c1c6ae-32b7-40aa-a917-88b75502120a
 #+begin_definition
-*Motivation*
+*Why*
 
 We need to represents booleans /i.e./ a type with two elements, true or false.
 
 
 *Formation*
 
-- Boolean : Type
+#+begin_example
+Boolean : Type
+#+end_example
 
 
 *Introduction*
 
-- 0 : Boolean
-- 1 : Boolean
+#+begin_example
+0 : Boolean
+1 : Boolean
+#+end_example
 
 
 *Elimination*
 
-- C : Type
-- elim : (c0:C) (c1:C) → Boolean → C :≡
-  - 0 ↦ c0
-  - 1 ↦ c1
+#+begin_example
+C : Type
+elim : (c0:C) (c1:C) → Boolean → C :≡
+  0 ↦ c0
+  1 ↦ c1
+#+end_example
+
 
 -----
 
 
-- C : Boolean → Type
-- ind : (c0:C(0)) (c1:C(1)) → Π(x:Boolean), C(x) :≡
-  - 0 ↦ c0
-  - 1 ↦ c1
+#+begin_example
+C : Boolean → Type
+ind : (c0:C(0)) (c1:C(1)) → Π(x:Boolean), C(x) :≡
+  0 ↦ c0
+  1 ↦ c1
+#+end_example
+#+end_definition
+
+* Symbol
+
+#+ID: 8b9b2a1c-baf4-4e1b-856a-704ff98d04fa
+#+begin_definition
+*Why*
+
+We need to represents symbols /i.e./ unique instances (they are only equal to
+themselves an nothing else).
+
+*Formation*
+
+#+begin_example
+Symbol : Type
+#+end_example
+
+*Introduction*
+
+#+begin_example
+Symbol#mk : String → Symbol
+:name :≡ Symbol#mk("name")
+#+end_example
+
+*Elimination*
+
+Behaves like a FinSet where elements are all the symbols that have been introduced so
+far.
 #+end_definition
 
 * Type
@@ -402,7 +561,7 @@ define new types:
 
 #+ID: 38160003-3d0b-4923-ab0e-d225e3e33658
 #+begin_definition
-*Motivation*
+*Why*
 
 Why do we need to introduce this new type?
 
@@ -459,7 +618,7 @@ propositions are nothing but special types — namely, types whose elements are 
 
 #+ID: 24e2fc8c-85be-44ca-b7fc-8b434858f7bd
 #+begin_definition
-*Motivation*
+*Why*
 
 The identity type internalizes the notion of equality (or identification)
 within the type theory. Given two terms a and b of the same type A, the
@@ -467,132 +626,173 @@ identity type a = b is the type of evidences that a and b are equal.
 
 *Formation*
 
-- A : Type
-- a, b : A
-- IdA(a, b) : U
-- a = b :≡ IdA(a, b)
+#+begin_example
+A : Type
+a, b : A
+IdA(a, b) : U
+a = b :≡ IdA(a, b)
+#+end_example
 
 
 *Introduction*
 
-- refl : Π(a:A), a = a
+#+begin_example
+refl : Π(a:A), a = a
+#+end_example
 
 
 *Elimination*
 
-- C : A → U
-- f : ∏(x,y:A)∏(p:x=y),C(x) → C(y)
-- f(x,x,refl(x)) :≡ id(C(x))
+#+begin_example
+C : A → U
+f : ∏(x,y:A)∏(p:x=y),C(x) → C(y)
+f(x,x,refl(x)) :≡ id(C(x))
+#+end_example
 
 
 -----
 
 
-- C : ∏(x,y:A),x=y → U
-- c : ∏(x:A),C(x,x,refl(x))
-- f : ∏(x,y:A), ∏(p:x=y), C(x,y,p)
-- f(x,x,refl(x)) :≡ c(x)
+#+begin_example
+C : ∏(x,y:A),x=y → U
+c : ∏(x:A),C(x,x,refl(x))
+f : ∏(x,y:A), ∏(p:x=y), C(x,y,p)
+f(x,x,refl(x)) :≡ c(x)
+#+end_example
 #+end_definition
 
 * List(X)
 
 #+ID: 688dbc9a-9f1f-471f-b362-5703765684c5
 #+begin_definition
-*Motivation*
+*Why*
 
 Lists of things are a common data structures, we need a way to represent them.
 
 
 *Formation*
 
-- X : Type
-- List(X) : Type
+#+begin_example
+X : Type
+List(X) : Type
+#+end_example
 
 
 *Introduction*
 
-- [] : List(X)
-- cons : X List(X) → List(X)
+#+begin_example
+[] : List(X)
+cons : X List(X) → List(X)
+#+end_example
 
 
 *Elimination*
 
-- C : Type
-- elim : (c0 : C) (g : X → C → C) → List(X) → C :≡
-  - f [] :≡ c0
-  - f cons(x lst) :≡ g x f(lst)
+#+begin_example
+C : Type
+elim : (c0 : C) (g : X → C → C) → List(X) → C :≡
+  f [] :≡ c0
+  f cons(x lst) :≡ g x f(lst)
+#+end_example
 
 
 -----
 
 
-- C : List(X) → Type
-- c0 : C([])
-- g : Π(x:X)Π(lst:List(X)), C(lst) → C(cons(x lst))
-- f : Π(lst:List(X)), C(lst) :≡
-  - [] ↦ c0
-  - cons x lst ↦ g x lst f(lst)
+#+begin_example
+C : List(X) → Type
+c0 : C([])
+g : Π(x:X)Π(lst:List(X)), C(lst) → C(cons(x lst))
+f : Π(lst:List(X)), C(lst) :≡
+  [] ↦ c0
+  cons x lst ↦ g x lst f(lst)
+#+end_example
+#+end_definition
+
+* map
+
+#+ID: dcea748c-4cc7-4fd4-b489-9e2e0ee7cdf4
+#+begin_definition
+Standard map function.
+
+#+begin_example
+map : List(A) (A → B) → List(B) :≡
+  as b ↦
+    match as
+      [] ↦ []
+      cons(a as) ↦ cons(b(a) map(as b))
+#+end_example
 #+end_definition
 
 * Bit
 
 #+ID: 98143a43-8b8b-4712-9630-68885a278503
 #+begin_definition
-*Motivation*
+*Why*
 
 Computers manipulates bits, let's represent them.
 
 
 *Formation*
 
-- Bit : Type
+#+begin_example
+Bit : Type
+#+end_example
 
 
 *Introduction*
 
-- 0 : Bit
-- 1 : Bit
+#+begin_example
+0 : Bit
+1 : Bit
+#+end_example
 
 
 *Elimination*
 
-- C : Type
-- c0, c1 : C
-- f : Bit → C :≡
-  - 0 ↦ c0
-  - 1 ↦ c1
+#+begin_example
+C : Type
+c0, c1 : C
+f : Bit → C :≡
+  0 ↦ c0
+  1 ↦ c1
+#+end_example
 
 
 -----
 
 
-- C : Bit → Type
-- c0 : C(0)
-- c1 : C(1)
-- f : Π(x:Bit), C(x) :≡
-  - 0 ↦ c0
-  - 1 ↦ c1
+#+begin_example
+C : Bit → Type
+c0 : C(0)
+c1 : C(1)
+f : Π(x:Bit), C(x) :≡
+  0 ↦ c0
+  1 ↦ c1
+#+end_example
 #+end_definition
 
 * Data
 
 #+ID: f5fda64f-c973-4c7f-a36d-296beb470938
 #+begin_definition
-*Motivation*
+*Why*
 
 Computers manipulate /data/ which are just lists of bits.
 
 
 *Formation*
 
+#+begin_example
 Data :≡ List(Bit)
+#+end_example
 #+end_definition
 
 * Undefined
 
 #+ID: e228fa8f-91d2-4751-8933-5ce1475e1ad0
 #+begin_definition
-*Motivation*
+*Why*
 
 Programmning languages have a tendency to represent undefined object, which is to say
 to there is something but we have no idea what that is beyond that point.
@@ -600,12 +800,16 @@ to there is something but we have no idea what that is beyond that point.
 
 *Formation*
 
-- Undefined : Type
+#+begin_example
+Undefined : Type
+#+end_example
 
 
 *Introduction*
 
-- undefined : Undefined
+#+begin_example
+undefined : Undefined
+#+end_example
 
 
 *Elimination*
@@ -615,7 +819,7 @@ to there is something but we have no idea what that is beyond that point.
 
 #+ID: e9f2605e-c196-4689-8dd6-b6515a7ca84a
 #+begin_definition
-*Motivation*
+*Why*
 
 How to represent the absence of a value? By using the unique instance of the Nothing
 type, isomorphic to 𝟙.
@@ -623,12 +827,16 @@ type, isomorphic to 𝟙.
 
 *Formation*
 
-- Nothing : Type
+#+begin_example
+Nothing : Type
+#+end_example
 
 
 *Introduction*
 
-- nothing : Nothing
+#+begin_example
+nothing : Nothing
+#+end_example
 
 
 *Elimination*
@@ -638,7 +846,7 @@ type, isomorphic to 𝟙.
 
 #+ID: a489781c-9a92-4c11-9698-81750460e9cf
 #+begin_definition
-*Motivation*
+*Why*
 
 Assume that a computers tries to map some data received from the network to some type
 using a given program. Assume an injective mapping, then the algorithm might
@@ -648,21 +856,25 @@ instance of some type or nothing. Let's represent that.
 
 *Formation*
 
-- X : Type
-- Maybe(X) :≡ Nothing + X
+#+begin_example
+X : Type
+Maybe(X) :≡ Nothing + X
+#+end_example
 
 
 *Construction*
 
-- none :≡ left(nothing)
-- just(x) :≡ right(x)
+#+begin_example
+none :≡ left(nothing)
+just(x) :≡ right(x)
+#+end_example
 #+end_definition
 
 * TODO Vector(X n)
 
 #+ID: f9b8b08e-9b5c-4497-850e-8e8cc0b36aa8
 #+begin_definition
-*Motivation*
+*Why*
 
 Finite lists of things that have a known length are common in programming languages,
 let's defined them.
@@ -670,15 +882,19 @@ let's defined them.
 
 *Formation*
 
-- X : Type
-- n : ℕ
-- Vector(X n) : Type
+#+begin_example
+X : Type
+n : ℕ
+Vector(X n) : Type
+#+end_example
 
 
 *Introduction*
 
-- nil : Vector(X zero)
-- cons(x lst) : X Vector(X n) → Vector(X n+1)
+#+begin_example
+nil : Vector(X zero)
+cons(x lst) : X Vector(X n) → Vector(X n+1)
+#+end_example
 
 
 *Elimination*
@@ -686,86 +902,141 @@ let's defined them.
 🞎
 #+end_definition
 
-* TODO index : List(X n) Nat → X | Undefined
+* TODO index
 
 #+ID: 64e31ad5-c5f5-4d4c-ad2a-adb8bd9f5474
 #+begin_definition
 *index(lst n)* represents the nth element of lst if any, else undefined.
 
-- index : List(X 0) Nat → X | Undefined
-- index([] n) :≡ undefined
+#+begin_example
+index : List(X 0) Nat → X | Undefined
+index([] n) :≡ undefined
+#+end_example
 
 
-- index : List(X 1) Nat → X | Undefined
-- index([x] 0) :≡ undefined
-- index([x] 1) :≡ x
-- Given k > 1, then index([x] k) :≡ undefined.
+#+begin_example
+index : List(X 1) Nat → X | Undefined
+index([x] 0) :≡ undefined
+index([x] 1) :≡ x
+Given k > 1, then index([x] k) :≡ undefined.
+#+end_example
 
 
 Given index : List(X n) Nat → X | Undefined, lst+x : List(X n+1), and k : Nat, then:
-- if k < n+1, then index(lst k) :≡ index(lst k)
-- if k = n+1, then index(lst n+1) :≡ x
-- if k > n+1, then index(lst k) :≡ undefined
+#+begin_example
+if k < n+1, then index(lst k) :≡ index(lst k)
+if k = n+1, then index(lst n+1) :≡ x
+if k > n+1, then index(lst k) :≡ undefined
+#+end_example
 #+end_definition
 
 * TODO String
 
 #+ID: 5702b0b7-a4bd-4933-bc07-0f30b0f85899
 #+begin_definition
-*String* :≡ List(Nat)
+#+begin_example
+String :≡ List(Nat)
+#+end_example
 #+end_definition
 
 * TODO Just
 
 #+ID: a6d97a04-6512-4c0b-b4ee-011afac18074
 #+begin_definition
-- X : Type
-- *Just(X)* :≡ 🞎
+#+begin_example
+X : Type
+Just(X) :≡ 🞎
+#+end_example
 #+end_definition
 
 * TODO StrictPartialOrder
 
 #+ID: 6086ccfe-0154-4590-b38d-fb994fa0a137
 #+begin_definition
-*StrictPartialOrder(X)* :≡ 🞎
+#+begin_example
+StrictPartialOrder(X) :≡ 🞎
+#+end_example
 #+end_definition
 
 * TODO Set
 
 #+ID: 6c127151-52d8-4f16-9f8e-9ce43f34b353
 #+begin_definition
-- X : Type
-- = : X X → Boolean
-- = is an equality
-- *Set(X =)* :≡
-  - list : List(X)
-  - e(i) ∈ list, e(j) ∈ list, i ≠ j, e(i) ≠ e(j)
+#+begin_example
+X : Type
+= : X X → Boolean
+= is an equality
+Set(X =) :≡
+  list : List(X)
+  e(i) ∈ list, e(j) ∈ list, i ≠ j, e(i) ≠ e(j)
+#+end_example
+#+end_definition
+
+* Predicate
+
+#+ID: 7d9319cc-43b6-44a4-909c-bd9de693ee75
+#+begin_definition
+#+begin_example
+Predicate :≡ X → Boolean
+#+end_example
 #+end_definition
 
 * Language
+** cond
+
+To express the fact if a given ~predicate() = true~ holds, then some list of
+instructions should be executed, we use the following syntacting form:
+
+#+ID: 3e170749-4e0d-46bf-9587-7ae7bc555cb2
+#+begin_definition
+#+begin_example
+cond
+  predicate ↦ instructions
+  …
+  true ↦ instructions
+#+end_example
+#+end_definition
+
 ** match
 
-To express the fact that some piece of data /x/ may be of some form or another, or more
-generally matches a predicate, and that if it does then we executed an associated
-list of instructions, we use the following syntacting form:
+To express the fact if some piece of data /x/ has a given form (/i.e./ it matches some
+[[https://en.wikipedia.org/wiki/Unification_(computer_science)][pattern]]), then some list of instructions should be executed, potentially using
+matched patterns, we use the following syntacting form:
 
 #+ID: 1bc43afe-625d-4ca2-a6fa-913e0a328546
 #+begin_definition
-- match x
-  - predicate ↦ instructions
-  - …
+#+begin_example
+match x
+  pattern ↦ instructions
+  …
+  _ ↦ instructions
+#+end_example
 #+end_definition
 
-If /x/ does not match any predicate, then it is an error of the author. For instance:
+If /x/ does not match any pattern, then it is an error of the author. ~_~ matches
+anything. For instance:
 
+#+ID: ec069957-e208-47a8-91ca-f4cd9ad40539
+#+begin_instance
 #+begin_example
 match maybe
-  Nothing ↦ "nothing"
+  nothing ↦ "nothing"
   just(x) ↦ x
 #+end_example
+#+end_instance
 
-The meaning should be obvious: if maybe : Maybe(X) ≡ none, then replce the whole
-expression by "nothing". If maybe ≡ just(x), then replace the whole expression by x.
+The meaning should be obvious: if maybe : Maybe(X) ≡ none, then replace the whole
+expression by "nothing". If maybe ≡ just(x), then replace the whole expression by
+x. Patterns may be extended by predicates using /guards/. For instance:
+
+#+ID: b5b6980d-fd98-4296-9fa6-996f5eacce12
+#+begin_definition
+#+begin_example
+match x
+  pattern when predicate ↦ instructions
+  …
+#+end_example
+#+end_definition
 
 * Bibliography
 

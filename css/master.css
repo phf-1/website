@@ -4,19 +4,17 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-
-
 /**
  * Structure
  *
  * This file is structured in sections: Color, Font, Geometry, Typography,
- * Responsive, Other.  Each section applies a set of constraints to the HTML elements
- * in order to maximize legibility. This list is partially ordered: given i < j,
- * section(j) may rely on observed effects of section(i). For instance, Geometry
- * depends on Font as well as Typography.
+ * Responsive, Other. Each section applies a set of constraints to the HTML elements
+ * in order to maximize legibility (see: https://legibility.info/).
+ *
+ * This list is partially ordered: given i < j, section(j) may rely on observed
+ * effects of section(i). For instance, Geometry depends on Font as well as
+ * Typography.
  */
-
-
 
 /**
  * Color
@@ -24,7 +22,6 @@
  * This section defines the set of available colors and applies them to various HTML
  * elements.
  */
-
 :root {
     --article-bg-color: #fbf7f0;
     --text-color: var(--color-blue-grey-900);
@@ -50,14 +47,22 @@
     --topnav-bg-color: var(--article-white);
 }
 
-html { color: var(--text-color); }
+html {
+    color: var(--text-color);
+}
 
-article, .reviewer {
+article,
+.reviewer {
     background-color: var(--article-bg-color);
     border-color: var(--border-color);
 }
 
-h2, h3, h4, h5 { border-color: var(--border-color); }
+h2,
+h3,
+h4,
+h5 {
+    border-color: var(--border-color);
+}
 
 a {
     color: var(--link-color);
@@ -70,21 +75,37 @@ figure {
     }
 }
 
-.src, code {
+.src,
+code {
     border-color: var(--src-border-color);
     background-color: var(--src-bg-color);
 }
 
-.todo, .done {
+.todo,
+.done {
     color: var(--article-bg-color);
-    &.TODO { background-color: var(--kw-todo-bg-color); }
-    &.DOING { background-color: var(--kw-doing-bg-color); }
-    &.DONE { background-color: var(--kw-done-bg-color); }
+
+    &.TODO {
+        background-color: var(--kw-todo-bg-color);
+    }
+
+    &.DOING {
+        background-color: var(--kw-doing-bg-color);
+    }
+
+    &.DONE {
+        background-color: var(--kw-done-bg-color);
+    }
 }
 
-th, td { border-color: var(--table-border-color); }
+th,
+td {
+    border-color: var(--table-border-color);
+}
 
-th { background-color: var(--table-th-bg-color); }
+th {
+    background-color: var(--table-th-bg-color);
+}
 
 .abstract {
     background-color: var(--src-bg-color);
@@ -116,7 +137,6 @@ blockquote {
  *
  * This section defines the set of available fonts: Serif, Sans and Mono.
  */
-
 @font-face {
     font-family: 'Sans';
     font-style: normal;
@@ -279,19 +299,20 @@ blockquote {
     unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
 }
 
-
 /**
  * Geometry
  *
  * This section defines various distances and constraints to be applied to the boxes
  * (see: CSS Box Model).
  */
-
 :root {
     --distance-h1-abstract: 5rem;
+    --line-height: 1.6;
 }
 
-* { box-sizing: border-box; }
+* {
+    box-sizing: border-box;
+}
 
 html {
     height: 100%;
@@ -301,22 +322,17 @@ body {
     margin: 0;
     height: 100vh;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 96ch minmax(0, 1fr); /* 80 ch + 2*12 ch */
+    grid-template-columns: minmax(0, 1fr) 80ch minmax(0, 1fr);
+    /* 80 ch + 2*12 ch */
     grid-template-rows: auto 1fr;
     grid-template-areas:
         "c11 c12 c13"
         "c21 c22 c23";
-
-    .c11 { grid-area: c11; }
-    .c12 { grid-area: c12; }
-    .c13 { grid-area: c13; }
-    .c21 { grid-area: c21; }
-    .c22 { grid-area: c22; }
-    .c23 { grid-area: c23; }
 }
 
 .top-nav {
     padding: 0.5em 0;
+
     ul {
         display: flex;
         gap: 1.5em;
@@ -326,14 +342,18 @@ body {
         align-items: center;
         justify-content: left;
     }
-    .left, .right {
-        display: flex;
-        gap: 1.5em;
-        align-items: center;
-    }
+
+    .left,
+        .right {
+            display: flex;
+            gap: 1.5em;
+            align-items: center;
+        }
+
     .right {
         margin-left: auto;
     }
+
     .link {
         a {
             text-decoration: none;
@@ -343,27 +363,31 @@ body {
     }
 }
 
-article, .reviewer {
+article,
+.reviewer {
     position: relative;
     height: 100%;
     font-style: normal;
     margin: 0;
-    padding: 12ch;
+    padding: 8ch;
     border-left: solid 1px;
     border-right: solid 1px;
     border-top: solid 1px;
     border-radius: 2px;
 
-    ul, ol {
-        padding-left: 1em;
-        li {
-            unicode-bidi: isolate;
-            margin-bottom: 0.75em;
+    ul,
+        ol {
+            padding-left: 1em;
+
+            li {
+                unicode-bidi: isolate;
+                margin-bottom: 0.75em;
+            }
+
+            li:last-child {
+                margin-bottom: 0;
+            }
         }
-        li:last-child {
-            margin-bottom: 0;
-        }
-    }
 }
 
 .reviewer {
@@ -371,13 +395,18 @@ article, .reviewer {
         display: flex;
         justify-content: flex-end;
         margin: 1rem 0;
+
         button {
             margin-left: 1rem;
         }
     }
 }
 
-h1, h2, h3, h4, h5 {
+h1,
+h2,
+h3,
+h4,
+h5 {
     display: block;
     line-height: 1.2;
     margin: 2.5em 0 0.5em 0;
@@ -389,20 +418,26 @@ h1 {
     margin: 0 0 var(--distance-h1-abstract) 0;
 }
 
-p, pre {
+p,
+pre {
     display: block;
     margin-block-start: 0;
-    margin-block-end: 1.5em;
+    margin-block-end: calc(var(--line-height) * 1em);
     margin-inline-start: 0px;
     margin-inline-end: 0px;
 }
 
 figure {
     margin: 2rem 0;
-    img { border-radius: 2px; }
+
+    img {
+        border-radius: 2px;
+        border: 1px solid black;
+    }
 }
 
-pre, .src {
+pre,
+.src {
     overflow-x: auto;
 }
 
@@ -413,7 +448,8 @@ pre, .src {
     margin: 2rem 0;
 }
 
-.todo, .done {
+.todo,
+.done {
     padding: 0.1em 0.2em;
     border-radius: 2px;
     margin-right: 0.33em;
@@ -426,7 +462,8 @@ table {
     margin-block-end: 1em;
 }
 
-th, td {
+th,
+td {
     border: 1px solid;
     padding: 0.5em;
 }
@@ -434,25 +471,32 @@ th, td {
 nav#table-of-contents {
     margin-left: auto;
     padding-left: 0.2rem;
-    padding-right: 1rem;
+    margin-right: 0.5rem;
     width: fit-content;
     overflow-y: auto;
+    scrollbar-width: thin;
     max-height: 80vh;
     position: sticky;
     top: 1rem;
-    ul, ol {
-        margin-inline-start: 0px;
-        margin-inline-end: 0px;
-        padding-inline-start: 1em;
-        list-style-type: none;
+
+    ul,
+        ol {
+            margin-inline-start: 0px;
+            margin-inline-end: 0px;
+            padding-inline-start: 1em;
+            list-style-type: none;
+        }
+
+    a {
+        text-decoration: none;
     }
 
-    & > h2:first-child {
+    &>h2:first-child {
         margin-top: 0;
         font-size: 1rem;
     }
 
-    #text-table-of-contents > ul:first-child {
+    #text-table-of-contents>ul:first-child {
         padding-left: 0;
     }
 }
@@ -479,7 +523,10 @@ nav#table-of-contents {
     margin-bottom: 0;
 }
 
-.instance, .definition, blockquote, .refutation {
+.instance,
+.definition,
+blockquote,
+.refutation {
     &::before {
         display: block;
         font-family: 'Sans', sans-serif;
@@ -491,24 +538,53 @@ nav#table-of-contents {
         color: var(--text-color);
         opacity: 0.7;
     }
+
     margin: 2.5rem 0;
     padding: 1.5rem;
     border: 1px solid;
     border-left: 5px solid;
     border-radius: 2px;
-    & *:first-child { margin-top: 0; }
-    & *:last-child { margin-bottom: 0; }
+
+    & *:first-child {
+        margin-top: 0;
+    }
+
+    & *:last-child {
+        margin-bottom: 0;
+    }
 }
 
-.definition { &::before { content: "Definition"; } }
-.refutation { &::before { content: "Refutation"; } }
-.instance { &::before { content: "Example"; } }
-blockquote { &::before { content: "Quote"; } }
+.definition {
+    &::before {
+        content: "Definition";
+    }
+}
+
+.refutation {
+    &::before {
+        content: "Refutation";
+    }
+}
+
+.instance {
+    &::before {
+        content: "Example";
+    }
+}
+
+blockquote {
+    &::before {
+        content: "Quote";
+    }
+}
 
 .csl-entry {
     margin: 1.5rem 0;
 }
 
+hr {
+    margin: calc(var(--line-height) * 1em) 0;
+}
 
 /**
  * Typography
@@ -516,10 +592,9 @@ blockquote { &::before { content: "Quote"; } }
  * This section defines various constraints to be applied to the content, text and
  * images, in order to maximize legibility.
  */
-
 html {
     font-family: 'Serif', serif;
-    line-height: 1.7;
+    line-height: var(--line-height);
     font-size: clamp(17px, 1.1vw, 20px);
     text-rendering: optimizeLegibility;
     font-variant-numeric: oldstyle-nums;
@@ -527,7 +602,12 @@ html {
     hyphens: auto;
     text-wrap: pretty;
 }
-h1, h2, h3, h4, h5 {
+
+h1,
+h2,
+h3,
+h4,
+h5 {
     font-family: 'Sans', sans-serif;
     font-weight: normal;
     unicode-bidi: isolate;
@@ -539,11 +619,22 @@ h1 {
     text-align: center;
 }
 
-h2, h3, h4, h5 { border-bottom: 2px solid; }
+h2,
+h3,
+h4,
+h5 {
+    border-bottom: 2px solid;
+}
 
-pre, .src, code { font-size: 0.85em; }
+pre,
+.src,
+code {
+    font-size: 0.85em;
+}
 
-p { unicode-bidi: isolate; }
+p {
+    unicode-bidi: isolate;
+}
 
 a {
     text-decoration: underline;
@@ -553,28 +644,45 @@ a {
 
 figure {
     text-align: center;
-    figurecaption { text-align: center; }
+
+    figurecaption {
+        text-align: center;
+    }
 }
 
-strong { font-weight: bold; }
+strong {
+    font-weight: bold;
+}
 
-.src, code { font-family: 'Mono', monospace; }
+.src,
+code {
+    font-family: 'Mono', monospace;
+}
 
-code { padding: 0 0.25em; }
+code {
+    padding: 0 0.25em;
+}
 
-.todo, .done {
+.todo,
+.done {
     font-family: 'Mono', monospace;
     font-weight: bold;
     font-size: 0.7em;
     text-decoration: none !important;
 }
 
-th, td { text-align: left; }
+th,
+td {
+    text-align: left;
+}
 
-th { font-weight: bold; }
+th {
+    font-weight: bold;
+}
 
-td.org-left { text-align: left; }
-
+td.org-left {
+    text-align: left;
+}
 
 /**
  * Responsive
@@ -594,10 +702,17 @@ td.org-left { text-align: left; }
         margin: 0 auto;
     }
 
-    main { flex: 1; }
+    main {
+        flex: 1;
+    }
 
     /* Hide side sidebars */
-    .c11, .c13, .c21, .c23 { display: none; }
+    .c11,
+        .c13,
+        .c21,
+        .c23 {
+            display: none;
+        }
 
     /* Top Nav container */
     .c12 {
@@ -607,12 +722,13 @@ td.org-left { text-align: left; }
     }
 
     /* Article Container */
-    article, .reviewer {
-        padding: 2rem 1.5rem;
-        border: none;
-        border-radius: 0;
-        width: 100%;
-    }
+    article,
+        .reviewer {
+            padding: 2rem 1.5rem;
+            border: none;
+            border-radius: 0;
+            width: 100%;
+        }
 
     /* Stack navigation items on smaller screens */
     .top-nav ul {
@@ -620,22 +736,31 @@ td.org-left { text-align: left; }
         flex-wrap: wrap;
         gap: 1em;
     }
-    .top-nav .right { margin-left: 0; }
+
+    .top-nav .right {
+        margin-left: 0;
+    }
 
     /* Hide TOC on tablet/mobile */
-    nav#table-of-contents { display: none; }
+    nav#table-of-contents {
+        display: none;
+    }
 }
 
 /**
  * Small Mobile
  */
 @media (max-width: 60ch) {
-    article, .reviewer {
-        padding: 1rem 1rem;
-    }
+
+    article,
+        .reviewer {
+            padding: 1rem 1rem;
+        }
 
     /* Allow header to take up more space on tiny screens */
-    .top-nav ul { gap: 0.5em; }
+    .top-nav ul {
+        gap: 0.5em;
+    }
 }
 
 /**
@@ -645,9 +770,11 @@ td.org-left { text-align: left; }
     html {
         font-size: 18px;
     }
-    nav#table-of-contents { font-size: 1rem; }
-}
 
+    nav#table-of-contents {
+        font-size: 1rem;
+    }
+}
 
 /**
  * Other
@@ -659,10 +786,18 @@ td.org-left { text-align: left; }
  * Unless all content has been loaded, the page is hidden. After load, it is
  * shown.
  */
-html.loading { opacity: 0; }
+html.loading {
+    opacity: 0;
+}
 
-.hidden { display: none; }
-.exercise { display: none; }
+.hidden {
+    display: none;
+}
+
+.exercise {
+    display: none;
+}
+
 form.discussion {
     margin: 2rem 0;
     display: none;
@@ -677,6 +812,7 @@ form.discussion {
     .content {
         display: inherit;
         flex-direction: inherit;
+
         textarea {
             margin-bottom: 1rem;
         }

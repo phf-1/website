@@ -1,0 +1,63 @@
+#+ID: 13cd7955-a682-44e5-9a2d-9dd98677949d
+#+TITLE: Conjectures and refutations
+#+DATE: 2026-02-28
+#+CITE_EXPORT: csl ieee.csl
+#+LICENSE: https://creativecommons.org/licenses/by-nc-sa/4.0 CC-BY-NC-SA-4.0
+#+STATUS: Draft
+
+#+begin_abstract
+The minimal cycle through which all genuine knowledge grows.
+#+end_abstract
+
+* Objective
+
+Define the process of knowledge growth in a form precise enough to be used daily.
+
+* Context
+
+Drawn directly from Karl Popper’s critical rationalism in *Conjectures and Refutations*
+[cite:@popper1963conjectures].
+
+* Result
+
+#+begin_definition
+P₁ → TT → EE → P₂
+
+- *P₁* : Problem
+  Any difficulty, anomaly, contradiction, or open question in our present understanding.
+
+- *TT* : Tentative Theory
+  A bold, imaginative conjecture offered as a possible solution to P₁.
+
+- *EE* : Error Elimination
+  Ruthless critical discussion and empirical tests designed to refute the TT if it is false.
+
+- *P₂* : New Problem
+  The sharper, deeper, richer problem situation that emerges after EE.
+
+The arrow means “gives rise to”. The cycle never ends; each iteration removes error
+and raises understanding.
+#+end_definition
+
+* Discussion
+
+This schema replaces passive accumulation of data with active creation followed by
+merciless criticism.
+
+* Conclusion
+
+Knowledge grows exactly as problems are solved by conjectures that survive attempted
+refutations.
+
+* Bibliography
+
+#+print_bibliography:
+
+* Local Variables                                                  :noexport:
+
+Local Variables:
+eval: (add-hook 'before-save-hook #'whitespace-cleanup nil t)
+eval: (add-hook 'after-save-hook #'user--org-export-current-buffer-to-utf8-buffer nil t)
+org-confirm-babel-evaluate: nil
+fill-column: 85
+End:

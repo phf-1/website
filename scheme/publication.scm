@@ -112,6 +112,9 @@
 (define (extract-name-from-text text)
   (extract-org-keyword-value text "#+TITLE:"))
 
+(define (extract-status-from-text text)
+  (extract-org-keyword-value text "#+STATUS:"))
+
 (define (extract-uuid-from-text text)
   (let* ((lines (string-split text #\newline))
          (id-line (let loop ((ls lines))
@@ -186,6 +189,7 @@
                     (let* ((uuid (extract-uuid-from-text text))
                            (name (extract-name-from-text text))
                            (date (extract-date-from-text text))
+                           (status (extract-status-from-text text))
                            (body (parser `(#:body ,text)))
                            (html (compose-html layout body css js)))
 
@@ -195,6 +199,7 @@
                           (#:date date) ; : String | #f
                           (#:text text)
                           (#:css css)
+                          (#:status status)
                           (#:js js)
                           (#:layout layout)
                           (#:data data)
