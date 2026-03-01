@@ -29,7 +29,7 @@
     (unless date   (error (format #f "Missing mandatory #+DATE: in publication ~a"   uuid)))
     (unless name   (error (format #f "Missing mandatory #+TITLE: in publication ~a"  uuid)))
     (unless status (error (format #f "Missing mandatory #+STATUS: in publication ~a" uuid)))
-    (format #f "| @@html:<span style=\"white-space:nowrap\">@@~a@@html:</span>@@ | [[href:/~a/html][~a]] | [[https://github.com/unprotocols/rfc/blob/master/2/README.md][~a]] |"
+    (format #f "| @@html:<span style=\"white-space:nowrap\">@@~a@@html:</span>@@ | [[href:/~a/html][~a]] | [[https://rfc.zeromq.org/spec/44/#26-evolution-of-public-contracts][~a]] |"
             date uuid name status)))
 
 (define (generate-index-text publications)

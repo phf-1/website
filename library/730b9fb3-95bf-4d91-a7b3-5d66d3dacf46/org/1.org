@@ -1,0 +1,127 @@
+#+ID: 730b9fb3-95bf-4d91-a7b3-5d66d3dacf46
+#+TITLE: Falsification and the Methodology of Scientific Research Programmes
+#+DATE: 2026-03-01
+#+CITE_EXPORT: csl ieee.csl
+#+LICENSE: https://creativecommons.org/licenses/by-nc-sa/4.0 CC-BY-NC-SA-4.0
+#+STATUS: Draft
+
+#+begin_abstract
+The unit of scientific progress is not the isolated theory but the research
+programme.
+#+end_abstract
+
+* Objective
+
+Define the process of knowledge growth in a form precise enough to be used daily,
+refining Popper’s single-conjecture schema (P₁ → TT → EE → P₂)
+[cite:@frohring2026conjectures] with the structure of research programmes.
+
+* Result
+
+The arrow means “gives rise to”. A programme is *progressive* when it predicts novel
+facts; *degenerative* when it only accommodates known facts /post hoc/.
+
+#+begin_definition
+~P₁ → RP → P₂~
+
+- *P₁* : Problem situation Any difficulty, anomaly, contradiction, or open question in
+  the current research programme.
+
+- *RP* : Research Programme
+  - *Hard core* : Set of irrefutable (by fiat) assumptions protected from
+    falsification.
+  - *Protective belt* : Auxiliary hypotheses and initial conditions that absorb
+    refutations.
+  - *Negative heuristic* : Do not attack the hard core.
+  - *Positive heuristic* : Articulate the protective belt so as to generate novel
+    predictions.
+
+- *P₂* : New problem situation The sharper, deeper problem situation that emerges after
+  a progressive or degenerative shift.
+#+end_definition
+
+Drawn directly from Imre Lakatos’ critical elaboration of Popper in *Falsification and
+the Methodology of Scientific Research Programmes* [cite:@lakatos1970falsification].
+
+* Example
+
+Newtonian celestial mechanics (hard core: inverse-square law of gravitation and three
+laws of motion).  Uranus deviates from predicted orbit (P₁).
+
+Popperian approach: theory falsified → discard Newtonian mechanics.
+
+Lakatosian approach: protect hard core, modify protective belt (“there exists an
+unknown planet Neptune whose gravitational pull explains the anomaly”), derive novel
+prediction (exact position of Neptune), observe it (1846). Programme remains
+progressive: new corroborated fact generated.
+
+If instead only ad-hoc patches are added with no new predictions (e.g., “Uranus has
+an invisible companion that affects nothing else”), the programme degenerates.
+
+* Kuhn’s Paradigms
+
+A paradigm is the disciplinary matrix formed by symbolic generalizations,
+metaphysical commitments, values, and concrete exemplars (standard puzzle-solutions)
+shared by a scientific community.
+
+If science consists of puzzle-solving activity strictly within this matrix, then
+accumulation of anomalies resistant to resolution precipitates a crisis.
+
+Resolution occurs through a non-cumulative paradigm shift to an incommensurable
+successor framework that redefines problems, methods, data, and standards of
+acceptability.
+
+Lakatos developed his framework specifically to rescue the objective rationality of
+scientific progress from Kuhn. To Lakatos, if paradigm shifts were truly
+incommensurable, theory change would be reduced to "mystical conversion" or "mob
+psychology." His metric of progressive versus degenerating programmes restores a
+rational basis for choosing one framework over another.
+
+* Duhem–Quine Problem
+
+No hypothesis can be confronted with experience in isolation. Any empirical
+prediction is derived from the conjunction of the target hypothesis *H* with a set of
+auxiliary assumptions *A* (instrumentation, background theories, boundary conditions).
+
+When observation *O* falsifies the prediction, /modus tollens/ applies solely to ¬(H ∧
+A). Logic never identifies which conjunct must be rejected. The entire theoretical
+network remains underdetermined by data; any statement may be held true by
+sufficiently drastic readjustments elsewhere in the web of belief.
+
+* Discussion
+
+Lakatos replaces Popper’s single-conjecture cycle (P₁ → TT → EE → P₂) with a
+temporally extended structure. The hard core is shielded exactly as in Kuhn’s
+paradigms, yet criticism remains ruthless — directed instead at the protective belt.
+
+This provides a methodological navigation of the Duhem–Quine problem: since logic
+cannot dictate which conjunct to reject, Lakatos introduces a decision by fiat to
+protect the hard core, purposefully distributing refutations to the auxiliary
+hypotheses.
+
+The trivial Neptune example shows the added value compared to pure Popperian
+falsificationism: Newtonian mechanics would have been abandoned on the first Uranus
+discrepancy, halting progress for decades. Lakatos’ framework permits rational
+retention of the hard core while demanding that modifications generate excess
+empirical content.
+
+Science advances by pursuing progressive programmes and abandoning degenerative ones,
+not by instant refutation of isolated theories.
+
+* Conclusion
+
+Knowledge grows exactly as research programmes are pursued that survive attempted
+refutations while generating novel corroborated facts.
+
+When your current theory fails a test, ask: "Is the protective belt still generating
+novel predictions?" If yes, adjust the belt; if no, the programme degenerates — shift
+to a new hard core. This single diagnostic rule refines Popper into daily practice.
+
+* Bibliography
+
+#+print_bibliography:
+
+* Local Variables :noexport:
+Local Variables: eval: (add-hook 'before-save-hook #'whitespace-cleanup nil t) eval:
+(add-hook 'after-save-hook #'user--org-export-current-buffer-to-utf8-buffer nil t)
+org-confirm-babel-evaluate: nil fill-column: 85 End:

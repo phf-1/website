@@ -1,136 +1,297 @@
 #+ID: 9a2e1e81-3000-4495-a13f-ff45afb5ad77
 #+TITLE: ExoCode
-#+DATE: 2025-10-30
+#+DATE: 2026-03-02
 #+CITE_EXPORT: csl ieee.csl
-#+STATUS: Draft
 #+LICENSE: https://creativecommons.org/licenses/by-nc-sa/4.0 CC-BY-NC-SA-4.0
+#+STATUS: Draft
 
 #+begin_abstract
-ExoCode is a simplified software development process, inspired by the Collective Code
-Construction Contract (C4.1). It is targeted at small teams (around a dozen
-contributors) or even single developers and is learnable in under an hour.
+A practical daily cycle that turns programming into systematic theory building.
 #+end_abstract
-
-* Introduction
-
-By analogy with an exothermic physical process, an /exovaloric/ social process is one
-that generates more value, utility, or benefit than the resources it consumes—often
-through cooperation or amplification. Since software development involves
-collaboration and value creation, we introduce /ExoCode/: an exovaloric process
-designed to create value through software production.
-
-ExoCode draws inspiration from the C4.1 process[cite:@hintjens_c4] described in the
-ØMQ Guide[cite:@hintjens_guide Chapter 6], but targets smaller groups (around a dozen
-collaborators rather than hundreds). It aims to drastically reduce the number of
-rules while preserving the essence of what makes C4.1 successful.
 
 * Objective
 
-ExoCode should:
-- Preserve the most valuable aspects of the C4.1 process as described in the guide.
-- Contain significantly fewer rules than C4.1.
-- Be usable by a single developer.
-- Be adoptable by a new developer in under an hour.
+Provide a /development loop/ suitable for AI integration: code is generated while the
+architecture remains clearly understood.
 
-* ExoCode
+* Result
 
-ExoCode is the process used by this project to update its code. When in doubt, refer
-to the C4.1 process[cite:@hintjens_c4].
+Since programming can be viewed as theory building [cite:@naur1985programming], /i.e./
+knowledge creation, a development loop that integrates Popper's
+[cite:@frohring2026conjectures] and Lakatos' [cite:@frohring2026researchprogram]
+views on knowledge growth has been defined.
 
-* License
+It is simple enough to be applied for day-to-day programming and suitable for
+AI-assisted programming. It is aimed at small teams of up to 10 people and additional
+AIs. The development loop is:
 
-The project uses a share-alike license such as:
-- MPLv2[cite:@mplv2]
-- LGPLv3[cite:@lgplv3]
-- GPLv3[cite:@gplv3]
+#+begin_definition
+~ExoCode~
+
+1. *Start:* =dev= (developer or AI) creates a short-lived branch from trunk. Add an
+   /iteration/ entry to =iterations/dev.org= on the branch. Define the objective and the
+   novel facts (tests) it must predict.
+
+2. *Work:* build refined objectives and candidates using a temporary
+   =discussion.org= file to accumulate prompts.
+   - Write automated tests → failure → implementation → success.
+   - If the surviving candidate requires changing =architecture.org=, *halt*. The current
+     iteration is suspended. A new, dedicated architectural iteration must be planned
+     and merged first.
+
+3. *Integrate:* distill key refutations and dead-ends from =discussion.org= into the
+   iteration's /Retrospective/ section to preserve the epistemological history.  Open
+   PR (CI-gated). Fast review (human + AI). Rebase to trunk then delete the branch.
+#+end_definition
+
+* Iteration
+
+An iteration is a template used to guide the growth of a code base toward reaching a
+new objective. Once agreed upon, it allows some degree of concurrent development.
+Provided that the objectives of each iteration do not overlap, they may occur
+concurrently. An iteration /scope/ is defined by the interfaces it requires and the
+interfaces it provides.
+
+All sections are optional except *Objective* and *Result*. Judgment should be applied
+to keep the process as light as possible. The template is:
+
+#+begin_src org
+,* TODO 🞎
+:PROPERTIES:
+:TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
+:EFFORT: 0:00
+:END:
+
+,** Context
+
+- A list of materials or references to materials
+  that clarify the subsequent content.
+
+,** Objective
+
+- Defines WHAT the code base should do.
+
+,** Risks
+
+- List of risks, if any.
+
+,** Log
+
+- Notable events or remarks
+  during iteration execution.
+
+,** Checklist
+
+- [ ] Stakeholders updated.
+- [ ] Time has been logged.
+
+,** Result
+
+- Quick summary of the result and links
+  to artifacts, if any.
+
+,** Review
+
+- Demo is reproducible by the client
+- Feedback
+
+,** Sign-off
+
+- Client acceptance: [YES/NO]
+- If milestone → invoice issued
+- Next iteration planned
+
+,** Retrospective
+
+- Liked: what went well
+- Learned: new insights / techniques
+- Lacked: what was missing / painful
+- Longed for: what we wish we had
+- Action Items: what should be carried forward
+#+end_src
+
+* =iterations/*=
+
+=iterations/dev.org= is a file that accumulates iterations sequentially on trunk
+authored by one developer or AI. Given /N/ developers or AIs, we would have /N/ files. We
+call them: =iterations/*=.
+
+* Prompt
+
+A prompt structures the content emitted by developers and AIs while executing an
+iteration. It forces the externalization of the tacit theory-building process. Here
+is the prompt template:
+
+#+begin_src org
+,* Prompt
+,** Context
+
+- A list of materials or references to materials
+  that clarify the subsequent content.
+
+,** Objective
+
+- Defines WHAT a solution should satisfy
+  (the anomaly or missing feature).
+
+,** Tests
+
+- Any solution MUST satisfy these tests.
+  These act as the "novel predictions" our
+  tentative theory must successfully handle to
+  prove it is progressive. Tests must fail
+  before implementation begins.
+
+,** Plan
+
+- Sketch the abstract steps that explain HOW
+  the solution will be reached.
+
+,** Candidate
+
+- The candidate solution so far.
+  In practice, this section is replaced by a
+  $ git diff or equivalent.
+
+,** Discussion
+
+- Merciless criticism: What flaws exist in this candidate?
+- *Record of Refutation:* If this candidate is rejected,
+  briefly note WHY here. This knowledge must be transferred
+  to =iterations/dev.org= before the branch is merged.
+
+,** Circuit Breaker
+
+Before executing the candidate, evaluate its structural impact:
+- [ ] This solution only requires implementation logic changes:
+      proceed.
+- [ ] This solution requires altering =architecture.org=.
+      ,*HALT*: Suspend this prompt and initiate a broader
+      architectural iteration.
+#+end_src
+
+* =architecture.org=
+
+=architecture.org= specifies WHAT the program does and HOW it does it using various
+specialized languages (/e.g./ Type Theory [cite:@frohring2026type], Actor Model
+[cite:@frohring2026actor]). Sections act as documentation for the associated
+code. Bidirectional links between specification and implementation ensure
+non-ambiguous correlations.
 
 * Platform
 
-The /platform/ is where the code is hosted — e.g. github.com, codeberg.org.
+Something like github.com, codeberg.org.
 
-* Issue
+* License
 
-An issue is created using the platform’s issue tracker. It consists of an assertion
-and a predicate that must be true for a patch to be considered a solution.
+A contribution, /i.e./ added materials through merges, uses the same license as the
+project: =mplv2=, =lgplv3+=, =gplv3+=. It is owned by its author; no copyright assignment
+required. Does not include non-trivial code from other projects unless the
+contributor is the original author.
 
-* Patch
+* Branches and commits
 
-A patch is a Git commit containing data intended to be added to the project.
+Given an iteration in =iterations/dev.org= named "TODO 🞎", then the matching branch
+name is "dev/🞎" and the first line of the commit is "DONE dev/🞎". Same
+cross-referencing as in =architecture.org= using UUIDs mays be used if necessary. The
+commit history looks like:
 
-* Valid patch
+#+ID: 1dcdadd7-27d4-4317-b9bd-5bc18c15c42f
+#+begin_instance
+#+begin_example
+DONE ai/updated-ui
+DONE dev/image-processing-steps
+…
+#+end_example 
+#+end_instance 
 
-A valid patch is a patch such that it:
-- Solves one issue.
-- Follows the project’s code style.
-- Adheres to the Evolution of Public Contracts[fn:393a].
-- Uses the same license as the project.
-- Is owned by its author; no copyright assignment required.
-- Does not include non-trivial code from other projects unless the contributor is the
-  original author.
-- Compiles cleanly and passes project self-tests on all main target platforms.
-- Contains a commit message composed of:
-  - An assertion as the first line.
-  - A blank line.
-  - An explanation of why the patch makes that assertion true.
-- Updates the relevant documentation.
-- Does not break the master branch when merged.
+* Example
 
-[fn:393a]: https://rfc.zeromq.org/spec/44/#26-evolution-of-public-contracts
+Consider the task of adding support for SEPA Instant Credit Transfers to a payment
+orchestration system written in Rust.
 
-* Contributor
+On a short-lived branch the following iteration entry is added to =iterations/dev.org=:
 
-From a contributor’s point of view — /i.e./ someone who wishes to submit a patch to the
-project — the process is:
+#+begin_src org
+,* TODO sepa-instant
+:PROPERTIES:
+:TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
+:EFFORT: 0:00
+:END:
 
-1) Log in to the platform with your real name or well-known alias.
-2) Add or choose an issue to solve in the issue tracker.
-3) Fork the project.
-4) Build a patch that solves the issue.
-5) If you are not listed as a contributor, identify yourself.
-6) Submit a pull request.
-7) After the pull request is merged by a maintainer, close the issue.
+,** Objective
 
-* Maintainer
+Support SEPA Instant payments with end-to-end processing
+under 10 seconds while maintaining idempotency and
+regulatory compliance.
 
-From a maintainer’s point of view — /i.e./ someone who reviews and merges patches — the
-process is:
+,** Risks
 
-1) Log in to the platform with your real name or well-known alias.
-2) Select a pull request.
-3) Verify that the patch is valid.
-4) If the patch is invalid, explain why to the author and:
-   - either return to step 3;
-   - or reject the pull request.
-5) If the patch is valid, merge it into the "master" branch.
+- Breaking changes to payment routing logic
+- Increased load on fraud detection service
 
-* Administrator
+,** Result
 
-From an administrator’s point of view — /i.e./ someone who manages maintainers — the
-process is:
+Added =PaymentProviderSEPAInstant= implementing the
+=InstantPayment= trait. Updated routing table in
+=architecture.org=. All latency and compliance tests pass.
+Merged after 4-hour branch lifetime.
+#+end_src
 
-1) Promote the most effective maintainers to administrators.
-2) Remove inactive maintainers.
-3) Ban "bad actors" after public discussion.
-
-* Founder
-
-From a founder’s point of view — /i.e./ someone who created the project and/or is its
-moral owner — the process is:
-
-1) Act as an administrator.
+During the *Work* phase, a temporary =discussion.org= on the same branch contains
+three successive prompts that refine error handling and idempotency guarantees
+before any code is written. The surviving candidate is implemented, tests are added,
+the architecture guard is verified (no change to =architecture.org= required beyond
+a small routing-table update), and the branch is merged via squash after fast CI
+and human+AI review.
 
 * Discussion
 
-ExoCode has far fewer rules than the C4.1 process but refers to it in case of doubt.
-Experience will show whether it fulfills its goals. Most importantly, it requires at
-least one project and one entity — similar to iMatix as described in the Guide — to
-hold a trademark and enforce the license. Until then, it cannot be put to the test.
+A prompt's objective corresponds to Popper's /P₁/ step. A prompt's candidate
+corresponds to Popper's /TT/ step. A prompt's discussion corresponds to Popper's /EE/
+step. The next prompt's objective corresponds to Popper's /P₂/ step. The prompt's
+diagnostic corresponds to Lakatos' distinction between /progressive/ and /degenerative/
+programs.
+
+Together, the files =iterations/*=, =architecture.org= and the source code itself
+ground Naur's "Programming as theory building" into different points of view, each
+expressed in its own formal language.
+
+While =iterations/*= provides a dynamic view of the program evolution, pursuing
+ever more ambitious objectives, =architecture.org= provides an integrated view of what
+the program does and how it does it after a given sequence of iterations.
+
+In particular, =architecture.org= answers most questions starting with /Why/, /What/
+and /How/ using simple, mathematically grounded languages that yield reasonable code.
+This offers a common ground for AIs and developers. While /tacit/ knowledge cannot be
+fully captured, enough should be made explicit so that a shared picture of the system
+can be maintained.
 
 * Conclusion
 
-ExoCode may serve as a draft for a simpler C4.1 process but cannot surpass it unless
-adopted by a project with significant stakes.
+This Development Loop externalizes the tacit theory-building process of programming
+into explicit, version-controlled artifacts. By combining short-lived branches with
+persistent evolutionary (=iterations/*=) and structural (=architecture.org=)
+documentation, it enables high-velocity AI-assisted development without sacrificing
+architectural clarity or conceptual integrity.
+
+The integration of Popper's critical rationalism and Lakatos' research programme
+framework provides a rigorous yet practical scaffold for knowledge growth in software
+systems. The result is a method that scales from solo developers to small teams
+augmented with multiple AIs, while keeping the cognitive overhead low enough for daily
+use.
+
+The stated objective is achieved: code is generated rapidly, yet the theory behind
+the system remains explicit, understandable, and evolvable.
 
 * Bibliography
 
 #+print_bibliography:
+
+* Local Variables :noexport:
+Local Variables:
+eval: (add-hook 'before-save-hook #'whitespace-cleanup nil t)
+eval: (add-hook 'after-save-hook #'user--org-export-current-buffer-to-utf8-buffer nil t)
+org-confirm-babel-evaluate: nil
+fill-column: 85
+End:

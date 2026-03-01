@@ -110,6 +110,40 @@ tree --gitignore
    - Use the same tone.
    - The reader should end the reading with a simple yet actionnable insight that refine knowledge creation as offered by Popper.
 
+* Prompt
+** Context
+*** Conjectures and refutations
+
+#+INCLUDE: "library/13cd7955-a682-44e5-9a2d-9dd98677949d/org/1.org" src org
+
+*** Falsification and the Methodology of Scientific Research Programmes
+
+#+INCLUDE: "library/730b9fb3-95bf-4d91-a7b3-5d66d3dacf46/org/1.org" src org
+
+** Objective
+
+- Using the article "Conjectures and refutations" as a template, write an article
+  that introduces the development loop.
+- Use the context as needed, including the content of the "Conjectures and
+  refutations" article, in addition to its structure.
+- Write the resulting content in a code block.
+- Preserve Org Mode markup.
+
+
+* Prompt
+** Context
+*** Article
+
+#+INCLUDE: "library/9a2e1e81-3000-4495-a13f-ff45afb5ad77/org/1.org" src org
+
+*** Trunk Based Development
+
+https://trunkbaseddevelopment.com/
+
+** Objective
+
+- Compare the ExoCode process and Trunk Based Development.
+
 * Local Variables                                                  :noexport:
 Local Variables:
 eval: (add-hook 'before-save-hook #'whitespace-cleanup nil t)

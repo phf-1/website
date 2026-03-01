@@ -4,9 +4,9 @@
 * Website
 ** state
 
-- [[file:planner.org]]
-- [[file:forum.org]]
-- [[file:architect.org]]
+- [[file:iterations.org]]
+- [[file:discussion.org]]
+- [[file:architecture.org]]
 
 ** message
 *** Specification

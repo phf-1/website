@@ -6,7 +6,7 @@
 #+STATUS: Draft
 
 #+begin_abstract
-The minimal cycle through which all genuine knowledge grows.
+The minimal cycle through which all knowledge grows.
 #+end_abstract
 
 * Objective
@@ -16,33 +16,49 @@ Define the process of knowledge growth in a form precise enough to be used daily
 * Context
 
 Drawn directly from Karl Popper’s critical rationalism in *Conjectures and Refutations*
-[cite:@popper1963conjectures].
+.
 
 * Result
 
 #+begin_definition
-P₁ → TT → EE → P₂
+~P₁ → TT → EE → P₂~
 
-- *P₁* : Problem
-  Any difficulty, anomaly, contradiction, or open question in our present understanding.
+- *P₁* : Problem. Any difficulty, anomaly, contradiction, or open question in our
+  present understanding.
 
-- *TT* : Tentative Theory
-  A bold, imaginative conjecture offered as a possible solution to P₁.
+- *TT* : Tentative Theory. A bold, imaginative conjecture offered as a possible
+  solution to P₁.
 
-- *EE* : Error Elimination
-  Ruthless critical discussion and empirical tests designed to refute the TT if it is false.
+- *EE* : Error Elimination. Ruthless critical discussion and empirical tests designed
+  to refute the TT if it is false.
 
-- *P₂* : New Problem
-  The sharper, deeper, richer problem situation that emerges after EE.
+- *P₂* : New Problem. The sharper, deeper, richer problem situation that emerges after
+  EE.
 
 The arrow means “gives rise to”. The cycle never ends; each iteration removes error
 and raises understanding.
 #+end_definition
 
+* Example
+
+A desk lamp fails to light up when switched on (*P₁*).
+
+- *TT₁*: The light bulb is burnt out.
+- *EE₁*: Replace the bulb with a known working one. The lamp still does not light.
+  The theory is falsified.
+- *P₂*: Why does a lamp with a working bulb fail to light?
+
+- *TT₂*: The wall outlet is not providing power.
+- *EE₂*: Plug a different device into the same outlet. It works. Theory falsified.
+- *P₃*: Why is power reaching the outlet but not the bulb socket? (The problem is now
+  sharper: we have eliminated the bulb and the house grid, pointing toward the
+  lamp’s internal wiring or switch).
+
 * Discussion
 
 This schema replaces passive accumulation of data with active creation followed by
-merciless criticism.
+merciless criticism. Knowledge does not begin with "observations," but with a
+problem and our imaginative attempts to solve it.
 
 * Conclusion
 

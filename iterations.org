@@ -1,7 +1,7 @@
 #+OPTIONS: author:nil
 #+PROPERTY: header-args:bash :exports both :results output raw :wrap example
 
-* planner
+* iterations
 :PROPERTIES:
 :ID:       af74b613-ff0c-4958-b709-10011fe89776
 :END:
@@ -112,6 +112,18 @@ To decide which path to take, ask yourself these three questions:
 
 Would you like me to help you draft a specific interface or "contract" for how the Actor should communicate its requirements to the `Ma` instance?
 #+end_example
+
+*** DONE iteration(38)
+
+**** Objective
+
+Add actionnable takes on knowledge growth.
+
+**** Result
+
+- Added Lakatos views after comments from Gregory Chaitin.
+- Added a trivial example to conjecture and refutations.
+- ExoCode updated.
 
 *** DONE iteration(37)
 :PROPERTIES:
