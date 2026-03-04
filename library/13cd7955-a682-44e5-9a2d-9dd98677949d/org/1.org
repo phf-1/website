@@ -16,7 +16,7 @@ Define the process of knowledge growth in a form precise enough to be used daily
 * Context
 
 Drawn directly from Karl Popper’s critical rationalism in *Conjectures and Refutations*
-.
+[cite:@popper1963conjectures].
 
 * Result
 

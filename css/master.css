@@ -363,8 +363,7 @@ body {
     }
 }
 
-article,
-.reviewer {
+article, .reviewer {
     position: relative;
     height: 100%;
     font-style: normal;
@@ -375,19 +374,18 @@ article,
     border-top: solid 1px;
     border-radius: 2px;
 
-    ul,
-        ol {
-            padding-left: 1em;
+    ul, ol {
+        padding-left: 1em;
+        margin-bottom: 2em;
 
-            li {
-                unicode-bidi: isolate;
-                margin-bottom: 0.75em;
-            }
-
-            li:last-child {
-                margin-bottom: 0;
-            }
+        li {
+            unicode-bidi: isolate;
         }
+
+        li:last-child {
+            margin-bottom: 0;
+        }
+    }
 }
 
 .reviewer {
@@ -418,13 +416,8 @@ h1 {
     margin: 0 0 var(--distance-h1-abstract) 0;
 }
 
-p,
-pre {
-    display: block;
+p, pre {
     margin-block-start: 0;
-    margin-block-end: calc(var(--line-height) * 1em);
-    margin-inline-start: 0px;
-    margin-inline-end: 0px;
 }
 
 figure {
@@ -436,9 +429,10 @@ figure {
     }
 }
 
-pre,
-.src {
+pre, .src {
     overflow-x: auto;
+    margin-block-start: 2em;
+    margin-block-end: 2em;
 }
 
 .src {
@@ -448,8 +442,7 @@ pre,
     margin: 2rem 0;
 }
 
-.todo,
-.done {
+.todo, .done {
     padding: 0.1em 0.2em;
     border-radius: 2px;
     margin-right: 0.33em;
@@ -471,6 +464,7 @@ td {
 nav#table-of-contents {
     margin-left: auto;
     padding-left: 0.2rem;
+    padding-right: 0.2rem;
     margin-right: 0.5rem;
     width: fit-content;
     overflow-y: auto;
@@ -479,13 +473,12 @@ nav#table-of-contents {
     position: sticky;
     top: 1rem;
 
-    ul,
-        ol {
-            margin-inline-start: 0px;
-            margin-inline-end: 0px;
-            padding-inline-start: 1em;
-            list-style-type: none;
-        }
+    ul, ol {
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+        padding-inline-start: 1em;
+        list-style-type: none;
+    }
 
     a {
         text-decoration: none;
@@ -580,6 +573,11 @@ blockquote {
 
 .csl-entry {
     margin: 1.5rem 0;
+
+    a {
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+    }
 }
 
 hr {
@@ -601,6 +599,8 @@ html {
     hanging-punctuation: first last;
     hyphens: auto;
     text-wrap: pretty;
+    text-wrap-mode: wrap;
+    text-wrap-style: pretty;
 }
 
 h1,
@@ -626,9 +626,7 @@ h5 {
     border-bottom: 2px solid;
 }
 
-pre,
-.src,
-code {
+pre, .src, code {
     font-size: 0.85em;
 }
 

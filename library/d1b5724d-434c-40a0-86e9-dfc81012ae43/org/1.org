@@ -1,6 +1,6 @@
 #+ID: d1b5724d-434c-40a0-86e9-dfc81012ae43
 #+TITLE: A simple actor definition
-#+DATE: 2026-03-04
+#+DATE: 2026-03-05
 #+CITE_EXPORT: csl ieee.csl
 #+LICENSE: https://creativecommons.org/licenses/by-nc-sa/4.0 CC-BY-NC-SA-4.0
 #+STATUS: Draft
@@ -46,7 +46,7 @@ as asynchronous message-passing between actors.
 An *actor* is a concurrent computational entity with:
 - a unique, unforgeable *address*,
 - private *state*,
-- a *script* (behavior) that defines how it reacts to messages.
+- a *script* that defines how it reacts to messages.
 
 #+begin_example
 Actor :≡ Address × State × Script
@@ -61,45 +61,48 @@ An *address* is an opaque, unforgeable identifier that names an actor. Addresses
 only be obtained through creation or by receiving them in messages.
 #+end_definition
 
+* Message
+
+#+ID: 72144470-feb7-4d93-86f3-344fa923014e
+#+begin_definition
+A *Message* is formed by an address and a payload. The payload is an immutable piece of
+data.
+
+#+begin_example
+Message :≡ Address × Payload
+#+end_example
+#+end_definition
+
 * State
 
 #+ID: 5d74d0a1-2d29-4254-95d1-f961c1951ac2
 #+begin_definition
-*State* is the private mutable memory of the actor, typically a value of some concrete
-type (record, tuple, map, etc.).
+*State* is the private memory of the actor.
 #+end_definition
 
 * Script
 
 #+ID: c796968d-171e-4393-a0af-2d22b0657f80
 #+begin_definition
-A *script* is the behavior of an actor. It defines how the actor reacts to each
+A *script* — /i.e./ the analog of a program — defines how the actor reacts to each
 incoming message using the following core operations:
 
 #+begin_example
-- send   : Address Any → ∅
-- become : Script State → ∅
-- self() : Address (the executing actor own address)
 - spawn  : Script State → Address
-- ■        (halt the actor)
+- self() : Address (the executing actor own address)
+- ■ (halt the actor)
+- send   : Message → ∅
+- become : Script State → ∅
 #+end_example
 #+end_definition
 
 * send
 
-*send* is the fundamental asynchronous communication primitive in the Actor Model.
-
 #+ID: 3f7c9a2b-1d4e-4f8a-9b2c-7e6d5a1f3b9e
 #+begin_definition
-*send*
-
-instructs the system to deliver the payload to the actor at the given address. The
-operation is non-blocking: the sender continues execution immediately. There are no
-guarantees of delivery or ordering.
-
-#+begin_example
-send(addr payload)
-#+end_example
+*send(message)* instructs the system — /i.e./ the runtime — to deliver the /payload/ to the
+actor at the given address. The operation is non-blocking: the sender continues
+execution immediately. There are no guarantees of delivery or ordering.
 #+end_definition
 
 * become
@@ -114,17 +117,9 @@ state will be used to process the next message.
 
 #+ID: 8a2b4c6d-9e1f-4b3a-8d7c-2e5f9a1b6c4d
 #+begin_definition
-*spawn*
-
-creates a new actor and returns its address.
-
-#+begin_example
-spawn : Script → State → Address
-spawn(script, initialState)
-#+end_example
-
-The newly created actor starts running the given ~script~ with ~initialState~
-immediately. The returned address is the only way to communicate with the new actor.
+*spawn(script state)* creates a new actor and returns its address. The newly created
+actor starts executing the given ~script~ with ~state~ immediately. The returned address
+is the only way to communicate with the new actor.
 #+end_definition
 
 * receive
@@ -142,11 +137,80 @@ receive
 #+end_example
 #+end_definition
 
+#+ID: dffe926b-9a8a-447e-955b-d40f076e7945
+#+begin_instance
+#+begin_example
+receive
+  "hello" ↦ "world"
+  x when x > 0 ↦ "#{x} is strictly positive"
+#+end_example
+#+end_instance
+
+* Theory and practice
+
+In our definition, =receive= is presented as a blocking operation that halts the
+actor’s execution until a message arrives. It is a practical concession rather than a
+theoretically pure one.
+
+In the strict Actor Model, actors are entirely reactive. They do not contain an
+explicit "blocking loop" that pulls messages from a queue; rather, the runtime pushes
+messages to the actor, invoking its current behavior. The actor reacts, designates
+its next behavior via become, and goes dormant.
+
+However, building complex control flows solely with reactive state transitions can be
+ergonomically challenging. Consequently, mature industrial implementations — such as
+Erlang and Akka — blend the Actor Model with sequential processing.
+
+They provide an explicit, blocking =receive= construct that pulls messages from a
+mailbox. Our definition adopts this pragmatic approach, acknowledging that the
+ability to write sequential, suspendable code is critical for the usability of an
+actor system in practice.
+
+* Protocol
+
+#+ID: f17d8f98-aef9-495b-9cc1-e577d1b21f5c
+#+begin_definition
+From a receiving actor point of view — /i.e./ the /server/ — a *protocol* defines the
+possible sequences of incoming messages from a /client/ and the server expected
+responses. A *coprotocol* is the dual of a protocol.
+#+end_definition
+
+A protocol may be defined using a specialized language called /Session Types/
+[cite:@gay2025session;@tabone2021elixir]. For instance, given:
+
+#+ID: c8db3eed-8a99-49be-9340-df92ed5abbc9
+#+begin_instance
+#+begin_example
+health :≡ GET /health: !{ "health": "ok" } . end
+hello  :≡ GET /hello: !"world" . end
+server :≡ &{ health, hello }
+#+end_example
+#+end_instance
+
+then the protocol =server= has branch named =health=. The branch =health= may be
+interpreted as: "If I receive the HTTP request GET /health from a client, then I
+should answer with a JSON string that maps to { "health": "ok" } which terminates the
+protocol."  The associated coprotocol is:
+
+#+ID: acc987be-c6f4-43ed-97a5-09134d2f5399
+#+begin_instance
+#+begin_example
+health :≡ GET /health: ?{ "health": "ok" } . end
+hello  :≡ GET /hello: ?"world" . end
+client :≡ ⊕{ health, hello }
+#+end_example
+#+end_instance
+
+Note that there is a deviation compared to the official notation. For instance, we
+let the reader translate ~?{ "health": "ok" }~ to "I expect to receive a string that
+can be mapped to the JSON value ~{ "health": "ok" }~".
+
 * Example
 
-We assume the existence of an actor =osc= that satisfies the following protocol:
-- =subscribe(addr)=: causes =addr= to receive =<osc, "tick">= every second
-- =unsubscribe(addr)=: stops sending ticks to =addr=
+The example shows how to define a stopwatch and the different steps that hold for all
+actor subtypes definitions.
+
+** Protocol
 
 A stopwatch is an actor that satisfies this protocol:
 
@@ -154,17 +218,24 @@ A stopwatch is an actor that satisfies this protocol:
 - Replies to =<sender, "read">= with =<self, seconds>=.
 - Halts (■) if it receives any other message.
 
-The implementation is defined as follows:
+** Assumption
+
+We assume the existence of an actor =osc= that satisfies the following protocol:
+- if =osc= receives =<:subscribe, addr>=, then =addr= receives =<osc, "tick">= every second.
+- if =osc= receives =<:unsubscribe, addr>=, then =osc= stops sending ticks to =addr=.
+
+** Script
 
 #+begin_example
 script(osc) :≡
-  osc#subscribe self()
+  send <osc, <:subscribe self()>>
   loop :≡
     seconds : Nat ↦
       receive
         <sender, "read"> ↦
-          send(sender <self(), seconds>)
-          become(loop seconds)
+          payload :≡ <self(), seconds>
+          send <sender, payload>
+          become loop seconds
 
         <osc, "tick"> ↦
           become(loop (seconds + 1))
@@ -173,37 +244,40 @@ script(osc) :≡
   loop(0)
 #+end_example
 
-We create the actor with:
+** Constructor
 
 #+begin_example
-sw :≡ spawn(script(osc) 0)
+sw : Stopwatch :≡ spawn(script(osc) 0)
 #+end_example
 
-=sw= is a stopwatch — /i.e./ it is an actor that satisfies the stopwatch protocol.
+** Proof
 
-**Proof:**
+=sw= is a stopwatch — /i.e./ it is an actor that satisfies the stopwatch protocol. *Proof*
+by induction on the number of messages processed by ~sw~.
 
-By induction on the number of messages processed by ~sw~.
-
-- **Base case** (0 messages): Actor starts in state ~loop(0)~ after subscribing. Count = 0 and alive. Holds.
-- **Inductive step**: Assume the actor is in state ~loop(n)~ and alive. On next message:
+- *Base case* (0 messages): Actor starts in state ~loop(0)~ after subscribing. Count = 0 and alive. Holds.
+- *Inductive step*: Assume the actor is in state ~loop(n)~ and alive. On next message:
   - ~<sender, "read">~: replies ~<self, n>~ and stays in ~loop(n)~.
   - ~<osc, "tick">~: becomes ~loop(n+1)~.
-  - Other: executes ■ (halts).
+  - else: ■.
 
 The protocol is preserved in all cases. By induction, ~sw~ satisfies the stopwatch
 protocol.
 
-* Actor construction
+* Actor sub-type
+
+How to define some kind of actors?
 
 #+ID: e813ef21-5758-493d-8d65-0f7188db94d0
 #+begin_definition
-*Actor construction*
+*Actor sub-type*
 
-1. *What*: Define the protocol the actor must satisfy.
-2. *How*: Define the initial state and script.
-3. *Proof*: Prove or at least test that the actor satisfies the protocol.
+1. *What*: Define the protocol.
+2. *How*: Define how to build an actor.
+3. *Proof*: Prove that the protocol is satisfied.
 #+end_definition
+
+In practice, note that the /proof/ is usually approximated by tests.
 
 * Stopwatch interface
 
@@ -215,12 +289,12 @@ Stopwatch#mk : Oscillator → Stopwatch :≡
 
 Stopwatch#read : Stopwatch → ℕ :≡
   sw ↦
-    send(sw <self, "read">)
+    send(<sw, <self, "read">>)
     receive
       <sw, seconds> ↦ seconds
 #+end_example
 
-Client example:
+Client invocation (an actor itself) example:
 
 #+begin_example
 sw1 :≡ Stopwatch#mk(osc)
@@ -237,13 +311,13 @@ A smart compiler or runtime may execute independent parts in parallel:
 
 #+begin_example
 ∥
-  1. sw1 :≡ Stopwatch#mk(osc)
-     t1  :≡ Stopwatch#read(sw1)
-     print("t1: #{t1}")
+  - sw1 :≡ Stopwatch#mk(osc)
+    t1  :≡ Stopwatch#read(sw1)
+    print("t1: #{t1}")
 
-  2. sw2 :≡ Stopwatch#mk(osc)
-     t2  :≡ Stopwatch#read(sw2)
-     print("t2: #{t2}")
+  - sw2 :≡ Stopwatch#mk(osc)
+    t2  :≡ Stopwatch#read(sw2)
+    print("t2: #{t2}")
 #+end_example
 
 * Generic protocols
@@ -252,13 +326,7 @@ The =Stopwatch#read= function works with *any* actor that satisfies the stopwatc
 protocol. This highlights that interfaces in actor systems are defined by protocols
 rather than concrete types. This enables greater flexibility and composition.
 
-* Protocol negotiation
-
-Actors can learn and negotiate protocols dynamically. This property allows actor
-systems to evolve into complex, adaptive “living systems”
-[cite:@hintjens2016livingsystems;@kay2011scaling;@kay2016hnambassadors;@kay2003oop].
-
-* Introducing new actor types
+* New actor sub-type
 
 New actor types can be introduced using the following template:
 
@@ -269,7 +337,7 @@ New actor types can be introduced using the following template:
 :ID: <UUID>
 :END:
 
-<Informal description.>
+<Informal: what does it represent? Why is it needed?>
 
 ,** Protocol
 
@@ -325,11 +393,10 @@ These observations open clear paths for future refinements of the model.
 
 * Conclusion
 
-We have presented a clean and minimal definition of actors based on five core
-primitives: ~send~, ~receive~, ~become~, ~spawn~, and ~■~. By putting protocols first and
-supporting them with concrete implementations and proofs, this article offers both a
-practical methodology and a foundation for building understandable concurrent
-systems.
+We have presented a minimal definition of actors based on five core primitives: ~send~,
+~receive~, ~become~, ~spawn~, and ~■~. By putting protocols first and supporting them with
+concrete implementations and proofs, this article offers both a practical methodology
+and a foundation for building understandable concurrent systems.
 
 The stopwatch example demonstrates that even with very few primitives, one can
 construct useful, provably correct behaviors. This protocol-centric approach
@@ -337,9 +404,35 @@ naturally leads to flexible, composable, and evolvable designs.
 
 This work is a first approximation in the spirit of progressive refinement. Future
 versions may incorporate session types, supervision primitives, timeouts, and tighter
-integration with type theory. Ultimately, we hope this framework helps make
-concurrent and distributed programming more accessible, more rigorous, and more
-reliable.
+integration with type theory.
+
+* TODO Protocol negotiation
+
+Actors can learn and negotiate protocols dynamically. This property allows actor
+systems to evolve into complex, adaptive “living systems”
+[cite:@hintjens2016livingsystems;@kay2011scaling;@kay2016hnambassadors;@kay2003oop].
+
+A protocol may be viewed as a /challenge/ — i.e., a request for the server to
+"prove that" it can behave according to a certain specification. If the server cannot
+satisfy the protocol on its own, the client may teach it the required definitions,
+algorithms, or sub-protocols and help it construct the proof. In effect, the parties
+negotiate /how/ the server should prove the required property. The client may also
+decompose the original proposition into smaller sub-propositions and negotiate only
+those that the server is able to prove. The whole process of reaching such an
+agreement is what /protocol negotiation/ really means.
+
+Finding a way to make computers perform this kind of sophisticated negotiation
+automatically (for instance by combining session types with AI and interactive
+theorem provers such as Lean) would be a fascinating research direction.
 
 * Bibliography
 #+print_bibliography:
+
+* Local Variables                                                  :noexport:
+
+Local Variables:
+eval: (add-hook 'before-save-hook #'whitespace-cleanup nil t)
+eval: (add-hook 'before-save-hook #'usr-org-update-date nil t)
+indent-tabs-mode: nil
+fill-column: 85
+End:
