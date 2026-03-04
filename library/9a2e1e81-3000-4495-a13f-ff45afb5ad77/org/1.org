@@ -17,9 +17,8 @@ architecture remains clearly understood.
 * Result
 
 Since programming can be viewed as theory building [cite:@naur1985programming], /i.e./
-knowledge creation, a development loop that integrates Popper's
-[cite:@frohring2026conjectures] and Lakatos' [cite:@frohring2026researchprogram]
-views on knowledge growth has been defined.
+knowledge creation, a development loop that integrates [[https://phfrohring.com/13cd7955-a682-44e5-9a2d-9dd98677949d/html][Popper's]] and [[https://phfrohring.com/730b9fb3-95bf-4d91-a7b3-5d66d3dacf46/html][Lakatos']] views on
+knowledge growth has been defined.
 
 It is simple enough to be applied for day-to-day programming and suitable for
 AI-assisted programming. It is aimed at small teams of up to 10 people and additional
@@ -28,21 +27,33 @@ AIs. The development loop is:
 #+begin_definition
 ~ExoCode~
 
-1. *Start:* =dev= (developer or AI) creates a short-lived branch from trunk. Add an
-   /iteration/ entry to =iterations/dev.org= on the branch. Define the objective and the
-   novel facts (tests) it must predict.
+1. *Start:* =dev= (developer or AI) MUST creates a short-lived branch from trunk and
+   SHOULD add an iteration to =iterations/dev.org=.
 
-2. *Work:* build refined objectives and candidates using a temporary
-   =discussion.org= file to accumulate prompts.
-   - Write automated tests → failure → implementation → success.
-   - If the surviving candidate requires changing =architecture.org=, *halt*. The current
-     iteration is suspended. A new, dedicated architectural iteration must be planned
-     and merged first.
+2. *Work:* build refined objectives and candidates using a temporary =discussion.org=
+   file to accumulate prompts.
 
-3. *Integrate:* distill key refutations and dead-ends from =discussion.org= into the
-   iteration's /Retrospective/ section to preserve the epistemological history.  Open
-   PR (CI-gated). Fast review (human + AI). Rebase to trunk then delete the branch.
+3. *Integrate:* distill key refutations from =discussion.org= into the iteration's
+   /Retrospective/ section. Open PR (CI-gated). Fast review (human + AI). Rebase to
+   trunk then delete the branch.
 #+end_definition
+
+* RFC 2119
+
+#+MACRO: must    *MUST*
+#+MACRO: mustn   *MUST NOT*
+#+MACRO: req     *REQUIRED*
+#+MACRO: shall   *SHALL*
+#+MACRO: shalln  *SHALL NOT*
+#+MACRO: should  *SHOULD*
+#+MACRO: shouldn *SHOULD NOT*
+#+MACRO: rec     *RECOMMENDED*
+#+MACRO: may     *MAY*
+#+MACRO: opt     *OPTIONAL*
+
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD
+NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as
+described in [[https://datatracker.ietf.org/doc/html/rfc2119][RFC 2119]].
 
 * Iteration
 
@@ -52,8 +63,9 @@ Provided that the objectives of each iteration do not overlap, they may occur
 concurrently. An iteration /scope/ is defined by the interfaces it requires and the
 interfaces it provides.
 
-All sections are optional except *Objective* and *Result*. Judgment should be applied
-to keep the process as light as possible. The template is:
+All sections are optional except *Objective* and *Result*. Judgment should be applied to
+keep the process as light as possible. A plan is the analog of a proof, albeit much
+less rigorous [cite:@Lamport2011_WriteProof]. The template is:
 
 #+begin_src org
 ,* TODO 🞎
@@ -64,21 +76,32 @@ to keep the process as light as possible. The template is:
 
 ,** Context
 
-- A list of materials or references to materials
-  that clarify the subsequent content.
+- MAY define a list of materials or references to
+  materials that clarify the following content.
 
 ,** Objective
 
-- Defines WHAT the code base should do.
+- MUST define WHAT we want.
+
+,** Test
+
+- SHOULD define new assertions to be verified,
+  provided the objective is claimed to be reached.
+
+,** Plan
+
+- MAY define steps — i.e. a tree of assertions — at
+  the end of which the objective is reached.
 
 ,** Risks
 
-- List of risks, if any.
+- MAY define a list of risks — i.e. assertions that
+  MUST NOT be verified.
 
 ,** Log
 
-- Notable events or remarks
-  during iteration execution.
+- MAY define a list of notable propositions discovered
+  during this iteration execution.
 
 ,** Checklist
 
@@ -87,7 +110,7 @@ to keep the process as light as possible. The template is:
 
 ,** Result
 
-- Quick summary of the result and links
+- MUST provide a quick summary of the result and links
   to artifacts, if any.
 
 ,** Review
@@ -126,32 +149,28 @@ is the prompt template:
 ,* Prompt
 ,** Context
 
-- A list of materials or references to materials
-  that clarify the subsequent content.
+- MAY define a list of materials or references to
+  materials that clarify the following content.
 
 ,** Objective
 
-- Defines WHAT a solution should satisfy
-  (the anomaly or missing feature).
+- MUST define /what/ we want.
 
-,** Tests
+,** Test
 
-- Any solution MUST satisfy these tests.
-  These act as the "novel predictions" our
-  tentative theory must successfully handle to
-  prove it is progressive. Tests must fail
-  before implementation begins.
+- MUST define new assertions to be verified,
+  provided the objective is claimed to be reached.
 
 ,** Plan
 
-- Sketch the abstract steps that explain HOW
-  the solution will be reached.
+- MAY define steps — /i.e./ a tree of assertions — at
+  the end of which the objective is reached.
 
 ,** Candidate
 
-- The candidate solution so far.
-  In practice, this section is replaced by a
-  $ git diff or equivalent.
+- The candidate solution so far. In practice, this
+  section is replaced by an implicit $ git diff or
+  equivalent.
 
 ,** Discussion
 
@@ -173,10 +192,9 @@ Before executing the candidate, evaluate its structural impact:
 * =architecture.org=
 
 =architecture.org= specifies WHAT the program does and HOW it does it using various
-specialized languages (/e.g./ Type Theory [cite:@frohring2026type], Actor Model
-[cite:@frohring2026actor]). Sections act as documentation for the associated
-code. Bidirectional links between specification and implementation ensure
-non-ambiguous correlations.
+specialized languages (/e.g./ [[https://phfrohring.com/32b32aa5-40cf-48c7-ac61-95e94eaa28a9/html][Type Theory]], [[https://phfrohring.com/d1b5724d-434c-40a0-86e9-dfc81012ae43/html][Actor Model]]). Sections act as documentation
+for the associated code. Bidirectional links between specification and implementation
+ensure non-ambiguous correlations.
 
 * Platform
 
@@ -202,8 +220,8 @@ commit history looks like:
 DONE ai/updated-ui
 DONE dev/image-processing-steps
 …
-#+end_example 
-#+end_instance 
+#+end_example
+#+end_instance
 
 * Example
 
