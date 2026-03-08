@@ -93,7 +93,7 @@ if [[ "$1" == "install" ]]; then
 # Given environment :≡ port : Port then after `$0 start', then a processus answers
 # HTTP requests at port.
 elif [[ "$1" == "start" ]]; then
-  guix shell -C -F -N -m prod-manifest.scm -- bash -c "make start PORT=$PORT"
+  guix shell -C -F -N -m guix/prod-manifest.scm -- bash -c "make start PORT=$PORT"
 
 else
   echo "ERROR | Unexpected message. message = $1"

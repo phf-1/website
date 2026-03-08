@@ -6,24 +6,23 @@
 :ID:       af74b613-ff0c-4958-b709-10011fe89776
 :END:
 
-** state
-*** TODO iteration(🞎)
+** TODO iteration(🞎)
 SCHEDULED: <2026-02-21 Sat>
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
 
-**** Objective
+*** Objective
 
 - Try to manage Lovable code. What happens if a bug is discovered? Should it be fixed
   from Lovable or should it be fixed by manually editing the code? How to ensure non
   regressions?
 
-**** Result
+*** Result
 
 - Article + repo
 
-*** TODO VM
+** TODO VM
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -31,16 +30,16 @@ SCHEDULED: <2026-02-21 Sat>
 CLOCK: [2026-01-24 Sat 11:30]--[2026-01-24 Sat 11:36] =>  0:06
 :END:
 
-**** Objective
+*** Objective
 =make vm= builds a qcow2 image of a Guix system optimized to execute the website. This
 qcow2 image is intented to be deployed to some VPS.
 
-**** Log
+*** Log
 #+begin_src bash
 sudo apt update && sudo apt install qemu-utils
 #+end_src
 
-*** TODO Ma
+** TODO Ma
 
 actors should ask surrounding context — /i.e./ a Ma instance — for functionalities. For
 instance, =ma#parse-binary(str)=. If parser ∈ ma, then ma#parse-binary(str) =
@@ -56,7 +55,7 @@ use #binary-type(str) then should the actor:
 3. Ask its surrounding environment for #binary-type(str) ?
    - ma#binary-type(str) (ultra late biding)
 
-**** Response
+*** Response
 #+begin_example
 This is a classic architectural trade-off involving **coupling, cohesion, and lifecycle management**. Choosing between internalizing a capability or externalizing it to the environment depends on how "essential" that functionality is to the actor's identity.
 
@@ -113,26 +112,39 @@ To decide which path to take, ask yourself these three questions:
 Would you like me to help you draft a specific interface or "contract" for how the Actor should communicate its requirements to the `Ma` instance?
 #+end_example
 
-*** DONE iteration(38)
+** DONE "Progressive Refinements" article improved.
+:LOGBOOK:
+CLOCK: [2026-03-08 Sun 10:00]--[2026-03-08 Sun 11:24] =>  1:24
+:END:
 
-**** Objective
+*** Objective
+
+Flesh it out.
+
+*** Result
+
+Usable, the template needs to be built. Practice will guide its construction.
+
+** DONE iteration(38)
+
+*** Objective
 
 Add actionnable takes on knowledge growth.
 
-**** Result
+*** Result
 
 - Added Lakatos views after comments from Gregory Chaitin.
 - Added a trivial example to conjecture and refutations.
 - ExoCode updated.
 
-*** DONE iteration(37)
+** DONE iteration(37)
 :PROPERTIES:
 :ID: c400bdca-652a-4185-8850-f73a665368f2
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :EFFORT: 0:00
 :END:
 
-**** Objective
+*** Objective
 
 - The index HTML is a table of rows.
 - The table headers reads: Date, Title and Status.
@@ -143,11 +155,11 @@ Add actionnable takes on knowledge growth.
 - If a status is missing, then an error is raised.
 - The data has the format: YYYY-MM-DD.
 
-**** Result
+*** Result
 
 The index is now a table.
 
-*** DONE iteration(36)
+** DONE iteration(36)
 :PROPERTIES:
 :ID: 22d28a78-afcc-4eca-a4e7-5c31c79eff55
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
@@ -157,11 +169,11 @@ The index is now a table.
 CLOCK: [2026-02-20 Fri 11:30]--[2026-02-20 Fri 12:03] =>  0:33
 :END:
 
-**** Objective
+*** Objective
 
 Re-use Makefile structure from debeo and fix make live
 
-*** DONE iteration(35)
+** DONE iteration(35)
 SCHEDULED: <2026-02-17 Tue>
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
@@ -170,11 +182,11 @@ SCHEDULED: <2026-02-17 Tue>
 CLOCK: [2026-02-17 Tue 13:50]--[2026-02-17 Tue 14:00] =>  0:10
 :END:
 
-**** Objective
+*** Objective
 
 Clarify the send operation.
 
-*** DONE iteration(34)
+** DONE iteration(34)
 SCHEDULED: <2026-02-17 Tue>
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
@@ -183,17 +195,17 @@ SCHEDULED: <2026-02-17 Tue>
 CLOCK: [2026-02-17 Tue 12:28]--[2026-02-17 Tue 13:00] =>  0:32
 :END:
 
-**** Objective
+*** Objective
 
 Pseudo code should seamlessly integrate into blocks or normal flow: whitespace
 traitement and font is enoughto make the distinction clear, not need for an heavy
 markup, specially nested ones.
 
-**** Result
+*** Result
 
 - example blocks are "lighter".
 
-*** DONE iteration(33)
+** DONE iteration(33)
 SCHEDULED: <2026-02-17 Tue>
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
@@ -202,17 +214,17 @@ SCHEDULED: <2026-02-17 Tue>
 CLOCK: [2026-02-17 Tue 10:56]--[2026-02-17 Tue 12:28] =>  1:32
 :END:
 
-**** Objective
+*** Objective
 
 Fix the bug.
 
-**** Result
+*** Result
 
 - Bug fixed by ~guix pull on the server~.
 - It may be useful to "pin" the Guix used from with the distributed archive.
 - The "Progressive Refinements" publication has been refined.
 
-*** DONE iteration(32)
+** DONE iteration(32)
 SCHEDULED: <2026-02-11 Wed>
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
@@ -221,11 +233,11 @@ SCHEDULED: <2026-02-11 Wed>
 CLOCK: [2026-02-11 Wed 16:42]--[2026-02-12 Thu 17:23] => 24:41
 :END:
 
-**** Objective
+*** Objective
 
 Continue iteration(31)
 
-*** DONE iteration(31)
+** DONE iteration(31)
 SCHEDULED: <2026-02-10 Tue>
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
@@ -236,15 +248,15 @@ CLOCK: [2026-02-10 Tue 14:51]--[2026-02-10 Tue 16:30] =>  1:39
 CLOCK: [2026-02-10 Tue 09:00]--[2026-02-10 Tue 13:30] =>  4:30
 :END:
 
-**** Objective
+*** Objective
 
 Try to refine the Actor understanding actor.
 
-**** Result
+*** Result
 
 - Article + repo
 
-*** DONE iteration(30)
+** DONE iteration(30)
 SCHEDULED: <2026-02-07 Sat>
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
@@ -253,13 +265,13 @@ SCHEDULED: <2026-02-07 Sat>
 CLOCK: [2026-02-07 Sat 13:30]--[2026-02-07 Sat 14:00] =>  0:30
 :END:
 
-**** Objective
+*** Objective
 
 - bibliography.bib has been augmented.
 - blockquote & .definition CSS have been corrected.
 - bug is master.js fixed.
 
-*** DONE iteration(29)
+** DONE iteration(29)
 SCHEDULED: <2026-02-07 Sat>
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
@@ -268,11 +280,11 @@ SCHEDULED: <2026-02-07 Sat>
 CLOCK: [2026-02-07 Sat 09:30]--[2026-02-07 Sat 10:30] =>  1:00
 :END:
 
-**** Objective
+*** Objective
 
 - Each publication has its own status, license, last edit date, title.
 
-*** DONE iteration(28)
+** DONE iteration(28)
 SCHEDULED: <2026-02-06 Fri>
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
@@ -281,12 +293,12 @@ SCHEDULED: <2026-02-06 Fri>
 CLOCK: [2026-02-06 Fri 20:00]--[2026-02-06 Fri 20:25] =>  0:25
 :END:
 
-**** Objective
+*** Objective
 
 - Fix abstract margins.
 - Init new article
 
-*** DONE iteration(27)
+** DONE iteration(27)
 SCHEDULED: <2026-02-06 Fri>
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
@@ -295,11 +307,11 @@ SCHEDULED: <2026-02-06 Fri>
 CLOCK: [2026-02-06 Fri 15:10]--[2026-02-06 Fri 15:40] =>  0:30
 :END:
 
-**** Objective
+*** Objective
 
 Display the last edit date in HTML and augment Publication with it.
 
-*** DONE iteration(26)
+** DONE iteration(26)
 SCHEDULED: <2026-02-06 Fri>
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
@@ -308,11 +320,11 @@ SCHEDULED: <2026-02-06 Fri>
 CLOCK: [2026-02-06 Fri 13:06]--[2026-02-06 Fri 15:10] =>  2:04
 :END:
 
-**** Objective
+*** Objective
 
 Fix the layout on mobile.
 
-**** Result
+*** Result
 
 - master.css organized in "layers".
 - media.css deleted in favor of a "Responsive" layer.
@@ -320,7 +332,7 @@ Fix the layout on mobile.
 - Landing page layout fixed (image included in the first paragraph with text).
 - A publication may not have a title like the one for the landing page → it is fine, do not raise an error.
 
-*** DONE iteration(25)
+** DONE iteration(25)
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -328,11 +340,11 @@ Fix the layout on mobile.
 CLOCK: [2026-02-06 Fri 10:00]--[2026-02-06 Fri 10:20] =>  0:20
 :END:
 
-**** Objective
+*** Objective
 
 Spelling of publications fixed
 
-*** DONE iteration(24)
+** DONE iteration(24)
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -340,16 +352,16 @@ Spelling of publications fixed
 CLOCK: [2026-02-06 Fri 00:30]--[2026-02-06 Fri 02:00] =>  1:30
 :END:
 
-**** Objective
+*** Objective
 
 - Improved legibility
 
-**** Result
+*** Result
 
 - Improved legibility.
 - Abstracts fixed.
 
-*** DONE iteration(23)
+** DONE iteration(23)
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -357,13 +369,13 @@ CLOCK: [2026-02-06 Fri 00:30]--[2026-02-06 Fri 02:00] =>  1:30
 CLOCK: [2026-02-05 Thu 23:30]--[2026-02-06 Fri 00:30] =>  1:00
 :END:
 
-**** Objective
+*** Objective
 
 - Title are fixed.
 - 404 are fixed.
 - Fonts fixed.
 
-*** DONE iteration(22)
+** DONE iteration(22)
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -371,17 +383,17 @@ CLOCK: [2026-02-05 Thu 23:30]--[2026-02-06 Fri 00:30] =>  1:00
 CLOCK: [2026-02-05 Thu 18:26]--[2026-02-05 Thu 20:05] =>  1:39
 :END:
 
-**** Objective
+*** Objective
 
 - Self host fonts.
 - Update publications
 
-**** Result
+*** Result
 
 - Self hosted fonts.
 - Publications updated.
 
-*** DONE iteration(21)
+** DONE iteration(21)
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -389,18 +401,18 @@ CLOCK: [2026-02-05 Thu 18:26]--[2026-02-05 Thu 20:05] =>  1:39
 CLOCK: [2026-02-05 Thu 16:50]--[2026-02-05 Thu 18:26] =>  1:36
 :END:
 
-**** Objective
+*** Objective
 
 Write an article to end this cycle, review, publish.
 
-**** Result
+*** Result
 
 - https://phfrohring.com/a94d4ca0-9656-4c8d-8bc2-f21a2e9c5d0e/html
   - Augmented bibliography
 - $ make live
   - Fixed dependencies (inotify-tools)
 
-*** DONE iteration(20)
+** DONE iteration(20)
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -409,15 +421,15 @@ CLOCK: [2026-02-05 Thu 09:45]--[2026-02-05 Thu 16:00] =>  6:15
 CLOCK: [2026-02-04 Wed 22:09]--[2026-02-05 Thu 01:30] =>  3:21
 :END:
 
-**** Objective
+*** Objective
 
 Simplify the JS by a better actor implementation.
 
-**** Result
+*** Result
 
 Refactored js.
 
-**** Log
+*** Log
 
 A type A is a representation of some intuition. For instance, Point (type) represents
 all points (intuition). An single point is represented by a pair of coordinates, x
@@ -481,7 +493,7 @@ represented as actors. For instance, the word =Point= is viewed as the address o
 actor that represents the Point type. =Point#mk(x y)= is viewed as sending the message
 =mk(x y)= to =Point=. =point#x= is viewed as sending the message =x= to =point=.
 
-*** DONE iteration(19)
+** DONE iteration(19)
 SCHEDULED: <2026-02-04 Wed>
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
@@ -491,11 +503,11 @@ CLOCK: [2026-02-04 Wed 13:30]--[2026-02-04 Wed 18:54] =>  5:24
 CLOCK: [2026-02-04 Wed 10:25]--[2026-02-04 Wed 10:45] =>  0:20
 :END:
 
-**** Objective
+*** Objective
 
 Documentation of the code is fine.
 
-*** DONE iteration(18)
+** DONE iteration(18)
 SCHEDULED: <2026-02-04 Wed>
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
@@ -504,18 +516,18 @@ SCHEDULED: <2026-02-04 Wed>
 CLOCK: [2026-02-04 Wed 07:18]--[2026-02-04 Wed 10:25] =>  3:07
 :END:
 
-**** Objective
+*** Objective
 
 Fix the remaining published content.
 
-**** Result
+*** Result
 
 - Publications creation has been parallelized.
 - Citation are taken into account (bibliography & pnas style).
 - Citation style is more legible.
 - Remaining published content have been migrated.
 
-*** DONE iteration(17)
+** DONE iteration(17)
 SCHEDULED: <2026-02-03 Tue>
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
@@ -527,7 +539,7 @@ CLOCK: [2026-02-03 Tue 16:04]--[2026-02-03 Tue 16:13] =>  0:09
 CLOCK: [2026-02-03 Tue 15:45]--[2026-02-03 Tue 15:50] =>  0:05
 :END:
 
-**** Objective
+*** Objective
 
 The following command:
 
@@ -537,7 +549,7 @@ make deploy
 
 After deploy, the website is live on some VPS.
 
-**** Specification
+*** Specification
 
 make deploy
 1. vps represents the VPS.
@@ -548,7 +560,7 @@ make deploy
    - execute command as user on the vps.
    - stdout should be "hello from user#name()"
 
-*** DONE iteration(16)
+** DONE iteration(16)
 SCHEDULED: <2026-02-03 Tue>
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
@@ -560,12 +572,12 @@ CLOCK: [2026-01-30 Fri 22:30]--[2026-01-30 Fri 22:50] =>  0:20
 CLOCK: [2026-01-30 Fri 20:52]--[2026-01-30 Fri 22:09] =>  1:17
 :END:
 
-**** Objective
+*** Objective
 
 =make install= installs a systemd service that starts the website and restarts it if it
 crashes.
 
-**** Specification
+*** Specification
 
 The objective is to expose a webserver behind a reverse proxy to the internet. An
 HTTP request goes to from the internet to the reverse proxy, is being forwarded to
@@ -574,19 +586,19 @@ processed replied to the client through This process may be understood as an Act
 /i.e./ it can send/receive messages, has processing capabilities, memory, and the
 capacity to start other processes.
 
-**** Execution
+*** Execution
 
 Assuming manifest.scm and guix, we can ship the dependencies, assuming very little of
 the box executing the archive.
 
-**** Result
+*** Result
 
 #+begin_src bash :eval no
 make prod PORT=3001
 make install
 #+end_src
 
-*** DONE iteration(15)
+** DONE iteration(15)
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -596,11 +608,11 @@ CLOCK: [2026-01-30 Fri 17:30]--[2026-01-30 Fri 19:04] =>  1:34
 CLOCK: [2026-01-30 Fri 10:30]--[2026-01-30 Fri 12:00] =>  1:30
 :END:
 
-**** Objective
+*** Objective
 
 Implement =make dist=.
 
-**** Specification
+*** Specification
 
 Implement a Bash script =build_dist= such that:
 
@@ -668,7 +680,7 @@ chmod +x prog
 
 Use the self-extracting archive examples as guideline to =build_dist=.
 
-*** DONE iteration(14)
+** DONE iteration(14)
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -677,12 +689,12 @@ CLOCK: [2026-01-28 Wed 10:08]--[2026-01-28 Wed 12:05] =>  1:57
 CLOCK: [2026-01-28 Wed 08:42]--[2026-01-28 Wed 10:08] =>  1:26
 :END:
 
-**** Objective
+*** Objective
 
 - Find a suitable way to document the code.
 - Simplify.
 
-*** DONE iteration(13)
+** DONE iteration(13)
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -691,7 +703,7 @@ CLOCK: [2026-01-27 Tue 21:20]--[2026-01-28 Wed 00:36] =>  3:16
 CLOCK: [2026-01-27 Tue 19:45]--[2026-01-27 Tue 19:51] =>  0:06
 :END:
 
-**** Objective
+*** Objective
 
 - We observe that Publication : Parser → Type.
 - More generally, we interpret types as actors, so we must generalyze :
@@ -699,7 +711,7 @@ CLOCK: [2026-01-27 Tue 19:45]--[2026-01-27 Tue 19:51] =>  0:06
   - Library : Publication(parser) → Type
   - …
 
-*** DONE iteration(13)
+** DONE iteration(13)
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -708,12 +720,12 @@ CLOCK: [2026-01-27 Tue 18:30]--[2026-01-27 Tue 19:45] =>  1:15
 CLOCK: [2026-01-27 Tue 12:27]--[2026-01-27 Tue 13:21] =>  0:54
 :END:
 
-**** Objective
+*** Objective
 
 - Generate the index.
 - Publication : Parser → Type
 
-*** DONE iteration(12)
+** DONE iteration(12)
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -721,12 +733,12 @@ CLOCK: [2026-01-27 Tue 12:27]--[2026-01-27 Tue 13:21] =>  0:54
 CLOCK: [2026-01-27 Tue 11:07]--[2026-01-27 Tue 12:23] =>  1:16
 :END:
 
-**** Objective
+*** Objective
 
 - redirect / to /00000000-0000-0000-0000-000000000000/html in scheme/server.scm
 - redirect /articles to /00000000-0000-0000-0000-000000000001/html in scheme/server.scm
 
-*** DONE iteration(11)
+** DONE iteration(11)
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -735,12 +747,12 @@ CLOCK: [2026-01-27 Tue 10:40]--[2026-01-27 Tue 11:05] =>  0:25
 CLOCK: [2026-01-27 Tue 10:16]--[2026-01-27 Tue 10:40] =>  0:24
 :END:
 
-**** Objective
+*** Objective
 
 - Reconcile specification notation and implementation notations. For instance =Parser#mk= ↦ =Parser#mk=.
 - test/server.scm is up to date.
 
-*** DONE iteration(10)
+** DONE iteration(10)
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -748,10 +760,10 @@ CLOCK: [2026-01-27 Tue 10:16]--[2026-01-27 Tue 10:40] =>  0:24
 CLOCK: [2026-01-27 Tue 08:45]--[2026-01-27 Tue 10:15] =>  1:30
 :END:
 
-**** Objective
+*** Objective
 Reconcile the specification and the implementation.
 
-*** DONE iteration(9)
+** DONE iteration(9)
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -760,11 +772,11 @@ CLOCK: [2026-01-26 Mon 20:56]--[2026-01-26 Mon 22:26] =>  1:30
 CLOCK: [2026-01-26 Mon 18:01]--[2026-01-26 Mon 20:38] =>  2:37
 :END:
 
-**** Objective
+*** Objective
 
 Publications should allow to re-use global CSS/JS/HTML.
 
-*** DONE iteration(8)
+** DONE iteration(8)
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -773,17 +785,17 @@ CLOCK: [2026-01-26 Mon 16:40]--[2026-01-26 Mon 17:57] =>  1:17
 CLOCK: [2026-01-26 Mon 16:25]--[2026-01-26 Mon 16:39] =>  0:14
 :END:
 
-**** Objective
+*** Objective
 
 A publication should includes CSS/JS in addition to HTML.
 
-**** Specification
+*** Specification
 
 Given a publication directory, there is a article.org file. Then, an article.html
 file is build from article.org file using Emacs. Then, Publication#mk adds the css
 and the js to the html using <script> and <style>.
 
-*** DONE iteration(7)
+** DONE iteration(7)
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -791,10 +803,10 @@ and the js to the html using <script> and <style>.
 CLOCK: [2026-01-26 Mon 10:37]--[2026-01-26 Mon 12:37] =>  2:03
 :END:
 
-**** Objective
+*** Objective
 Take into consideration data/* in publications.
 
-*** DONE iteration(6)
+** DONE iteration(6)
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -802,10 +814,10 @@ Take into consideration data/* in publications.
 CLOCK: [2026-01-24 Sat 17:07]--[2026-01-24 Sat 20:37]
 :END:
 
-**** Objective
+*** Objective
 Define a type of actor that serves the requested content.
 
-*** DONE iteration(5)
+** DONE iteration(5)
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -813,12 +825,12 @@ Define a type of actor that serves the requested content.
 CLOCK: [2026-01-24 Sat 11:41]--[2026-01-24 Sat 14:00] =>  2:19
 :END:
 
-**** Objective
+*** Objective
 - Implement the specification.
 - For each created/updated file, write the complete file in a code block so that I can copy/paste it.
 - Highlight changes using comments starting with ";; CLAUDE:".
 
-*** DONE iteration(4)
+** DONE iteration(4)
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -826,13 +838,13 @@ CLOCK: [2026-01-24 Sat 11:41]--[2026-01-24 Sat 14:00] =>  2:19
 CLOCK: [2026-01-24 Sat 10:30]--[2026-01-24 Sat 11:26] =>  0:56
 :END:
 
-**** Objective
+*** Objective
 - =make dist= builds an archive =_dist/website.tar.zst=.
 - Given =./website.tar.zst=, then after decompression, we have =./website/*=.
 - =cd website/; make; make install= installs the website and enable/start a systemd
   service that keep the website working.
 
-*** DONE iteration(3)
+** DONE iteration(3)
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -840,13 +852,13 @@ CLOCK: [2026-01-24 Sat 10:30]--[2026-01-24 Sat 11:26] =>  0:56
 CLOCK: [2026-01-23 Fri 22:37]--[2026-01-23 Fri 23:00] =>  0:23
 :END:
 
-**** Objective
+*** Objective
 - Add automated tests.
 
-**** Specification
+*** Specification
 =make test= excecutes automated tests that verify that the [[ref:d499ed57-889d-45bb-b6f0-9e0497d188c1][HTTP protocol]] is satisfied.
 
-*** DONE iteration(2)
+** DONE iteration(2)
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -854,10 +866,10 @@ CLOCK: [2026-01-23 Fri 22:37]--[2026-01-23 Fri 23:00] =>  0:23
 CLOCK: [2026-01-23 Fri 21:23]--[2026-01-23 Fri 22:37] =>  1:14
 :END:
 
-**** Objective
+*** Objective
 Model the program using actors.
 
-*** DONE iteration(1)
+** DONE iteration(1)
 :PROPERTIES:
 :TYPE: d0305c80-3399-4e07-b4ba-ee8c22eacb19 Iteration
 :END:
@@ -865,15 +877,15 @@ Model the program using actors.
 CLOCK: [2026-01-23 Fri 20:43]--[2026-01-23 Fri 21:23] =>  0:40
 :END:
 
-**** Objective
+*** Objective
 After website#start(port), a website is listening on localhost:port.
 
-**** Specification
+*** Specification
 website is a linux executable. Its syntax on the Bash CLI is, for instance: =$
 ./website :start 3000=. The website should just return "hello world!". =./website=
 should be implemented in [[https://www.gnu.org/software/guile/manual/guile.html][Guile Scheme]].
 
-** message
+* message
 
 * Local Variables                                                  :noexport:
 Local Variables:

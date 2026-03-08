@@ -1,6 +1,6 @@
 #+ID: d1b5724d-434c-40a0-86e9-dfc81012ae43
 #+TITLE: A simple actor definition
-#+DATE: 2026-03-05
+#+DATE: 2026-03-08
 #+CITE_EXPORT: csl ieee.csl
 #+LICENSE: https://creativecommons.org/licenses/by-nc-sa/4.0 CC-BY-NC-SA-4.0
 #+STATUS: Draft
@@ -103,6 +103,16 @@ incoming message using the following core operations:
 *send(message)* instructs the system — /i.e./ the runtime — to deliver the /payload/ to the
 actor at the given address. The operation is non-blocking: the sender continues
 execution immediately. There are no guarantees of delivery or ordering.
+#+end_definition
+
+In order to simplify notations, we introduce ~α#msg(param …)~ to mean "send the message
+<:msg, param …> to the actor α". In other words:
+
+#+ID: 70fad7e3-ddba-4cf1-9950-93966e2edccd
+#+begin_definition
+#+begin_example
+α#msg(param …) :≡ send(<α, <:msg, param …>>)
+#+end_example
 #+end_definition
 
 * become
@@ -215,29 +225,29 @@ actor subtypes definitions.
 A stopwatch is an actor that satisfies this protocol:
 
 - Starts counting =seconds : ℕ= from 0 upon creation.
-- Replies to =<sender, "read">= with =<self, seconds>=.
+- Replies to =<:read, sender>= with =<self(), seconds>=.
 - Halts (■) if it receives any other message.
 
 ** Assumption
 
 We assume the existence of an actor =osc= that satisfies the following protocol:
-- if =osc= receives =<:subscribe, addr>=, then =addr= receives =<osc, "tick">= every second.
+- if =osc= receives =<:subscribe, addr>=, then =addr= receives =<:tick, osc>= every second.
 - if =osc= receives =<:unsubscribe, addr>=, then =osc= stops sending ticks to =addr=.
 
 ** Script
 
 #+begin_example
 script(osc) :≡
-  send <osc, <:subscribe self()>>
+  osc#subscribe(self())
   loop :≡
     seconds : Nat ↦
       receive
-        <sender, "read"> ↦
+        <:read, sender> ↦
           payload :≡ <self(), seconds>
           send <sender, payload>
           become loop seconds
 
-        <osc, "tick"> ↦
+        <:tick, osc> ↦
           become(loop (seconds + 1))
 
         _ ↦ ■
@@ -257,8 +267,8 @@ by induction on the number of messages processed by ~sw~.
 
 - *Base case* (0 messages): Actor starts in state ~loop(0)~ after subscribing. Count = 0 and alive. Holds.
 - *Inductive step*: Assume the actor is in state ~loop(n)~ and alive. On next message:
-  - ~<sender, "read">~: replies ~<self, n>~ and stays in ~loop(n)~.
-  - ~<osc, "tick">~: becomes ~loop(n+1)~.
+  - ~<:read, sender>~: replies ~<self, n>~ and stays in ~loop(n)~.
+  - ~<:tick, osc>~: becomes ~loop(n+1)~.
   - else: ■.
 
 The protocol is preserved in all cases. By induction, ~sw~ satisfies the stopwatch
@@ -284,12 +294,12 @@ In practice, note that the /proof/ is usually approximated by tests.
 The following helpers provide a convenient way to create and use stopwatches:
 
 #+begin_example
-Stopwatch#mk : Oscillator → Stopwatch :≡
+Stopwatch$mk : Oscillator → Stopwatch :≡
   osc ↦ spawn(script(osc) 0)
 
-Stopwatch#read : Stopwatch → ℕ :≡
+Stopwatch$read : Stopwatch → ℕ :≡
   sw ↦
-    send(<sw, <self, "read">>)
+    sw#read(self())
     receive
       <sw, seconds> ↦ seconds
 #+end_example
@@ -297,10 +307,10 @@ Stopwatch#read : Stopwatch → ℕ :≡
 Client invocation (an actor itself) example:
 
 #+begin_example
-sw1 :≡ Stopwatch#mk(osc)
-sw2 :≡ Stopwatch#mk(osc)
-t1  :≡ Stopwatch#read(sw1)
-t2  :≡ Stopwatch#read(sw2)
+sw1 :≡ Stopwatch$mk(osc)
+sw2 :≡ Stopwatch$mk(osc)
+t1  :≡ Stopwatch$read(sw1)
+t2  :≡ Stopwatch$read(sw2)
 print("t1: #{t1} seconds")
 print("t2: #{t2} seconds")
 #+end_example
@@ -311,18 +321,18 @@ A smart compiler or runtime may execute independent parts in parallel:
 
 #+begin_example
 ∥
-  - sw1 :≡ Stopwatch#mk(osc)
-    t1  :≡ Stopwatch#read(sw1)
+  - sw1 :≡ Stopwatch$mk(osc)
+    t1  :≡ Stopwatch$read(sw1)
     print("t1: #{t1}")
 
-  - sw2 :≡ Stopwatch#mk(osc)
-    t2  :≡ Stopwatch#read(sw2)
+  - sw2 :≡ Stopwatch$mk(osc)
+    t2  :≡ Stopwatch$read(sw2)
     print("t2: #{t2}")
 #+end_example
 
 * Generic protocols
 
-The =Stopwatch#read= function works with *any* actor that satisfies the stopwatch
+The =Stopwatch$read= function works with *any* actor that satisfies the stopwatch
 protocol. This highlights that interfaces in actor systems are defined by protocols
 rather than concrete types. This enables greater flexibility and composition.
 
@@ -341,7 +351,7 @@ New actor types can be introduced using the following template:
 
 ,** Protocol
 
-<Clear description of accepted messages and responses.>
+<Description of accepted messages and responses.>
 
 ,** mk : 🞎 ⇢ Name
 
@@ -432,6 +442,7 @@ theorem provers such as Lean) would be a fascinating research direction.
 
 Local Variables:
 eval: (add-hook 'before-save-hook #'whitespace-cleanup nil t)
+eval: (add-hook 'before-save-hook #'usr-org-update-date nil t)
 eval: (add-hook 'before-save-hook #'usr-org-update-date nil t)
 indent-tabs-mode: nil
 fill-column: 85

@@ -307,8 +307,10 @@ the system remains explicit, understandable, and evolvable.
 #+print_bibliography:
 
 * Local Variables :noexport:
+
 Local Variables:
 eval: (add-hook 'before-save-hook #'whitespace-cleanup nil t)
+eval: (add-hook 'before-save-hook #'usr-org-update-date nil t)
 eval: (add-hook 'after-save-hook #'user--org-export-current-buffer-to-utf8-buffer nil t)
 org-confirm-babel-evaluate: nil
 fill-column: 85

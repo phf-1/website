@@ -1,6 +1,6 @@
-#+ID: 48e8264a-3609-4311-a61a-dcdcc7193419
-#+TITLE: A simple agent definition
-#+DATE: 2026-02-18
+#+ID: 716f24dc-66ac-417c-8664-e987b6aaa8c7
+#+TITLE: Category theory
+#+DATE: 2026-03-08
 #+CITE_EXPORT: csl ieee.csl
 #+LICENSE: https://creativecommons.org/licenses/by-nc-sa/4.0 CC-BY-NC-SA-4.0
 #+STATUS: Draft
@@ -9,29 +9,27 @@
 TODO
 #+end_abstract
 
-* TODO Introduction
+* Introduction
+
+
 * Objective
 
-Define what an "agent" is.
 
-* TODO Context
 
-The following resources were used:
-- 🞎
+* Context
 
-* TODO Result
-* TODO Discussion
-* TODO Conclusion
+- Type of article: [[href:/4bdfa923-20d0-47bc-8d1e-d39d66d7c5e0/html][Progressive Refinements]]
+- Resoure: Seven sketches [cite:@fong-spivak-2019-seven-sketches]
+
 * Bibliography
 
 #+print_bibliography:
 
-* Local Variables :noexport:
+* Local Variables                                                  :noexport:
 
 Local Variables:
 eval: (add-hook 'before-save-hook #'whitespace-cleanup nil t)
 eval: (add-hook 'before-save-hook #'usr-org-update-date nil t)
-eval: (add-hook 'after-save-hook #'user--org-export-current-buffer-to-utf8-buffer nil t)
 org-confirm-babel-evaluate: nil
 fill-column: 85
 End:

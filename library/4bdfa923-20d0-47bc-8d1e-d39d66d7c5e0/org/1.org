@@ -1,32 +1,61 @@
 #+ID: 4bdfa923-20d0-47bc-8d1e-d39d66d7c5e0
 #+TITLE: Progressive Refinements
-#+DATE: 2026-02-17
+#+DATE: 2026-03-08
 #+CITE_EXPORT: csl ieee.csl
 #+LICENSE: https://creativecommons.org/licenses/by-nc-sa/4.0 CC-BY-NC-SA-4.0
 #+STATUS: Draft
 
 #+begin_abstract
-Understanding is a dynamic process: definitions evolve as understanding deepens. To
-capture this idea, we embrace principled ambiguity: an article is viewed as an
-ordered sequence of definitions, examples, and refutations, all aimed at elucidating
-a phenomenon. Individual definitions may be ambiguous, but the final set—formed by
-the most recent version of each definition—contains no ambiguities, even as the
-article preserves the path that led to that set.
+Understanding is a dynamic process: as knowledge deepens, definitions evolve through
+cycles of conjecture, refutation, and refinement. Traditional scientific writing
+conceals this evolution by presenting only the final polished versions of concepts.
+
+We propose /progressive refinement articles/ as a format that makes this development
+explicit. Each concept is represented by a path of successive definitions forming a
+Directed Acyclic Graph (DAG). Refinements are driven by documented refutations and
+are frequently expressed as minimal extensions of prior versions. The resulting
+document preserves both the /current theory/ (the leaves of the DAG) and the full
+intellectual journey that produced it.
+
+This structure yields living documents that are logically rigorous and pedagogically
+transparent. An Org Mode template is provided to support this style of writing.
 #+end_abstract
 
 * Introduction
 
-Understanding requires definitions. Below we describe an incremental approach to
-writing definitions through successive refinements. An article that aims to capture
-the essence of a phenomenon is viewed as an ordered sequence of definitions,
-refutations, extensions, and integrations. Each of these elements is marked by a
-dedicated block to facilitate scanning of the article and is assigned a unique
-identifier (UUID).
+As our knowledge deepens, our definitions evolve. To capture this dynamic
+explicitly, we introduce /progressive refinement articles/. Within such an
+/article/, we define /definition-sequence(article)/ as the chronological sequence of
+definitions exactly as they appear in the text. Each definition, like /d1/, is
+assigned a unique identifier /id(d1)/. If a subsequent definition /d2/ shares that
+same identifier (/id(d2) = id(d1)/), then /d2/ is considered a /next version/ — or
+a /refinement of/ — /d1/. If /d2/ is the immediate refinement of /d1/ then we
+denote this relationship as /next(d1) :≡ d2/.
+
+Consequently, each /article/ maintains a distinct set of identifiers representing
+its core concepts. For every identifier, there is a /path/ tracking its evolving
+versions. Collectively, these paths form a Directed Acyclic Graph (/DAG/). The
+/current theory/ is simply the collection of definitions located at the leaves of
+this DAG, representing the most up-to-date version of each concept.
+
+Crucially, the article documents /why/ a concept evolves. Each refinement is
+prompted by a /refutation/, which can be illustrated using concrete /examples/.
+Instead of rewriting the entire definition from scratch, a new version is
+frequently introduced as an /extension/ which specifies only the differences
+compared to the previous version. To grasp the full current definition, one must
+look at the /integral/ of its /path/ (the successive application of every extension
+along the path).
+
+The remainder of this article details these ideas, proposes a clear presentation
+method, and provides an Org Mode template to write such an article.
 
 * Objective
 
-Guide the construction of an article that seeks to capture an idea using clear and
-appropriate definitions.
+- /Definition/ is defined.
+- /Example/ is defined.
+- /Refutation/ is defined.
+- /Extension/ is defined.
+- /Template/ is defined.
 
 * Context
 
@@ -44,7 +73,9 @@ definitions easy to locate, we present them using blocks that look as follows:
 
 #+ID: 57c6a5f3-8b0f-46cc-9fc6-44eb52177808
 #+begin_definition
-<description> *NewName* <description>.
+*NewName*
+
+<content>
 #+end_definition
 
 * Example
@@ -53,7 +84,7 @@ A definition may be followed by an *example*, introduced using a block as follow
 
 #+ID: ac0c8e26-e9da-4181-9872-4534d1a929e7
 #+begin_instance
-Example of what we mean by NewName.
+<content>
 #+end_instance
 
 * Refutation
@@ -83,21 +114,32 @@ A definition /DN/ represents the accumulation of all prior refinements from /D1/
 i.e., its *integration*. To avoid repeatedly reconstructing /DN/ from earlier
 definitions, integrated versions are explicitly stated when necessary.
 
-* Result
+* TODO Template
+* TODO Result
 
-#+begin_example
-Article :≡ List(Definition + Example + Refutation + Extension)
-#+end_example
+* Discussion
 
-An article whose goal is to capture an evolving understanding of a subject can
-proceed by adding sections that introduce, extend, or refine definitions. Definition
-integration reduces the cognitive burden of reconstructing definitions from their
-history of refinements. Examples illustrate how the definitions operate in practice.
-Refutations motivate the addition or extension of definitions.
+The traditional approach to scientific and mathematical writing often presents
+definitions in their final, polished form. While this maximizes brevity, it strips
+away the historical and cognitive context—the "why" behind the formalism.
 
-* TODO Discussion
+By modeling articles as a DAG of progressive refinements, we align the structure of
+the document with the human process of learning. It embraces Popper's cycle of
+conjectures and refutations, explicitly documenting the failures that necessitate
+complexity.
 
-* TODO Conclusion
+The primary trade-off is verbosity: tracking historical definitions requires more
+space. However, explicitly providing an "Integration" phase mitigates this by giving
+the reader a clean, updated reference point without forcing them to manually compute
+the differences across the definition path.
+
+* Conclusion
+
+Progressive refinement articles are a tool for thought. By formally linking
+definitions, refutations, and extensions using unique identifiers, we create a living
+document that captures not just the /current theory/, but the entire "rising sea" of
+understanding that produced it. This approach yields documentation that is both
+logically rigorous and pedagogical.
 
 * Bibliography
 
@@ -107,7 +149,7 @@ Refutations motivate the addition or extension of definitions.
 
 Local Variables:
 eval: (add-hook 'before-save-hook #'whitespace-cleanup nil t)
-eval: (add-hook 'after-save-hook #'user--org-export-current-buffer-to-utf8-buffer nil t)
+eval: (add-hook 'before-save-hook #'usr-org-update-date nil t)
 org-confirm-babel-evaluate: nil
 fill-column: 85
 End:

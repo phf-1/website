@@ -26,7 +26,7 @@ env:
 	  else
 	    CMD="${CMD}"
 	  fi
-	  guix shell -C -F -N -m dev-manifest.scm -- $${CMD}
+	  guix time-machine -C guix/channels.scm -- shell -C -F -N -m guix/dev-manifest.scm -- $${CMD}
 	fi
 
 # `make start' starts a webserver on port 3000
@@ -106,7 +106,7 @@ ${ARCHIVE}: ${FILES}
 	cp -rf html "$${TMPDIR}"
 	cp -rf js "$${TMPDIR}"
 	cp -rf library "$${TMPDIR}"
-	cp -rf prod-manifest.scm "$${TMPDIR}"
+	cp -rf guix "$${TMPDIR}"
 	cp -rf scheme "$${TMPDIR}"
 	cp -rf script "$${TMPDIR}"
 	rm -rf "$@"
